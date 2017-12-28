@@ -1,13 +1,25 @@
 <!--index.wxml-->
 <view class="container">
-  <view class="userinfo">
-    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
-    <block wx:else>
-      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" background-size="cover"></image>
-      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-    </block>
+
+  <view class="meeting-list">
+    <view class="meeting-list-item">
+      <view class="meeting-list-image"><image src="http://139.199.170.178/course/100712/ppt/17121115311202646656.jpg"></image></view>
+      <view class="meeting-list-title">如何开展个性化糖料病</view>
+      <view class="meeting-list-row"><view class="meeting-list-recordingTime">09'32''</view><view class="meeting-list-pages"><view class="meeting-list-pages-current">1</view><view class="meeting-list-pages-amount">30</view></view></view>
+      <view class="meeting-list-row "><view class="meeting-list-status">录播中</view><button class="meeting-list-share share-notLogin-hook"></button></view>
+    </view>
+    <view class="meeting-list-item">
+      <view class="meeting-list-image"><image src="http://139.199.170.178/course/100712/ppt/17121115311202646656.jpg"></image></view>
+      <view class="meeting-list-title">如何开展个性化糖料病</view>
+      <view class="meeting-list-row"><view class="meeting-list-recordingTime">09'32''</view><view class="meeting-list-pages"><view class="meeting-list-pages-current">1</view><view class="meeting-list-pages-amount">30</view></view></view>
+      <view class="meeting-list-row "><view class="meeting-list-status">录播中</view><button class="meeting-list-share share-notLogin-hook"></button></view>
+    </view>
   </view>
-  <view class="usermotto">
-    <text class="user-motto">{{motto}}</text>
+
+  <view class="fixedButton">
+    <view class="fixed-button-min changeMettingButton"><view class="icon"></view></view>
+    <view class="qrcodeButton"></view>
+    <view class="fixed-button-min userButton"><view class="icon"></view></view>
   </view>
+
 </view>

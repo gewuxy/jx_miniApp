@@ -1,21 +1,13 @@
 /**index.wxss**/
-.userinfo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+page { background-color:#F1F2F6; }
 
-.userinfo-avatar {
-  width: 128rpx;
-  height: 128rpx;
-  margin: 20rpx;
-  border-radius: 50%;
-}
+.meeting-list { padding:30rpx; display:flex; flex-wrap:wrap; justify-content:space-between;  }
+.meeting-list-item {}
 
-.userinfo-nickname {
-  color: #aaa;
-}
-
-.usermotto {
-  margin-top: 200px;
-}
+.fixedButton > view { position: fixed;}
+.fixedButton .fixed-button-min { width:92rpx; height:92rpx; background-color:#fff; border-radius: 50%;}
+.fixedButton .fixed-button-min .icon { width:72rpx; height:72rpx; margin:10rpx auto; border-radius: 50%; }
+.fixedButton .userButton { right:114rpx; bottom:55rpx;}
+.fixedButton .userButton .icon { background:url(http://139.199.170.178/headimg/admin-userImg.png) no-repeat center; }
+.changeMettingButton { left:114rpx; bottom:55rpx; }
+.changeMettingButton .icon{ background:#f00;  }
