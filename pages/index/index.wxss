@@ -5,6 +5,25 @@ page { background-color:#F1F2F6; }
 
 .clearButtonStyle { margin:0; padding:0; border-radius: 0; display: flex; }
 .clearButtonStyle:after { border:0;}
+
+/*卡片列表*/
+.meeting-card { margin-top:50rpx; }
+.meeting-card .meeting-card-swiper { height:914rpx; padding:0 32rpx; }
+.meeting-card .meeting-card-item { background-color:#fff; border-radius: 12.5rpx; box-shadow: 0 4rpx 13rpx 0 rgba(22,111,254,0.08); }
+.meeting-card .meeting-card-item .meeting-card-img { height:675rpx; background-color:#efefef; }
+.meeting-card .meeting-card-item .meeting-card-img image { width:100%; height:100%;}
+.meeting-card .meeting-card-item .meeting-card-main { padding:36rpx 32rpx;}
+.meeting-card .meeting-card-item .meeting-card-title { font-size:38rpx; margin-bottom:22rpx;}
+.meeting-card .meeting-card-item .meeting-card-recordingTime { font-size:32rpx; margin-right:30rpx; color:#7A8B9F;}
+.meeting-card .meeting-card-item .meeting-card-row { display:flex; justify-content:space-between;   }
+.meeting-card .meeting-card-item .meeting-card-col-2 {  display:flex; align-items:center;}
+.meeting-card .meeting-card-item .meeting-card-pages { display:flex; align-items:center; color:#7A8B9F; font-size:28rpx;}
+.meeting-card .meeting-card-item .meeting-card-pages-current { color:#167AFE;}
+.meeting-card .meeting-card-item .meeting-card-pages .space { font-size:18rpx; margin:0 13rpx;}
+.meeting-card .meeting-card-item .meeting-card-status { font-size:24rpx; color:#7A8B9F; margin-right:30rpx;}
+.meeting-card .meeting-card-item .meeting-card-share{width:24rpx; height:24rpx;  background:url(https://file.medyaya.cn/wx_mini/images/icon-share.png) no-repeat; background-size:24rpx;}
+
+/*会议列表*/
 .meeting-list {margin:30rpx; display:flex; flex-wrap:wrap; justify-content:space-between;  }
 .meeting-list-main { padding:10rpx 15rpx;}
 .meeting-list-item { background:#fff; border-radius:12rpx; margin-bottom:32rpx; box-shadow: 4rpx 5rpx 12rpx rgba(136,138,169,0.2);}
