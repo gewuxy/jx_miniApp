@@ -1,7 +1,10 @@
 <!--index.wxml-->
 <view class="container">
-
-    <button bindtap="bindAction">登录</button>
-
-
+    <view class="avatarImg"><image src="{{userInfo.avatarUrl}}"></image></view>
+    <view class="nickName">{{userInfo.nickName}}</view>
+    <button class="btn" bindtap="bindAction">登录</button>
+    <!-- audio.wxml -->
+    <audio  src="{{src}}" id="myAudio" ></audio>
+    <button bindtap='bindPlay'>播放</button>
+    <button bindtap='bgBindPlay'>背景播放</button>
 </view>

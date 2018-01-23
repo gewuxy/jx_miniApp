@@ -1,13 +1,17 @@
+<view class="ad_popError" wx:if="{{popErrorMsg}}">{{popErrorMsg}}</view>  
 <!--index.wxml-->
 <view class="container">
-
+<view class="avatarImg"><image src="{{userInfo.avatarUrl}}"></image></view>
+    <view class="nickName">{{userInfo.nickName}}</view>
   <!--卡片显示方式  -->
-  <view class="meeting-card">
+  <view class="meeting-card" hidden="{{isCardStatus==true}}" >
+      <view class="meeting-card-pagination"> <view class="current">1</view> <view class="space">|</view>10</view>
       <!-- 轮播图 -->
-      <swiper class="meeting-card-swiper" circular="true" indicator-dots="true" autoplay="true" interval="3000" duration="500" indicator-color="rgba(255,255,255,.8)"
+      <swiper class="meeting-card-swiper" circular="true" autoplay="true" interval="3000" duration="500" indicator-color="rgba(255,255,255,.8)"
               indicator-active-color="#31c27c" bindchange='changeSwiper'>
 
-              <swiper-item data-id="{{item.id}}" data-url="{{item.linkUrl}}" class="meeting-card-item">
+          <swiper-item data-id="{{item.id}}" data-url="{{item.linkUrl}}" >
+              <view class="meeting-card-item">
                   <view class="meeting-card-img"><image src="https://file.medyaya.cn/course/100712/ppt/17121115311202646656.jpg" class="img" /></view>
                     <view class="meeting-card-main">
                         <view class="meeting-card-title">如何开展个性化糖料病</view>
@@ -26,24 +30,27 @@
                             </view>
                         </view>
                     </view>
-              </swiper-item>
+              </view>
+          </swiper-item>
 
-          <swiper-item data-id="{{item.id}}" data-url="{{item.linkUrl}}" class="meeting-card-item">
-              <view class="meeting-card-img"><image src="https://file.medyaya.cn/course/100712/ppt/17121115311202646656.jpg" class="img" /></view>
-              <view class="meeting-card-main">
-                  <view class="meeting-card-title">如何开展个性化糖料病</view>
-                  <view class="meeting-card-row">
-                      <view class="meeting-card-col-2">
-                          <view class="meeting-card-recordingTime">09'32''</view>
-                          <view class="meeting-card-pages">
-                              <view class="meeting-card-pages-current">1</view>
-                              <view class="space">|</view>
-                              <view class="meeting-card-pages-amount">30</view>
+          <swiper-item data-id="{{item.id}}" data-url="{{item.linkUrl}}" >
+              <view class="meeting-card-item">
+                  <view class="meeting-card-img"><image src="https://file.medyaya.cn/course/100712/ppt/17121115311202646656.jpg" class="img" /></view>
+                  <view class="meeting-card-main">
+                      <view class="meeting-card-title">如何开展个性化糖料病</view>
+                      <view class="meeting-card-row">
+                          <view class="meeting-card-col-2">
+                              <view class="meeting-card-recordingTime">09'32''</view>
+                              <view class="meeting-card-pages">
+                                  <view class="meeting-card-pages-current">1</view>
+                                  <view class="space">|</view>
+                                  <view class="meeting-card-pages-amount">30</view>
+                              </view>
                           </view>
-                      </view>
-                      <view class="meeting-card-col-2">
-                          <view class="meeting-card-status">录播中</view>
-                          <button class="meeting-card-share clearButtonStyle" open-type="share"></button>
+                          <view class="meeting-card-col-2">
+                              <view class="meeting-card-status">录播中</view>
+                              <button class="meeting-card-share clearButtonStyle" open-type="share"></button>
+                          </view>
                       </view>
                   </view>
               </view>
@@ -53,8 +60,8 @@
   </view>
 
   <!--列表显示方式-->
-  <view class="meeting-list">
-    <view class="meeting-list-item">
+  <view class="meeting-list" hidden="{{isCardStatus==false}}">
+    <view class="meeting-list-item" bindtap='showImage'>
       <view class="meeting-list-image"><image src="http://139.199.170.178/course/100712/ppt/17121115311202646656.jpg"></image></view>
       <view class="meeting-list-main">
         <view class="meeting-list-title">如何开展个性化糖料病</view>
@@ -99,10 +106,10 @@
 
   <!--固定的按钮-->
   <view class="fixedButton">
-    <view class="fixed-button-min changeMettingButton"><view class="icon"></view></view>
+    <view class="fixed-button-min changeMettingButton" bindtap='changeListStatus'><view class="icon"></view></view>
     <!--<view class="qrcodeButton"><view class="icon"></view></view>-->
-    <view class="qrcodeButton"><navigator class="icon" url="/pages/login/index"></navigator></view>
-    <view class="fixed-button-min userButton"><view class="icon userImage"  style="background-image:url(http://139.199.170.178/headimg/admin-userImg.png); "></view></view>
+    <view class="qrcodeButton"><navigator class="icon" url="/pages/login/index?id=1"></navigator></view>
+    <view class="fixed-button-min userButton" bindtap='bindViewTap'><view class="icon userImage"  style="background-image:url(http://139.199.170.178/headimg/admin-userImg.png); "></view></view>
   </view>
 
 </view>

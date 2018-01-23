@@ -8,12 +8,44 @@ const formatTime = date => {
 
   return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute, second].map(formatNumber).join(':')
 }
-
 const formatNumber = n => {
   n = n.toString()
   return n[1] ? n : '0' + n
 }
 
+
+// 去前后空格  
+function trim(str) {
+  return str.replace(/(^\s*)|(\s*$)/g, "");
+}
+
+// 提示错误信息  
+function isError(msg, that) {
+  that.setData({
+    showTopTips: true,
+    errorMsg: msg
+  })
+}
+
+// 清空错误信息  
+function clearError(that) {
+  that.setData({
+    showTopTips: false,
+    errorMsg: ""
+  })
+}
+
+//定时器提示框3秒消失  
+function ohShitfadeOut(that) {  
+  var fadeOutTimeout = setTimeout(() => {
+    that.setData({ popErrorMsg: '' });
+    clearTimeout(fadeOutTimeout);
+  }, 3000);
+}
+
+
+
 module.exports = {
-  formatTime: formatTime
+  formatTime: formatTime,
+  ohShitfadeOut:ohShitfadeOut
 }
