@@ -8,6 +8,30 @@ const formatTime = date => {
 
   return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute, second].map(formatNumber).join(':')
 }
+//转化时间
+const formatTimes = msd => {
+
+  var time = parseFloat(msd) ;
+  if (null != time && "" != time) {
+    if (time > 60 && time < 60 * 60) {
+      time = parseInt(time / 60.0) + ":" + parseInt((parseFloat(time / 60.0) -
+        parseInt(time / 60.0)) * 60) + "";
+    }
+    // else if (time >= 60 * 60 && time < 60 * 60 * 24) {
+    else if (time >= 60 * 60) {
+      time = parseInt(time / 3600.0) + ":" + parseInt((parseFloat(time / 3600.0) -
+        parseInt(time / 3600.0)) * 60) + ":" +
+        parseInt((parseFloat((parseFloat(time / 3600.0) - parseInt(time / 3600.0)) * 60) -
+          parseInt((parseFloat(time / 3600.0) - parseInt(time / 3600.0)) * 60)) * 60) + "";
+    }
+    else {
+      time = parseInt(time) + "";
+    }
+  }
+  return time;
+
+}
+
 const formatNumber = n => {
   n = n.toString()
   return n[1] ? n : '0' + n
@@ -43,9 +67,14 @@ function ohShitfadeOut(that) {
   }, 3000);
 }
 
+function checkSettingStatu(cb) {
+  
+}
+
 
 
 module.exports = {
   formatTime: formatTime,
+  formatTimes: formatTimes,
   ohShitfadeOut:ohShitfadeOut
 }

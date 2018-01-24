@@ -1,4 +1,5 @@
 const host = 'https://www.cspmeeting.com/csp';
+
 //app.js
 App({
   onShow() {
@@ -26,8 +27,7 @@ App({
                     code: that.globalData.code,
                   },
                   success(data) {
-
-                    console.log(data);
+                    console.log('请求code',data);
                     //是否已经注册
                     if (data.data.data.has_user) {
                       console.log('已注册')
@@ -42,6 +42,30 @@ App({
                           that.globalData.UserToken = res.data.data.token;
                           //保存token到本地
                           wx.setStorageSync('token', res.data.data.token);
+                          // 存储用户信息到本地
+                          wx.setStorage({
+                            key: 'userInfo',
+                            data: {
+                              userInfo: {
+                                avatarUrl: that.globalData.userInfo.avatarUrl,            //头像
+                                nickName: that.globalData.userInfo.nickName,              //用户名
+                                city: that.globalData.userInfo.city,                      //城市
+                                country: that.globalData.userInfo.country,                //国家
+                                province: that.globalData.userInfo.province,              //省份
+                                gender: that.globalData.userInfo.gender                   //性别
+                              }
+                            },
+                            success: function (res) {
+                              console.log("存储成功");
+                            }
+                          });
+                          //使用 Promise 回调的值
+                          var res = {
+                            status: 200,
+                            userInfo: that.globalData.userInfo,
+                            token: that.globalData.UserToken
+                          }
+                          resolve(res);
                         }
                       })
                     } else {
@@ -66,6 +90,30 @@ App({
                             that.globalData.UserToken = res.data.data.token;
                             //保存token到本地
                             wx.setStorageSync('token', res.data.data.token);
+                            // 存储用户信息到本地
+                            wx.setStorage({
+                              key: 'userInfo',
+                              data: {
+                                userInfo: {
+                                  avatarUrl: that.globalData.userInfo.avatarUrl,            //头像
+                                  nickName: that.globalData.userInfo.nickName,              //用户名
+                                  city: that.globalData.userInfo.city,                      //城市
+                                  country: that.globalData.userInfo.country,                //国家
+                                  province: that.globalData.userInfo.province,              //省份
+                                  gender: that.globalData.userInfo.gender                   //性别
+                                }
+                              },
+                              success: function (res) {
+                                console.log("存储成功");
+                              }
+                            });
+                            //使用 Promise 回调的值
+                            var res = {
+                              status: 200,
+                              userInfo: that.globalData.userInfo,
+                              token: that.globalData.UserToken
+                            }
+                            resolve(res);
                           }
                         });
 
@@ -96,8 +144,33 @@ App({
                               },
                               success: (res) => {
                                 that.globalData.UserToken = res.data.data.token;
+                               
                                 //保存token到本地
                                 wx.setStorageSync('token', res.data.data.token);
+                                // 存储用户信息到本地
+                                wx.setStorage({
+                                  key: 'userInfo',
+                                  data: {
+                                    userInfo: {
+                                      avatarUrl: that.globalData.userInfo.avatarUrl,            //头像
+                                      nickName: that.globalData.userInfo.nickName,              //用户名
+                                      city: that.globalData.userInfo.city,                      //城市
+                                      country: that.globalData.userInfo.country,                //国家
+                                      province: that.globalData.userInfo.province,              //省份
+                                      gender: that.globalData.userInfo.gender                   //性别
+                                    }
+                                  },
+                                  success: function (res) {
+                                    console.log("存储成功");
+                                  }
+                                });
+                                //使用 Promise 回调的值
+                                var res = {
+                                  status: 200,
+                                  userInfo: that.globalData.userInfo,
+                                  token: that.globalData.UserToken
+                                }
+                                resolve(res);
 
                               }
                             });
@@ -105,34 +178,40 @@ App({
                         })
                       }
                     }
-                    // 存储用户信息到本地
-                    wx.setStorage({
-                      key: 'userInfo',
-                      data: {
-                        userInfo: {
-                          avatarUrl:that.globalData.userInfo.avatarUrl,            //头像
-                          nickName:that.globalData.userInfo.nickName,              //用户名
-                          city:that.globalData.userInfo.city,                      //城市
-                          country:that.globalData.userInfo.country,                //国家
-                          province:that.globalData.userInfo.province,              //省份
-                          gender:that.globalData.userInfo.gender                   //性别
+
+                    wx.hideLoading();
+                  },
+                  fail(res) {
+                    console.log('请求服务器有问题');
+                  }
+                })
+              },
+              fail:function(res){
+                wx.hideLoading();
+                wx.showModal({
+                  title: '授权提示',
+                  content: '小程序功能需要授权才能正常使用噢！请点击“确定”-“用户信息”再次授权',
+                  showCancel: false,
+                  success: function(res){
+                    wx.openSetting({
+                      success: (res) => {
+                        if (that.globalData.errorBoll){
+                          //回调获取缓存
+                          that.getUserInfo();
+                          //防止二次加载
+                          that.globalData.errorBoll = true;
                         }
                       },
-                      success: function (res) {
-                        console.log("存储成功");
+                      fail: function(res){
+                        // 提示版本过低
+                        wx.showModal({
+                          title: '提示',
+                          content: '当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。'
+                        })
                       }
                     })
                   }
                 })
-                wx.setStorage({
-                  key: "auth_key",
-                  data: res.userInfo
-                })
-                var res = {
-                  status: 200,
-                  data: res.userInfo
-                }
-                resolve(res);
               }
             })
           } else {
@@ -147,11 +226,9 @@ App({
       })
     });
   },
-  userInfo: {},
   globalData:{
-
+    //防止重复加载
+    errorBoll:false
   },
-  host,
-  token:"",
-  add:'你好吗'
+  host
 })

@@ -1,32 +1,11 @@
 /**index.wxss**/
-page { background-color:#F1F2F6; }
+page { background-color:#F2F2F4; }
 
 .container { padding:0 0 140rpx; display: block;}
 
 .clearButtonStyle { margin:0; padding:0; border-radius: 0; display: flex; }
 .clearButtonStyle:after { border:0;}
 
-/*卡片列表*/
-.meeting-card { }
-.meeting-card .meeting-card-pagination{ margin:15px 0; color:#7A8B9F; font-size:30rpx; display: flex; align-items:center; justify-content:center;}
-.meeting-card .meeting-card-pagination .current { color:#167AFE;}
-.meeting-card .meeting-card-pagination .space { font-size:23rpx; margin:0 10rpx;}
-.meeting-card .meeting-card-swiper { height:914rpx; }
-.meeting-card .meeting-card-swiper swiper-item { }
-.meeting-card .meeting-card-item { background-color:#fff; border-radius: 12.5rpx; box-shadow: 0 4rpx 13rpx 0 rgba(22,111,254,0.08); margin:0 32rpx; }
-.meeting-card .meeting-card-item image {  border-radius: 12.5rpx 12.5rpx 0 0; }
-.meeting-card .meeting-card-item .meeting-card-img { height:675rpx; background-color:#efefef; }
-.meeting-card .meeting-card-item .meeting-card-img image { width:100%; height:100%;}
-.meeting-card .meeting-card-item .meeting-card-main { padding:40rpx 32rpx;}
-.meeting-card .meeting-card-item .meeting-card-title { font-size:38rpx; margin-bottom:22rpx;}
-.meeting-card .meeting-card-item .meeting-card-recordingTime { font-size:32rpx; margin-right:30rpx; color:#7A8B9F;}
-.meeting-card .meeting-card-item .meeting-card-row { display:flex; justify-content:space-between;   }
-.meeting-card .meeting-card-item .meeting-card-col-2 {  display:flex; align-items:center;}
-.meeting-card .meeting-card-item .meeting-card-pages { display:flex; align-items:center; color:#7A8B9F; font-size:28rpx;}
-.meeting-card .meeting-card-item .meeting-card-pages-current { color:#167AFE;}
-.meeting-card .meeting-card-item .meeting-card-pages .space { font-size:18rpx; margin:0 13rpx;}
-.meeting-card .meeting-card-item .meeting-card-status { font-size:24rpx; color:#7A8B9F; margin-right:30rpx;}
-.meeting-card .meeting-card-item .meeting-card-share{width:24rpx; height:24rpx;  background:url(https://file.medyaya.cn/wx_mini/images/icon-share.png) no-repeat; background-size:24rpx;}
 
 /*会议列表*/
 .meeting-list {margin:30rpx; display:flex; flex-wrap:wrap; justify-content:space-between;  }
@@ -41,20 +20,32 @@ page { background-color:#F1F2F6; }
 .meeting-list-pages { display: flex; align-items: center; color:#7A8B9F;}
 .meeting-list-pages .space { font-size:18rpx; margin:0 10rpx;}
 .meeting-list-status { font-size:22rpx; color:#167afe;}
-.meeting-list-share {  width:26rpx; height:26rpx;  background:url(https://file.medyaya.cn/wx_mini/images/icon-share.png) no-repeat; background-size:26rpx;}
+.meeting-list-share {  width:26rpx; height:26rpx;  background:url(https://file.medyaya.cn/wx_mini/images/icon-index-share.png) no-repeat; background-size:26rpx;}
+
+
+/* 块列表  */
+.meeting-card { margin:30rpx; }
+.meeting-card .meeting-list-item .meeting-list-image { position: relative;}
+.meeting-card .meeting-list-item .meeting-list-image .isSourceType { background:url(https://file.medyaya.cn/wx_mini/images/icon-index-isSoureType.png) no-repeat; background-size:51rpx; width:51rpx; height:51rpx; position: absolute; top:16rpx; right:16rpx; }
+.meeting-card .meeting-list-item .meeting-list-image .img{ width:100%; height:303rpx; background-repeat: no-repeat; background-size:cover; border-radius: 12rpx 12rpx 0 0;}
+.meeting-card .meeting-list-share {  width:38rpx; height:38rpx;  background:url(https://file.medyaya.cn/wx_mini/images/icon-index-share.png) no-repeat; background-size:38rpx;}
+.meeting-card .meeting-list-item .meeting-list-title { width:auto; font-size:28rpx;}
+.meeting-card .meeting-list-main { padding:18rpx 40rpx;}
+.meeting-card .meeting-list-row { margin:15rpx 0 0;}
+.meeting-card .meeting-list-recordingTime { font-weight: bold;}
 
 
 
 .fixedButton > view { position: fixed;}
-.fixedButton .fixed-button-min { width:92rpx; height:92rpx; background-color:#fff; border-radius: 50%; box-shadow: 4rpx 5rpx 12rpx rgba(136,138,169,0.2);}
-.fixedButton .fixed-button-min .icon { width:72rpx; height:72rpx; margin:10rpx auto; border-radius: 50%; }
+.fixedButton .fixed-button-min { width:92rpx; height:92rpx; background-color:#fff; border-radius: 50%; box-shadow: 4rpx 5rpx 12rpx rgba(136,138,169,0.2); display:flex;align-items:center;  justify-content:center;}
+.fixedButton .fixed-button-min .icon { width:72rpx; height:72rpx;  border-radius: 50%; }
 .fixedButton .userButton { right:114rpx; bottom:55rpx; }
 .fixedButton .userButton .icon { background:url(https://file.medyaya.cn/wx_mini/images/icon-miniUser.png) no-repeat center; background-size:52rpx; }
 .fixedButton .userButton .userImage { background-size:72rpx; }
 .changeMettingButton { left:114rpx; bottom:55rpx; }
 .changeMettingButton .icon{ background:url(https://file.medyaya.cn/wx_mini/images/icon-changeCard.png) no-repeat center;  background-size:52rpx;  }
 .qrcodeButton { bottom:42rpx; left:50%; margin-left:-60rpx; }
-.qrcodeButton .icon{ width:124rpx; height:124rpx; background:url(https://file.medyaya.cn/wx_mini/images/icon-qrcode.png) no-repeat center;  background-size:124rpx;  border-radius: 50%; }
+.qrcodeButton .icon{ width:124rpx; height:124rpx; background:url(https://file.medyaya.cn/wx_mini/images/icon-index-add-button.png) no-repeat center;  background-size:124rpx;  border-radius: 50%; }
 
 /* 顶部提示语 */
 .ad_popError{ background: #2B2F38; color: #ACE400; height: 58rpx; line-height: 58rpx; font-size: 24rpx; text-align: center;  position: fixed; left: 0; top: 0; width: 100%; z-index:3;}  

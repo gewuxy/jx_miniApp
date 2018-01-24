@@ -6,73 +6,101 @@ var util = require('../../utils/util.js');
 Page({
   data: {
     // 用户信息
+
     bType: "primary", // 按钮类型
     actionText: "登录", // 按钮文字提示
     lock: false, //登录按钮状态，false表示未登录
-    wxcode: "",
-    wxSessionKey: "",
-    getUnionId: false,   //是否获取到unionId
-    motto: 'Hello World',
     changeCurrentIndex: 0,   //选中位标,
     meetingList: [],  //会议列表
+    pushMeetingList: [],  //加载后的会议列表
     userInfo: {
       avatarUrl: "",
       nickName: "未登录"
     },
-    hasUserInfo: false,
-    popErrorMsg: '小程序只显示录播会议哦！',  //顶部提示语，直接setData就能使用
+    token: "",
+    popErrorMsg: "",  //顶部提示语，直接setData就能使用
+    meetingListPageNum:1,   //分页数
+    meetingListPageSize: 3,   //每页个数
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
-    isCardStatus:true
+    isCardStatus:false
   },
+  // 监听页面加载，只执行一次
   onLoad: function () {
-    var that = this;
-    // var userStorageInfoUser = wx.getStorageSync('userInfo');
-    // var userStorageToken = wx.getStorageSync('token');
-
-    //获取缓存
-    var userInfoStorage = wx.getStorageSync('userInfo');
-    if (userInfoStorage) {
-      this.setData({
-        userInfo: {
-          avatarUrl: userInfoStorage.userInfo.avatarUrl,
-          nickName: userInfoStorage.userInfo.nickName
-        }
-      })
-    }
-    console.log(userInfoStorage);
-    console.log('tokenIndex', wx.getStorageSync('token'));
-    console.log('获取值', app);
-    console.log('获取值', app.globalData);
-    console.log('获取值token', app.globalData.UserToken);
-
-
-
-    app.getUserInfo().then(function (res) {
-      console.log(res);
-      if (res.status == 200) {
-        var auth_key = res.data;
-        that.setData({
-          userInfo: app.globalData.userInfo
-        })
-        console.log(1);
-        console.log(app);
-        console.log(app.globalData);
-      } else {
-        console.log(res.data);
-      }
-    });
-
-
-
-
-
-
+    //刷新显示列表
+    this.setData({ meetingListPageNum : 1});
   },
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    
+    var that = this;
+    var userStorageInfoUser = wx.getStorageSync('userInfo');
+    var userStorageToken = wx.getStorageSync('token');
+
+    //已有Token缓存
+    if (userStorageToken && userStorageInfoUser) {
+      //设置数据
+      this.setData({
+        userInfo: userStorageInfoUser.userInfo
+      });
+      // 加载会议列表
+      wx.request({
+        url: app.host + '/api/meeting/list',
+        method: 'GET',
+        data: {
+          pageSize: that.data.meetingListPageSize,
+          pageNum: that.data.meetingListPageNum
+        },
+        header: {
+          token: userStorageToken
+        },
+        success(res) {
+          console.log(res);
+          console.log(res.data.data.list);
+          console.log(that.data);
+          that.setData({
+            meetingList: res.data.data.list,
+            token: userStorageToken
+          });
+
+        }
+      });
+
+      console.log(userStorageInfoUser);
+      console.log('tokenIndex', wx.getStorageSync('token'));
+    } else {
+      wx.showLoading({ title: '加载中' });
+      //第一次访问
+      app.getUserInfo().then(function (res) {
+        console.log('访问前', res);
+        if (res.status == 200) {
+          //设置数据
+          that.setData({
+            userInfo: app.globalData.userInfo
+          });
+          // 加载会议列表
+          wx.request({
+            url: app.host + '/api/meeting/list',
+            method: 'GET',
+            data: {
+              pageSize: that.data.meetingListPageSize,
+              pageNum: that.data.meetingListPageNum
+            },
+            header: {
+              token: app.globalData.UserToken
+            },
+            success(res) {
+              that.setData({
+                meetingList: res.data.data.list,
+                token: app.globalData.UserToken
+              });
+            }
+          });
+        } else {
+          console.log(res.data);
+        }
+      });
+    }
 
   },
   //事件处理函数
@@ -83,22 +111,61 @@ Page({
   },
   //下拉刷新
   onPullDownRefresh: function(){
+    var that = this;
+    //刷新显示列表
+    that.setData({ meetingListPageNum: 1 });
     wx.request({
-      url: '',
-      data: {},
+      url: app.host + '/api/meeting/list',
       method: 'GET',
-      success: function (res) {},
-      fail: function (res) {},
+      data: {
+        pageSize: that.data.meetingListPageSize,
+        pageNum: that.data.meetingListPageNum
+      },
+      header: {
+        token: that.data.token
+      },
+      success(res) {
+        that.setData({
+          meetingList: res.data.data.list
+        });
+      },
       complete: function (res) {
         wx.stopPullDownRefresh();
       }
-    })
-    util.ohShitfadeOut(this);
+    });
+    util.ohShitfadeOut(that);
   },
   //上拉加载更多
   onReachBottom:function(){
-    this.setData({ popErrorMsg: '小程序只显示录播会议哦！'})
-    console.log('下滑加载更多');
+    var that = this;
+    //新增后的数据
+    var result = that.data.meetingList;
+    this.setData({ 
+      popErrorMsg: '小程序只显示录播会议哦！' ,
+      meetingListPageNum: that.data.meetingListPageNum + 1
+    });
+    wx.request({
+      url: app.host + '/api/meeting/list',
+      method: 'GET',
+      data: {
+        pageSize: that.data.meetingListPageSize,
+        pageNum: that.data.meetingListPageNum
+      },
+      header: {
+        token: that.data.token
+      },
+      success(res) {
+        for (var i = 0; i < that.data.meetingList.length; i += that.data.meetingListPageSize) {
+          result = result.concat(res.data.data.list.slice(i, i+that.data.meetingListPageSize));
+        } 
+        that.setData({
+          meetingList: result
+        });
+      },
+      complete: function (res) {
+
+      }
+    });
   },
   //分享按钮
   onShareAppMessage: function (options){
@@ -119,24 +186,5 @@ Page({
       current: '', // 当前显示图片的http链接
       urls: ['https://timgsa.baidu.com/timg?image&quality=80&size=b10000_10000&sec=1516084229&di=307386df25650d9d5ab51c33a193c6bb&src=http://www.sd-i.cn/uploadfile/2013/0628/20130628120240861.jpg'] // 需要预览的图片http链接列表
     })
-  },
-  getUserInfo: function (e) {
-    console.log(e)
-    app.userInfo = e.detail.userInfo
-    this.setData({
-      userInfo: e.detail.userInfo,
-      hasUserInfo: true
-    })
-  },
-  times1:function(){
-    var time = setInterval(function () {
-      // 因为一开始缓存当中指定的key为假当为真的时候就说明上一步成功了这时候就可以开始发送下一步的请求了
-      var userInfoStorage = wx.getStorageSync('userInfo')
-      console.log(userInfoStorage);
-
-      clearTimeout(time);
-    })
   }
-
-  
 })
