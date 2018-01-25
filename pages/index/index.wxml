@@ -7,7 +7,7 @@
       <view class="meeting-list-item" >
         <view class="meeting-list-image">
           <view class="img" style="background-image:url({{item.coverUrl}})"></view>
-          <view class="isSourceType" wx:if="{{item.playState == 1}}"></view>
+          <view class="isSourceType" wx:if="{{item.sourceType == 1}}"></view>
         </view>
         <view class="meeting-list-main">
           <view class="meeting-list-title">{{item.title}}</view>
@@ -69,9 +69,9 @@
   <view class="fixedButton">
     <view class="fixed-button-min changeMettingButton" bindtap='changeListStatus'><view class="icon"></view></view>
     <!--<view class="qrcodeButton"><view class="icon"></view></view>-->
-    <view class="qrcodeButton"><navigator class="icon" url="/pages/login/index?id=1"></navigator></view>
+    <view class="qrcodeButton"><view class="icon" bindtap='chooseImg'></view></view>
     <view class="fixed-button-min userButton" bindtap='bindViewTap'>
-      <view class="icon userImage" wx:if="{{userInfo.avatarUrl}}" style="background-image:url({{userInfo.avatarUrl}}); "></view>
+      <view class="icon userImage" wx:if="{{avatar}}" style="background-image:url({{avatar}}); "></view>
       <view class="icon" wx:else></view>
     </view>
   </view>

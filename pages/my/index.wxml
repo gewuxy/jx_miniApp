@@ -1,2 +1,47 @@
 <!--pages/my/index.wxml-->
-<text>pages/my/index.wxml</text>
+<view class="container my-page">
+  <!-- 我的首页 -->
+  <view wx:if="{{loadPageType == ''}}">
+    <view class="input-item-row ">
+        <view class="input-row" bindtap='toEditMy'>
+          <view class="input-header my-page-image"><image class="input-avatar" src="{{avatar}}"></image></view>
+          <view class="input-main "><view class="my-page-title">{{userInfo.nickName}}</view> <view class="icon-arrows"></view></view>
+        </view>
+      </view>
+      <view class="input-item-row ">
+        <view class="input-row">
+          <view class="input-main"><view class="icon-edit"></view> 权限<view class="icon-arrows"></view></view>
+        </view>
+      </view>
+      <view class="input-item-row " bindtap='toHelp'>
+        <view class="input-row">
+          <view class="input-main"><view class="icon-help"></view> 帮助与反馈<view class="icon-arrows"></view></view>
+        </view>
+      </view>
+  </view>
+
+  <!--编辑介绍  -->
+  <view  wx:elif="{{loadPageType == 'editPage'}}">
+    <view class="input-item-row ">
+      <view class="input-row input-row-line" bindtap='editAvatar'>
+        <view class="input-header">头像</view>
+        <view class="input-main text-right"><image class="input-avatar" src="{{avatar}}"></image><view class="icon-arrows"></view></view>
+      </view>
+      <view class="input-row">
+        <view class="input-header">昵称</view>
+        <view class="input-main text-right"><view class="me-input-text color-gray">{{nickName}}</view><view class="icon-arrows"></view></view>
+        
+      </view>
+    </view>
+    <view class="input-item-row input-showTextarea">
+      <view class="input-row input-row-line">
+        <view class="input-header">简介</view>
+        <view class="input-main text-right"><view class="me-input-text  color-gray">输入简介</view><view class="icon-arrows"></view></view>
+      </view>
+      <view class="input-row">
+        <view class=" color-gray">占位符</view>
+      </view>
+    </view>
+  </view>
+  
+</view>

@@ -1,1 +1,11 @@
 /* pages/my/index.wxss */
+page { background-color:#F2F2F4; }
+
+.container { padding:40rpx 0 0; }
+
+.my-page .icon-help,
+.my-page .icon-edit { margin-right:15rpx;}
+
+.my-page .input-row .my-page-image .input-avatar{ width:104rpx; height:104rpx; margin:0; padding:0;}
+.my-page .input-row .my-page-image { margin-right:32rpx;}
+.my-page-title { display: flex; align-items: center; height:100%;}

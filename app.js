@@ -39,21 +39,20 @@ App({
                           uniqueId: data.data.data.unionid
                         },
                         success: (res) => {
+                          that.globalData.userInfo = res.data.data;
                           that.globalData.UserToken = res.data.data.token;
+                          that.globalData.avatar = res.data.data.avatar;
                           //保存token到本地
                           wx.setStorageSync('token', res.data.data.token);
+                          wx.setStorageSync('avatar', res.data.data.avatar);
+                          wx.setStorageSync('nickName', res.data.data.nickName);
+
+                          // console.log(that.globalData.avatar);
                           // 存储用户信息到本地
                           wx.setStorage({
                             key: 'userInfo',
                             data: {
-                              userInfo: {
-                                avatarUrl: that.globalData.userInfo.avatarUrl,            //头像
-                                nickName: that.globalData.userInfo.nickName,              //用户名
-                                city: that.globalData.userInfo.city,                      //城市
-                                country: that.globalData.userInfo.country,                //国家
-                                province: that.globalData.userInfo.province,              //省份
-                                gender: that.globalData.userInfo.gender                   //性别
-                              }
+                              userInfo: that.globalData.userInfo
                             },
                             success: function (res) {
                               console.log("存储成功");
@@ -63,14 +62,14 @@ App({
                           var res = {
                             status: 200,
                             userInfo: that.globalData.userInfo,
-                            token: that.globalData.UserToken
+                            token: that.globalData.UserToken,
+                            avatar: that.globalData.avatar
                           }
                           resolve(res);
                         }
                       })
                     } else {
                       //能否获取到unionid
-                      console.log(data);
                       if (data.data.data.unionid) {
                         // 注册登录微信
                         wx.request({
@@ -87,21 +86,17 @@ App({
                             avatar: res.userInfo.avatarUrl,
                           },
                           success: (res) => {
+                            that.globalData.userInfo = res.data.data;
                             that.globalData.UserToken = res.data.data.token;
                             //保存token到本地
                             wx.setStorageSync('token', res.data.data.token);
+                            wx.setStorageSync('avatar', res.data.data.avatar);
+                            wx.setStorageSync('nickName', res.data.data.nickName);
                             // 存储用户信息到本地
                             wx.setStorage({
                               key: 'userInfo',
                               data: {
-                                userInfo: {
-                                  avatarUrl: that.globalData.userInfo.avatarUrl,            //头像
-                                  nickName: that.globalData.userInfo.nickName,              //用户名
-                                  city: that.globalData.userInfo.city,                      //城市
-                                  country: that.globalData.userInfo.country,                //国家
-                                  province: that.globalData.userInfo.province,              //省份
-                                  gender: that.globalData.userInfo.gender                   //性别
-                                }
+                                userInfo: that.globalData.userInfo
                               },
                               success: function (res) {
                                 console.log("存储成功");
@@ -111,7 +106,8 @@ App({
                             var res = {
                               status: 200,
                               userInfo: that.globalData.userInfo,
-                              token: that.globalData.UserToken
+                              token: that.globalData.UserToken,
+                              avatar: that.globalData.avatar
                             }
                             resolve(res);
                           }
@@ -128,6 +124,7 @@ App({
                             iv: res.iv
                           },
                           success: (res) => {
+                            console.log(res);
                             // 注册登录微信
                             wx.request({
                               url: `${host}/api/user/login`,
@@ -143,22 +140,19 @@ App({
                                 avatar: res.data.data.avatarUrl,
                               },
                               success: (res) => {
+                                console.log(res);
+                                that.globalData.userInfo = res.data.data;
                                 that.globalData.UserToken = res.data.data.token;
                                
                                 //保存token到本地
                                 wx.setStorageSync('token', res.data.data.token);
+                                wx.setStorageSync('avatar', res.data.data.avatar);
+                                wx.setStorageSync('nickName', res.data.data.nickName);
                                 // 存储用户信息到本地
                                 wx.setStorage({
                                   key: 'userInfo',
                                   data: {
-                                    userInfo: {
-                                      avatarUrl: that.globalData.userInfo.avatarUrl,            //头像
-                                      nickName: that.globalData.userInfo.nickName,              //用户名
-                                      city: that.globalData.userInfo.city,                      //城市
-                                      country: that.globalData.userInfo.country,                //国家
-                                      province: that.globalData.userInfo.province,              //省份
-                                      gender: that.globalData.userInfo.gender                   //性别
-                                    }
+                                    userInfo: that.globalData.userInfo
                                   },
                                   success: function (res) {
                                     console.log("存储成功");
@@ -168,7 +162,8 @@ App({
                                 var res = {
                                   status: 200,
                                   userInfo: that.globalData.userInfo,
-                                  token: that.globalData.UserToken
+                                  token: that.globalData.UserToken,
+                                  avatar: that.globalData.avatar
                                 }
                                 resolve(res);
 

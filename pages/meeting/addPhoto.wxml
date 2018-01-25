@@ -1,0 +1,17 @@
+<!--pages/meeting/addPhoto.wxml-->
+<view class="ad_popError" wx:if="{{popErrorMsg}}">{{popErrorMsg}}</view>
+
+<view class="container">
+  <view class="img-v">
+    <view class="img-item" wx:for="{{imgs}}" wx:for-item="item" wx:key="*this">
+      <view class="img-item-box">
+        <image class="images" src="{{item}}"  data-index="{{index}}" mode="aspectFill" bindtap="previewImg"></image>
+      </view>
+      <view class="delete-btn" data-index="{{index}}" catchtap="deleteImg"></view>
+    </view>
+  </view>
+  <view class="fiexd-button">
+    <view class="upload-img-btn" bindtap="chooseImg">上传图片({{imgs.length}}/9)</view>
+    <view class="input-button" bindtap='toAddMeeting'>生成讲本</view>
+  </view>
+</view>

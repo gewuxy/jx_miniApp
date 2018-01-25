@@ -6,9 +6,6 @@ var util = require('../../utils/util.js');
 Page({
   data: {
     // 用户信息
-
-    bType: "primary", // 按钮类型
-    actionText: "登录", // 按钮文字提示
     lock: false, //登录按钮状态，false表示未登录
     changeCurrentIndex: 0,   //选中位标,
     meetingList: [],  //会议列表
@@ -17,6 +14,8 @@ Page({
       avatarUrl: "",
       nickName: "未登录"
     },
+    avatar: "",
+    imgs: [],         //点击新增的图片
     token: "",
     popErrorMsg: "",  //顶部提示语，直接setData就能使用
     meetingListPageNum:1,   //分页数
@@ -37,6 +36,7 @@ Page({
     var userStorageInfoUser = wx.getStorageSync('userInfo');
     var userStorageToken = wx.getStorageSync('token');
 
+
     //已有Token缓存
     if (userStorageToken && userStorageInfoUser) {
       //设置数据
@@ -56,16 +56,15 @@ Page({
         },
         success(res) {
           console.log(res);
-          console.log(res.data.data.list);
-          console.log(that.data);
           that.setData({
             meetingList: res.data.data.list,
-            token: userStorageToken
+            token: userStorageToken,
+            avatar: wx.getStorageSync('avatar'),
           });
 
         }
       });
-
+      //打印缓存数据
       console.log(userStorageInfoUser);
       console.log('tokenIndex', wx.getStorageSync('token'));
     } else {
@@ -92,7 +91,8 @@ Page({
             success(res) {
               that.setData({
                 meetingList: res.data.data.list,
-                token: app.globalData.UserToken
+                token: app.globalData.UserToken,
+                avatar: app.globalData.avatar
               });
             }
           });
@@ -103,10 +103,22 @@ Page({
     }
 
   },
+  /**
+ * 生命周期函数--监听页面卸载
+ */
+  onUnload: function () {
+
+  },
+  /**
+ * 生命周期函数--监听页面初次渲染完成
+ */
+  onReady: function () {
+
+  },
   //事件处理函数
   bindViewTap: function() {
     wx.navigateTo({
-      url: '../login/index?id=2&abc=6'
+      url: '../my/index'
     })
   },
   //下拉刷新
@@ -155,9 +167,10 @@ Page({
         token: that.data.token
       },
       success(res) {
+        //增加会议到数组里
         for (var i = 0; i < that.data.meetingList.length; i += that.data.meetingListPageSize) {
           result = result.concat(res.data.data.list.slice(i, i+that.data.meetingListPageSize));
-        } 
+        }
         that.setData({
           meetingList: result
         });
@@ -169,7 +182,7 @@ Page({
   },
   //分享按钮
   onShareAppMessage: function (options){
-    console.log(1);
+    console.log('点击分享');
   },
   //切换列表状态
   changeListStatus:function(){
@@ -178,6 +191,65 @@ Page({
     this.setData({
       isCardStatus: isCardStatus
     })
+  },
+  //上传图片并跳转
+  chooseImg: function (e) {
+    var that = this;
+    var imgs = this.data.imgs;
+    //清空已经选中的图片
+    that.setData({ imgs:[] });
+
+    if (imgs.length >= 9) {
+      this.setData({
+        lenMore: 1
+      });
+      setTimeout(function () {
+        that.setData({
+          lenMore: 0
+        });
+      }, 2500);
+      return false;
+    }
+    wx.chooseImage({
+      // count: 1, // 默认9
+      sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+      sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+      success: function (res) {
+        // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+        var tempFilePaths = res.tempFilePaths;
+        var imgs = that.data.imgs;
+        var tempFile = res.tempFiles;
+        console.log(res.tempFiles);
+        console.log(tempFilePaths + '----');
+        for (var i = 0; i < tempFilePaths.length; i++) {
+          if (imgs.length >= 9) {
+            that.setData({
+              imgs: imgs
+            });
+            return false;
+          } else {
+            imgs.push(tempFilePaths[i]);
+          }
+        }
+        //跳转到新增图片页面
+        wx.navigateTo({
+          url: '../../pages/meeting/addPhoto',
+          success(res) {
+            //缓存数据
+            wx.setStorage({
+              key: 'images',
+              data: {
+                imgs: imgs
+              },
+              success: function (res) {
+                console.log("存储成功");
+              }
+            });
+
+          }
+        });
+      }
+    });
   },
   showImage:function(e){
     var that = this;
