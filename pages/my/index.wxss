@@ -12,3 +12,9 @@ page { background-color:#F2F2F4; }
 
 .my-page input{ display: inline-block;}
 .my-page .icon-user { position: relative;  margin-right:15rpx;}
+
+.my-page .input-textarea ,
+.my-page .input-textarea textarea{ width:100%; font-size:32rpx;  }
+.my-page .input-textarea textarea { height:650rpx; }
+
+.my-page .showTextarea { height:450rpx;}

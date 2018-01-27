@@ -30,8 +30,8 @@
 				{
 					"id": 0,
 					"name": "测试添加",
-					"pathName": "pages/meeting/addMeeting",
-					"query": ""
+					"pathName": "pages/my/index",
+					"query": "loadPageType=editPageInfo"
 				}
 			]
 		}

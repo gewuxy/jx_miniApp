@@ -11,7 +11,9 @@ Page({
     nickName:"",
     loadPageType:"",
     pageTitle:"",
-    isDisabled: true
+    isDisabled: true,
+    inputNumber:0,
+    info:""
   },
 
   /**
@@ -45,7 +47,8 @@ Page({
     that.setData({
       userInfo: wx.getStorageSync('userInfo').userInfo,
       avatar: wx.getStorageSync('avatar'),
-      nickName: wx.getStorageSync('nickName')
+      nickName: wx.getStorageSync('nickName'),
+      info: wx.getStorageSync('info')
     });
     console.log('userInfo', that.data.userInfo);
   },
@@ -142,6 +145,7 @@ Page({
       }
     });
   },
+  //昵称提交
   nickNameFormSubmit: function (e) {
     var that = this;
     wx.request({
@@ -161,12 +165,36 @@ Page({
       }
     })
   },
+  infoFormSubmit: function(e) {
+    var that = this;
+    console.log(e);
+    wx.request({
+      url: app.host + '/api/user/updateInfo',
+      method: 'POST',
+      data: {
+        info: e.detail.value["info"]
+      },
+      header: {
+        token: wx.getStorageSync('token'),
+        "Content-Type": "application/x-www-form-urlencoded"   //处理 POST BUG 问题
+      },
+      success(res) {
+        //更新缓存
+        // wx.setStorageSync('nickName', e.detail.value["nickName"]);
+        wx.setStorageSync('info', e.detail.value["info"]);
+        wx.navigateBack();
+      }
+    })
+  },
   formReset: function () {
     console.log('form发生了reset事件')
   },
   bindInput:function(e) {
     var that = this;
+    //判断是否为空
     e.detail.value != "" ? that.setData({ isDisabled: false }) : that.setData({ isDisabled: true });
+    //计算输入数量
+    that.setData({ inputNumber:e.detail.cursor });
   },
   //路由
   toEditMy() {
@@ -196,6 +224,11 @@ Page({
   toEditMynickName(){
     wx.navigateTo({
       url: '../../pages/my/index?loadPageType=editPageNickName'
+    })
+  },
+  toEditMyInfo(){
+    wx.navigateTo({
+      url: '../../pages/my/index?loadPageType=editPageInfo'
     })
   }
 })

@@ -33,14 +33,17 @@
         
       </view>
     </view>
-    <view class="input-item-row input-showTextarea">
-      <view class="input-row input-row-line">
+    <view class="input-item-row input-showTextarea" bindtap='toEditMyInfo'>
+      <view class="input-row input-row-line" >
         <view class="input-header">简介</view>
-        <view class="input-main text-right"><view class="me-input-text  color-gray">输入简介</view><view class="icon-arrows"></view></view>
+        <view class="input-main">
+          <view class="me-input-text text-right color-gray">输入简介</view><view class="icon-arrows"></view>
+        </view>
       </view>
       <view class="input-row">
-        <view class=" color-gray">占位符</view>
+          <view class="showTextarea">{{info}}</view>
       </view>
+
     </view>
   </view>
 
@@ -51,6 +54,24 @@
       <view class="input-item-row ">  
         <view class="input-row" >
           <view class="input-main"><view class="icon-user"></view> <input type='text' name="nickName" focus="true" placeholder="请输入标题" bindinput='bindInput'></input></view>
+        </view>
+      </view>
+      <view class="btn-area">
+          <button formType="submit" class="inputButton" disabled="{{isDisabled}}">保存</button>
+      </view>
+    </form>
+  </view>
+
+  <!-- 编辑简介  -->
+  <view  wx:elif="{{loadPageType == 'editPageInfo'}}">
+    <form bindsubmit="infoFormSubmit">
+      <view class="input-item-row ">  
+        <view class="input-row" >
+          <view class="input-textarea">
+            
+            <textarea placeholder="请输入标题" placeholder-style='color:#afafaf;' maxlength='600' bindinput='bindInput' name="info" focus="true"></textarea>
+            <view class="textarea-number text-right">{{inputNumber}}/600</view>
+          </view>
         </view>
       </view>
       <view class="btn-area">
