@@ -10,7 +10,8 @@ Page({
     avatar:"",
     nickName:"",
     loadPageType:"",
-    pageTitle:""
+    pageTitle:"",
+    isDisabled: true
   },
 
   /**
@@ -40,6 +41,7 @@ Page({
    */
   onShow: function () {
     var that = this;
+    //进入页面后加载缓存数据
     that.setData({
       userInfo: wx.getStorageSync('userInfo').userInfo,
       avatar: wx.getStorageSync('avatar'),
@@ -80,8 +82,12 @@ Page({
    * 用户点击右上角分享
    */
   onShareAppMessage: function () {
-  
+    //分享该页面返回首页
+    return {
+      path:'/pages/index/index'
+    }
   },
+  //编辑头像
   editAvatar() {
     var that = this;
     wx.chooseImage({
@@ -113,6 +119,55 @@ Page({
       }
     });
   },
+  editAuthority () {
+    var that = this;
+    wx.openSetting({
+      success: (res) => {
+        if (!res.authSetting["scope.userInfo"]){
+          wx.showModal({
+            title: '授权提示',
+            content: '小程序功能需要授权才能正常使用噢！请点击“确定”-“用户信息”再次授权',
+            success(res){
+              that.editAuthority();
+            }
+          })
+        }
+      },
+      fail: function (res) {
+        // 提示版本过低
+        wx.showModal({
+          title: '提示',
+          content: '当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。'
+        })
+      }
+    });
+  },
+  nickNameFormSubmit: function (e) {
+    var that = this;
+    wx.request({
+      url: app.host + '/api/user/updateInfo',
+      method:'POST',
+      data: {
+        nickName: e.detail.value["nickName"]
+      },
+      header: {
+        token: wx.getStorageSync('token'),
+        "Content-Type": "application/x-www-form-urlencoded"   //处理 POST BUG 问题
+      },
+      success(res) {
+        //更新缓存
+        wx.setStorageSync('nickName', e.detail.value["nickName"]);
+        wx.navigateBack();
+      }
+    })
+  },
+  formReset: function () {
+    console.log('form发生了reset事件')
+  },
+  bindInput:function(e) {
+    var that = this;
+    e.detail.value != "" ? that.setData({ isDisabled: false }) : that.setData({ isDisabled: true });
+  },
   //路由
   toEditMy() {
     wx.navigateTo({
@@ -120,8 +175,27 @@ Page({
     })
   },
   toHelp() {
+    wx.request({
+      url: app.host + '/api/meeting/mini/qrcode',
+      method: 'GET',
+      data: {
+        id:1,
+        page:'/pages/my/index'
+      },
+      header: {
+        token: wx.getStorageSync('token'),
+      },
+      success(res) {
+        console.log(res);
+      }
+    })
+    // wx.navigateTo({
+    //   url: '../../pages/my/help'
+    // })
+  },
+  toEditMynickName(){
     wx.navigateTo({
-      url: '../../pages/my/help'
+      url: '../../pages/my/index?loadPageType=editPageNickName'
     })
   }
 })

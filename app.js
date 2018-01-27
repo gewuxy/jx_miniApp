@@ -1,4 +1,4 @@
-const host = 'https://www.cspmeeting.com/csp';
+const host = 'https://www.cspmeeting.com/liping';
 
 //app.js
 App({
@@ -88,6 +88,7 @@ App({
                           success: (res) => {
                             that.globalData.userInfo = res.data.data;
                             that.globalData.UserToken = res.data.data.token;
+                            that.globalData.avatar = res.data.data.avatar;
                             //保存token到本地
                             wx.setStorageSync('token', res.data.data.token);
                             wx.setStorageSync('avatar', res.data.data.avatar);
@@ -143,7 +144,7 @@ App({
                                 console.log(res);
                                 that.globalData.userInfo = res.data.data;
                                 that.globalData.UserToken = res.data.data.token;
-                               
+                                that.globalData.avatar = res.data.data.avatar;
                                 //保存token到本地
                                 wx.setStorageSync('token', res.data.data.token);
                                 wx.setStorageSync('avatar', res.data.data.avatar);
@@ -204,7 +205,7 @@ App({
                           content: '当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。'
                         })
                       }
-                    })
+                    });
                   }
                 })
               }

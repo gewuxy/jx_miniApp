@@ -5,11 +5,11 @@
     <view class="input-item-row ">
         <view class="input-row" bindtap='toEditMy'>
           <view class="input-header my-page-image"><image class="input-avatar" src="{{avatar}}"></image></view>
-          <view class="input-main "><view class="my-page-title">{{userInfo.nickName}}</view> <view class="icon-arrows"></view></view>
+          <view class="input-main "><view class="my-page-title">{{nickName}}</view> <view class="icon-arrows"></view></view>
         </view>
       </view>
       <view class="input-item-row ">
-        <view class="input-row">
+        <view class="input-row" bindtap='editAuthority'>
           <view class="input-main"><view class="icon-edit"></view> 权限<view class="icon-arrows"></view></view>
         </view>
       </view>
@@ -27,7 +27,7 @@
         <view class="input-header">头像</view>
         <view class="input-main text-right"><image class="input-avatar" src="{{avatar}}"></image><view class="icon-arrows"></view></view>
       </view>
-      <view class="input-row">
+      <view class="input-row" bindtap='toEditMynickName'>
         <view class="input-header">昵称</view>
         <view class="input-main text-right"><view class="me-input-text color-gray">{{nickName}}</view><view class="icon-arrows"></view></view>
         
@@ -42,6 +42,21 @@
         <view class=" color-gray">占位符</view>
       </view>
     </view>
+  </view>
+
+
+  <!-- 编辑昵称  -->
+  <view  wx:elif="{{loadPageType == 'editPageNickName'}}">
+    <form bindsubmit="nickNameFormSubmit">
+      <view class="input-item-row ">  
+        <view class="input-row" >
+          <view class="input-main"><view class="icon-user"></view> <input type='text' name="nickName" focus="true" placeholder="请输入标题" bindinput='bindInput'></input></view>
+        </view>
+      </view>
+      <view class="btn-area">
+          <button formType="submit" class="inputButton" disabled="{{isDisabled}}">保存</button>
+      </view>
+    </form>
   </view>
   
 </view>

@@ -1,5 +1,5 @@
 <!--pages/meeting/addPhoto.wxml-->
-<view class="ad_popError" wx:if="{{popErrorMsg}}">{{popErrorMsg}}</view>
+<view class="popError" wx:if="{{popErrorMsg}}">{{popErrorMsg}}</view>  
 
 <view class="container">
   <view class="img-v">

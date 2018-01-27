@@ -4,5 +4,6 @@ page { background-color:#F2F2F4; }
 .container { padding:40rpx 0 0; display: block;}
 
 .fiexd-button { position: fixed; bottom:0; left:0; display: flex; width:100%; }
+.fiexd-button > button,
 .fiexd-button > view{ flex: 1;  text-align: center; display: flex; align-items: center; justify-content:center;  height:100rpx; background-color:#fff; font-size:34rpx;  }
 .fiexd-button .input-button {  color:#fff;border-radius:0;  background:linear-gradient( #7a768f ,#202432 65%,#262B3B ); }

@@ -9,3 +9,6 @@ page { background-color:#F2F2F4; }
 .my-page .input-row .my-page-image .input-avatar{ width:104rpx; height:104rpx; margin:0; padding:0;}
 .my-page .input-row .my-page-image { margin-right:32rpx;}
 .my-page-title { display: flex; align-items: center; height:100%;}
+
+.my-page input{ display: inline-block;}
+.my-page .icon-user { position: relative;  margin-right:15rpx;}

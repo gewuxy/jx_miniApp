@@ -1,5 +1,6 @@
 // pages/meeting/addMeeting.js
 const app = getApp();
+var util = require('../../utils/util.js');
 Page({
 
   /**
@@ -9,6 +10,9 @@ Page({
     imgs:[],
     token:"",
     imgsFile: [],
+    meetingTitle:"",
+    popErrorMsg:"",
+    courseId:""
   },
 
   /**
@@ -30,27 +34,6 @@ Page({
     });
     console.log(that.data.imgs);
     console.log('tokenIndex', wx.getStorageSync('token'));
-    wx.getStorage({
-      key: 'token',
-      success: function (res) {
-        console.log(res.data);
-        that.setData({
-          token: res.data
-        });
-        console.log('哇哈哈哈', that.data.imgs);
-        console.log('哇哈哈哈1', that.data.token);
-      },
-    });
-    wx.getStorage({
-      key: 'imagesFile',
-      success: function (res) {
-        console.log(res.data.imgs);
-        that.setData({
-          imgsFile: res.data.imgs
-        });
-        console.log('呵呵2', that.data.imgsFile[0])
-      },
-    });
 
   },
 
@@ -100,41 +83,93 @@ Page({
    * 用户点击右上角分享
    */
   onShareAppMessage: function () {
-  
+    //分享该页面返回首页
+    return {
+      path: '/pages/index/index'
+    }
   },
-  upLoadMeeting: function(e){
+  //递归上传图片函数
+  uploadDIY(filePaths,  i, length) {
     var that = this;
-    // wx.request({
-    //   url: app.host + '/api/meeting/mini/create/update',
-    //   method: 'POST',
-    //   data: {
-    //     files: that.data.imgsFile[0],
-    //     title: 'text'
-    //   },
-    //   header: {
-    //     token: wx.getStorageSync('token')
-    //   },
-    //   success(res) {
-    //     console.log(res);
-    //   },
-    //   complete: function (res) {
-
-    //   }
-    // });
+    
     wx.uploadFile({
-      url: app.host + '/api/meeting/mini/create/update',
-      filePath: that.data.imgs[0],
-      name: 'files',
+      url: app.host + '/api/meeting/upload/picture',
+      filePath: filePaths[i],
+      name: 'file',
       header: { "Content-Type": "multipart/form-data" },
       formData: {
-        'title': 'test'
+        sort: i,
+        courseId: that.data.courseId
       },
-      header:{
+      header: {
         token: wx.getStorageSync('token')
       },
-      success(res) {
-        console.log(res);
+      success: (resp) => {
+        var data = JSON.parse(resp.data);
+        data = data.data.id;
+        //第一次获取到对应会议的ID
+        if( i == 0) {
+          that.data.courseId = data
+        }
+        i++;
+        if (i == length) {
+          //完成后去到生成会议函数
+          that.createMeeting(that.data.courseId);
+        } else {
+          //递归 将图片传到对应ID里
+          that.uploadDIY(filePaths, i, length);
+        }
+      },
+      fail: (res) => {
+
+      },
+      complete: () => {
+
+      },
+    });
+
+    console.log('uploadDIY');
+  },
+  createMeeting: function (courseId){
+    var that = this;
+    wx.request({
+      url: app.host + '/api/meeting/mini/update',
+      method:'POST',
+      data:{
+        courseId: courseId,
+        title: that.data.meetingTitle
+      },
+      header: {
+        token: wx.getStorageSync('token'),
+        "Content-Type": "application/x-www-form-urlencoded"   //处理 POST BUG 问题
+      },
+      success(res){
+        wx.hideLoading();
+        wx.redirectTo({
+          url: '../../pages/index/index',
+        })
       }
+      
     })
+  },
+  upLoadMeeting: function (e){
+    var that = this;
+    var successUp = 0; //成功个数
+    var failUp = 0; //失败个数
+    var length = that.data.imgs.length; //总共个数
+    var i = 0; //第几个
+    var tempFilePaths = that.data.imgs  //上传的图片
+    console.log(that.data.imgs);
+    if (e.detail.value.meetingTitle != "") {
+      //设置标题
+      that.setData({ meetingTitle: e.detail.value.meetingTitle});
+    } else {
+      that.setData({ popErrorMsg : '标题不能为空'});
+      util.ohShitfadeOut(that);
+      return false;
+    }
+    wx.showLoading({ title: '上传中'});
+    that.uploadDIY(tempFilePaths, i, length);
+    
   }
 })

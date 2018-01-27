@@ -1,12 +1,16 @@
 <!--pages/meeting/addMeeting.wxml-->
+<view class="popError" wx:if="{{popErrorMsg}}">{{popErrorMsg}}</view>  
+
 <view class="container">
+ <form bindsubmit="upLoadMeeting" bindreset="formReset">
   <view class="input-item-row">
     <view class="input-row">
       <view class="input-header">标题</view>
-      <view class="input-main"><input type='text' name="inputTItle" focus="true" placeholder="请输入标题"></input></view>
+      <view class="input-main"><input type='text' name="meetingTitle" focus="true" placeholder="请输入标题"></input></view>
     </view>
   </view>
   <view class="fiexd-button">
-    <view class="upload-img-btn" bindtap="upLoadMeeting">保存讲本</view>
+    <button formType="submit" class="upload-img-btn">保存讲本</button>
   </view>
+  </form>
 </view>

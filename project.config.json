@@ -30,7 +30,7 @@
 				{
 					"id": 0,
 					"name": "测试添加",
-					"pathName": "pages/my/index",
+					"pathName": "pages/meeting/addMeeting",
 					"query": ""
 				}
 			]

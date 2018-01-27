@@ -145,7 +145,6 @@ Page({
         wx.stopPullDownRefresh();
       }
     });
-    util.ohShitfadeOut(that);
   },
   //上拉加载更多
   onReachBottom:function(){
@@ -218,9 +217,6 @@ Page({
         // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
         var tempFilePaths = res.tempFilePaths;
         var imgs = that.data.imgs;
-        var tempFile = res.tempFiles;
-        console.log(res.tempFiles);
-        console.log(tempFilePaths + '----');
         for (var i = 0; i < tempFilePaths.length; i++) {
           if (imgs.length >= 9) {
             that.setData({
@@ -231,22 +227,19 @@ Page({
             imgs.push(tempFilePaths[i]);
           }
         }
+        //缓存数据
+        wx.setStorage({
+          key: 'images',
+          data: {
+            imgs: that.data.imgs
+          },
+          success: function (res) {
+            console.log("存储成功");
+          }
+        });
         //跳转到新增图片页面
         wx.navigateTo({
-          url: '../../pages/meeting/addPhoto',
-          success(res) {
-            //缓存数据
-            wx.setStorage({
-              key: 'images',
-              data: {
-                imgs: imgs
-              },
-              success: function (res) {
-                console.log("存储成功");
-              }
-            });
-
-          }
+          url: '../../pages/meeting/addPhoto'
         });
       }
     });

@@ -26,5 +26,16 @@ page { background-color:#F2F2F4; }
 .icon-arrows { position: absolute; right:0; top:50%; margin-top:-12rpx; background:url(https://file.medyaya.cn/wx_mini/images/icon-input-arrows.png) no-repeat center center; width:24rpx; height:24rpx; background-size:24rpx; }
 .icon-edit { display: inline-block; background:url(https://file.medyaya.cn/wx_mini/images/icon-edit.png) no-repeat center center; width:32rpx; height:32rpx; background-size:32rpx;}
 .icon-help { display: inline-block; background:url(https://file.medyaya.cn/wx_mini/images/icon-help.png) no-repeat center center; width:32rpx; height:32rpx; background-size:32rpx;}
+.icon-user { display: inline-block; background:url(https://file.medyaya.cn/wx_mini/images/icon-user.png) no-repeat center center; width:32rpx; height:32rpx; background-size:32rpx;}
 
 .my-page .input-row .input-main{ padding:0 50rpx 0 0;}
+.btn-area { margin:20rpx 40rpx;}
+.btn-area button[disabled] { opacity: 0.5; color:#fff; }
+
+.inputButton { color:#fff;border-radius:200rpx;  background:linear-gradient( #7a768f ,#202432 65%,#262B3B );  }
+
+/* 顶部提示语 */
+.ad_popError{ background: #2B2F38; color: #ACE400; height: 58rpx; line-height: 58rpx; font-size: 24rpx; text-align: center;  position: fixed; left: 0; top: 0; width: 100%; z-index:3;}
+.popError {
+  background: #E43939; color: #fff; height: 58rpx; line-height: 58rpx; font-size: 24rpx; text-align: center;  position: fixed; left: 0; top: 0; width: 100%; z-index:3;
+}
