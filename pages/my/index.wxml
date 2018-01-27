@@ -66,9 +66,9 @@
   <view  wx:elif="{{loadPageType == 'editPageInfo'}}">
     <form bindsubmit="infoFormSubmit">
       <view class="input-item-row ">  
+      dd
         <view class="input-row" >
           <view class="input-textarea">
-            
             <textarea placeholder="请输入标题" placeholder-style='color:#afafaf;' maxlength='600' bindinput='bindInput' name="info" focus="true"></textarea>
             <view class="textarea-number text-right">{{inputNumber}}/600</view>
           </view>
