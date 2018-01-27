@@ -1,4 +1,40 @@
-<view class="ad_popError" wx:if="{{popErrorMsg}}">{{popErrorMsg}}</view>  
+<!--提示语  -->
+<view class="ad_popError" wx:if="{{popErrorMsg}}">{{popErrorMsg}}</view>
+<!--自定义弹窗  -->
+<view class="commodity-screen" bindtap="hideModal" wx:if="{{showModalStatus}}"></view>
+<view animation="{{animationData}}" class="commodity-attr-box" wx:if="{{showModalStatus}}">
+
+  <view class="commodity-head">
+    <scroll-view scroll-x="true">  
+      <view class="commodity-box" scroll-x="true">
+        <view class="commodity-box-item">
+          <button class="resetButton" open-type="share" size='mini'></button>
+          <image src="https://file.medyaya.cn/wx_mini/images/commodity-image-wechat.png"></image>
+          <view>微信好友</view>
+        </view>
+        <view class="commodity-box-item">
+          <image src="https://file.medyaya.cn/wx_mini/images/commodity-image-wechatCircle.png"></image>
+          <view>朋友圈</view>
+        </view>
+        <view class="commodity-box-item">
+          <image src="https://file.medyaya.cn/wx_mini/images/commodity-image-edit.png"></image>
+          <view>编辑</view>
+        </view>
+        <view class="commodity-box-item">
+          <image src="https://file.medyaya.cn/wx_mini/images/commodity-image-password.png"></image>
+          <view>观看密码</view>
+        </view>
+      </view>
+    </scroll-view>  
+  </view>
+  <view class="commodity-main">
+    <view class="commodity-row">删除</view>
+  </view>
+  <view class="commodity-footer">
+    <view class="commodity-row" bindtap='hideModal'>取消</view>
+  </view>
+ </view>
+
 <!--index.wxml-->
 <view class="container">
   <!--卡片显示方式  -->
@@ -13,7 +49,8 @@
           <view class="meeting-list-title">{{item.title}}</view>
           <view class="meeting-list-row">
             <view class="meeting-list-recordingTime">{{item.playTime}}</view>
-            <button class="meeting-list-share clearButtonStyle" open-type="share"></button>
+            <!-- <button class="meeting-list-share clearButtonStyle" open-type="share"></button> -->
+             <view class="meeting-list-share" bindtap='showModal'></view> 
           </view>
         </view>
       </view>

@@ -47,3 +47,5 @@ page { background-color:#F2F2F4; }
 .qrcodeButton { bottom:42rpx; left:50%; margin-left:-60rpx; }
 .qrcodeButton .icon{ width:124rpx; height:124rpx; background:url(https://file.medyaya.cn/wx_mini/images/icon-index-add-button.png) no-repeat center;  background-size:124rpx;  border-radius: 50%; }
 
+
+

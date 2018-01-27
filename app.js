@@ -1,4 +1,4 @@
-const host = 'https://www.cspmeeting.com/liping';
+const host = 'https://www.cspmeeting.com/csp';
 
 //app.js
 App({
@@ -42,10 +42,13 @@ App({
                           that.globalData.userInfo = res.data.data;
                           that.globalData.UserToken = res.data.data.token;
                           that.globalData.avatar = res.data.data.avatar;
+                          //判断是否有简介
+                          if (res.data.data.info) {  that.globalData.info = res.data.data.info; }
                           //保存token到本地
                           wx.setStorageSync('token', res.data.data.token);
                           wx.setStorageSync('avatar', res.data.data.avatar);
                           wx.setStorageSync('nickName', res.data.data.nickName);
+                          if (res.data.data.info) { wx.setStorageSync('info', res.data.data.info); }
 
                           // console.log(that.globalData.avatar);
                           // 存储用户信息到本地
@@ -63,7 +66,8 @@ App({
                             status: 200,
                             userInfo: that.globalData.userInfo,
                             token: that.globalData.UserToken,
-                            avatar: that.globalData.avatar
+                            avatar: that.globalData.avatar,
+                            info: that.globalData.info
                           }
                           resolve(res);
                         }
@@ -89,10 +93,13 @@ App({
                             that.globalData.userInfo = res.data.data;
                             that.globalData.UserToken = res.data.data.token;
                             that.globalData.avatar = res.data.data.avatar;
+                            //判断是否有简介
+                            if (res.data.data.info) { that.globalData.info = res.data.data.info; }
                             //保存token到本地
                             wx.setStorageSync('token', res.data.data.token);
                             wx.setStorageSync('avatar', res.data.data.avatar);
                             wx.setStorageSync('nickName', res.data.data.nickName);
+                            if (res.data.data.info) { wx.setStorageSync('info', res.data.data.info); }
                             // 存储用户信息到本地
                             wx.setStorage({
                               key: 'userInfo',
@@ -108,7 +115,8 @@ App({
                               status: 200,
                               userInfo: that.globalData.userInfo,
                               token: that.globalData.UserToken,
-                              avatar: that.globalData.avatar
+                              avatar: that.globalData.avatar,
+                              info: that.globalData.info
                             }
                             resolve(res);
                           }
@@ -145,10 +153,13 @@ App({
                                 that.globalData.userInfo = res.data.data;
                                 that.globalData.UserToken = res.data.data.token;
                                 that.globalData.avatar = res.data.data.avatar;
+                                //判断是否有简介
+                                if (res.data.data.info) { that.globalData.info = res.data.data.info; }
                                 //保存token到本地
                                 wx.setStorageSync('token', res.data.data.token);
                                 wx.setStorageSync('avatar', res.data.data.avatar);
                                 wx.setStorageSync('nickName', res.data.data.nickName);
+                                if (res.data.data.info) { wx.setStorageSync('info', res.data.data.info); }
                                 // 存储用户信息到本地
                                 wx.setStorage({
                                   key: 'userInfo',
@@ -164,7 +175,8 @@ App({
                                   status: 200,
                                   userInfo: that.globalData.userInfo,
                                   token: that.globalData.UserToken,
-                                  avatar: that.globalData.avatar
+                                  avatar: that.globalData.avatar,
+                                  info: that.globalData.info
                                 }
                                 resolve(res);
 

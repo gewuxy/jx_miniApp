@@ -5,7 +5,7 @@
 .img-v .img-item-box { overflow: hidden; width: 320rpx; height:309rpx; border-radius: 15rpx;}
 .img-v .img-item image { max-width:100%;  }
 .img-v .img-item .delete-btn { position: absolute; right:-20rpx; top:-20rpx; z-index: 2; color:#f00; width:50rpx; height:50rpx; background:url(https://file.medyaya.cn/wx_mini/images/icon-meeting-remove.png) no-repeat; background-size:50rpx;}
-.fiexd-button { position: fixed; bottom:0; left:0; display: flex; width:100%; }
+.fiexd-button { position: fixed; bottom:0; left:0; display: flex; width:100%; z-index: 5; }
 .fiexd-button > button,
 .fiexd-button > view{ flex: 1;  text-align: center; display: flex; align-items: center; justify-content:center;  height:100rpx; background-color:#fff; font-size:34rpx;  }
 .fiexd-button .input-button {  color:#fff;border-radius:0;  background:linear-gradient( #7a768f ,#202432 65%,#262B3B ); }

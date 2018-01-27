@@ -15,6 +15,9 @@ page { background-color:#F2F2F4; }
 /**/
 .text-right { text-align: right;}
 .color-gray { color:#9699A2 !important;}
+.t-center { text-align: center;}
+.resetButton { position:static; display:inline-block; box-sizing:border-box; font-size:24rpx; text-align:center; text-decoration:none; line-height:1.4; border-radius:0; overflow:auto; color:#000000; background-color:transparent;   }
+.resetButton:after { border:0; }
 
 .input-item-row { background:#fff; margin-bottom:40rpx; padding:0 30rpx;  }
 .input-row { display: flex; font-size:34rpx;   padding:35rpx 0;  }
@@ -39,3 +42,15 @@ page { background-color:#F2F2F4; }
 .popError {
   background: #E43939; color: #fff; height: 58rpx; line-height: 58rpx; font-size: 24rpx; text-align: center;  position: fixed; left: 0; top: 0; width: 100%; z-index:3;
 }
+
+/*自定义底部弹层  */
+.commodity-screen { width: 100%; height: 100%; position: fixed; top: 0; left: 0; background: #000; opacity: 0.2; overflow: hidden; z-index: 1000; color: #fff;  }
+.commodity-head, .commodity-main , .commodity-footer { background-color:#fff;}
+.commodity-head { border-bottom:1rpx #dbdbdb solid;}
+.commodity-main { margin-bottom:10rpx;}
+.commodity-attr-box { width: 100%; overflow: hidden; position: fixed; bottom: 0; left: 0;  z-index: 2000;  background: #F2F2F4;  }
+.commodity-attr-box .commodity-box { height:140rpx;  display: flex; display: -webkit-box; flex-direction: column; padding:60rpx 60rpx;}
+.commodity-attr-box .commodity-box-item{  flex: 1; width:25%; height:140rpx; font-size:24rpx; color:#333; text-align: center;  position: relative;}
+.commodity-attr-box .commodity-box-item image { width:92rpx; height:92rpx; margin-bottom:10rpx}
+.commodity-row { padding:30rpx 0; text-align: center; font-size:36rpx; }
+.commodity-box-item .resetButton { width:100%; height:100%; position: absolute; top:0; left:0; }

@@ -20,11 +20,18 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    console.log('每个的页码', options.loadPageType)
     console.log(app.globalData);
+    //设置不同的页面标题
     if (options.loadPageType == 'editPage') {
       wx.setNavigationBarTitle({ title: '我的信息' });
-    }
+    } else if (options.loadPageType == 'editPageNickName'){
+      wx.setNavigationBarTitle({ title: '昵称' });
+    } else if (options.loadPageType == 'editPageInfo') {
+      wx.setNavigationBarTitle({ title: '简介' });
+    } else if (options.loadPageType == 'helpPage') {
+      wx.setNavigationBarTitle({ title: '帮助与反馈' });
+    } 
+
     var that = this;
     that.setData({
       loadPageType: options.loadPageType
@@ -48,7 +55,8 @@ Page({
       userInfo: wx.getStorageSync('userInfo').userInfo,
       avatar: wx.getStorageSync('avatar'),
       nickName: wx.getStorageSync('nickName'),
-      info: wx.getStorageSync('info')
+      info: wx.getStorageSync('info'),
+      inputNumber: wx.getStorageSync('info').length
     });
     console.log('userInfo', that.data.userInfo);
   },
@@ -191,24 +199,19 @@ Page({
   },
   bindInput:function(e) {
     var that = this;
+    console.log(e);
     //判断是否为空
     e.detail.value != "" ? that.setData({ isDisabled: false }) : that.setData({ isDisabled: true });
     //计算输入数量
     that.setData({ inputNumber:e.detail.cursor });
   },
-  //路由
-  toEditMy() {
-    wx.navigateTo({
-      url: '../../pages/my/index?loadPageType=editPage'
-    })
-  },
-  toHelp() {
+  getQrcode(){
     wx.request({
       url: app.host + '/api/meeting/mini/qrcode',
       method: 'GET',
       data: {
-        id:1,
-        page:'/pages/my/index'
+        id: 1,
+        page: '/pages/my/index'
       },
       header: {
         token: wx.getStorageSync('token'),
@@ -217,9 +220,42 @@ Page({
         console.log(res);
       }
     })
-    // wx.navigateTo({
-    //   url: '../../pages/my/help'
-    // })
+  },
+  //路由
+  toEditMy() {
+    wx.navigateTo({
+      url: '../../pages/my/index?loadPageType=editPage'
+    })
+  },
+  toHelp() {
+    wx.navigateTo({
+      url: '../../pages/my/index?loadPageType=helpPage'
+    })
+  },
+  toWebUpdateLog() {
+    wx.navigateTo({
+      url: '../../pages/my/index?loadPageType=toWebUpdateLog'
+    })
+  },
+  toWebService() {
+    wx.navigateTo({
+      url: '../../pages/my/index?loadPageType=toWebService'
+    })
+  },
+  toWebHelp() {
+    wx.navigateTo({
+      url: '../../pages/my/index?loadPageType=toWebHelp'
+    })
+  },
+  toWebAbout() {
+    wx.navigateTo({
+      url: '../../pages/my/index?loadPageType=toWebAbout'
+    })
+  },
+  toHelpUpdateLog() {
+    wx.navigateTo({
+      url: '../../pages/my/index?loadPageType=helpPage'
+    })
   },
   toEditMynickName(){
     wx.navigateTo({

@@ -18,3 +18,7 @@ page { background-color:#F2F2F4; }
 .my-page .input-textarea textarea { height:650rpx; }
 
 .my-page .showTextarea { height:450rpx;}
+
+.my-page .help-header { font-size:26rpx; margin:25rpx 0 65rpx;}
+.my-page .help-header-logo { margin-bottom:25rpx;}
+.my-page .help-header-logo image{ width:126rpx; height:126rpx; }

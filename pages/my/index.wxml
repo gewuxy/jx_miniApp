@@ -37,11 +37,12 @@
       <view class="input-row input-row-line" >
         <view class="input-header">简介</view>
         <view class="input-main">
-          <view class="me-input-text text-right color-gray">输入简介</view><view class="icon-arrows"></view>
+          <view class="me-input-text text-right color-gray" wx:if="{{info == ''}}">输入简介</view><view class="icon-arrows"></view>
         </view>
       </view>
       <view class="input-row">
-          <view class="showTextarea">{{info}}</view>
+          <view class="showTextarea" wx:if="{{info != ''}}">{{info}}</view>
+          <view class="showTextarea color-gray" wx:else>个人简介</view>
       </view>
 
     </view>
@@ -53,7 +54,11 @@
     <form bindsubmit="nickNameFormSubmit">
       <view class="input-item-row ">  
         <view class="input-row" >
-          <view class="input-main"><view class="icon-user"></view> <input type='text' name="nickName" focus="true" placeholder="请输入标题" bindinput='bindInput'></input></view>
+        
+          <view class="input-main" wx:if="{{nickName == ''}}"><view class="icon-user"></view> <input type='text' name="nickName" focus="true" placeholder="请输入昵称" bindinput='bindInput'></input></view>
+
+          <view class="input-main" wx:else><view class="icon-user"></view> <input type='text' name="nickName" value="{{nickName}}" bindinput='bindInput'></input></view>
+
         </view>
       </view>
       <view class="btn-area">
@@ -66,11 +71,14 @@
   <view  wx:elif="{{loadPageType == 'editPageInfo'}}">
     <form bindsubmit="infoFormSubmit">
       <view class="input-item-row ">  
-      dd
         <view class="input-row" >
-          <view class="input-textarea">
-            <textarea placeholder="请输入标题" placeholder-style='color:#afafaf;' maxlength='600' bindinput='bindInput' name="info" focus="true"></textarea>
-            <view class="textarea-number text-right">{{inputNumber}}/600</view>
+          <view class="input-textarea" wx:if="{{info == ''}}">
+            <textarea placeholder="请输入简介" placeholder-style='color:#afafaf;' maxlength='600' bindinput='bindInput' name="info" focus="true"></textarea>
+            <view class="textarea-number text-right">{{inputNumber}} / 600</view>
+          </view>
+          <view class="input-textarea" wx:else>
+            <textarea maxlength='600' bindinput='bindInput' name="info" value="{{info}}"></textarea>
+            <view class="textarea-number text-right">{{inputNumber}} / 600</view>
           </view>
         </view>
       </view>
@@ -78,6 +86,47 @@
           <button formType="submit" class="inputButton" disabled="{{isDisabled}}">保存</button>
       </view>
     </form>
+  </view>
+
+  <!--帮助与反馈首页  -->
+  <view wx:if="{{loadPageType == 'helpPage'}}">
+       <view class="help-header t-center">
+        <view class="help-header-logo "><image src="https://file.medyaya.cn/wx_mini/images/help-logo.png"></image></view>
+        <view class="color-gray">会讲小程序</view>
+      </view>
+      <view class="input-item-row ">
+        <view class="input-row" bindtap='toWebUpdateLog'>
+          <view class="input-main">更新日志<view class="icon-arrows"></view></view>
+        </view>
+        <view class="input-row" bindtap='toWebService'>
+          <view class="input-main">服务协议<view class="icon-arrows"></view></view>
+        </view>
+        <view class="input-row" bindtap='toWebHelp'>
+          <view class="input-main">帮助<view class="icon-arrows"></view></view>
+        </view>
+      </view>
+      <view class="input-item-row " bindtap='toWebAbout'>
+        <view class="input-row">
+          <view class="input-main">关于我们<view class="icon-arrows"></view></view>
+        </view>
+      </view> 
+  </view>
+
+  <!--更新日志  -->
+  <view wx:if="{{loadPageType == 'toWebUpdateLog'}}">
+    <web-view src="https://www.cspmeeting.com/view/17110216044331146598"></web-view>
+  </view>
+  <!--服务协议  -->
+  <view wx:if="{{loadPageType == 'toWebService'}}">
+    <web-view src="https://www.cspmeeting.com/view/17110215475385132976"></web-view>
+  </view>
+  <!--帮助  -->
+  <view wx:if="{{loadPageType == 'toWebHelp'}}">
+    <web-view src="https://www.cspmeeting.com/view/17110216023876150654"></web-view>
+  </view>
+  <!--关于我们  -->
+  <view wx:if="{{loadPageType == 'toWebAbout'}}">
+    <web-view src="https://www.cspmeeting.com/view/17110216051754139182"></web-view>
   </view>
   
 </view>

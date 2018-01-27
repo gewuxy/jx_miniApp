@@ -19,9 +19,9 @@ Page({
     token: "",
     popErrorMsg: "",  //顶部提示语，直接setData就能使用
     meetingListPageNum:1,   //分页数
-    meetingListPageSize: 3,   //每页个数
+    meetingListPageSize: 6,   //每页个数
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
-    isCardStatus:false
+    isCardStatus:false,
   },
   // 监听页面加载，只执行一次
   onLoad: function () {
@@ -251,5 +251,13 @@ Page({
       current: '', // 当前显示图片的http链接
       urls: ['https://timgsa.baidu.com/timg?image&quality=80&size=b10000_10000&sec=1516084229&di=307386df25650d9d5ab51c33a193c6bb&src=http://www.sd-i.cn/uploadfile/2013/0628/20130628120240861.jpg'] // 需要预览的图片http链接列表
     })
+  },
+  showModal: function () {
+    var that = this;
+    util.showModal(that);
+  },
+  hideModal: function () {
+    var that = this;
+    util.hideModal(that);
   }
 })

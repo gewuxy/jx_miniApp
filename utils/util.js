@@ -67,8 +67,48 @@ function ohShitfadeOut(that) {
   }, 3000);
 }
 
-function checkSettingStatu(cb) {
-  
+//显示自定义图层
+function showModal(that) {
+  // 显示遮罩层
+  var animation = wx.createAnimation({
+    duration: 200,
+    timingFunction: "linear",
+    delay: 0
+  })
+  that.animation = animation
+  animation.translateY(300).step()
+  that.setData({
+    animationData: animation.export(),
+    showModalStatus: true
+  })
+  setTimeout(function () {
+    animation.translateY(0).step()
+    that.setData({
+      animationData: animation.export()
+    })
+  }.bind(that), 200)
+}
+
+//隐藏自定义图层
+function hideModal(that) {
+  // 隐藏遮罩层
+  var animation = wx.createAnimation({
+    duration: 200,
+    timingFunction: "linear",
+    delay: 0
+  })
+  that.animation = animation
+  animation.translateY(300).step()
+  that.setData({
+    animationData: animation.export(),
+  })
+  setTimeout(function () {
+    animation.translateY(0).step()
+    that.setData({
+      animationData: animation.export(),
+      showModalStatus: false
+    })
+  }.bind(that), 200)
 }
 
 
@@ -76,5 +116,7 @@ function checkSettingStatu(cb) {
 module.exports = {
   formatTime: formatTime,
   formatTimes: formatTimes,
-  ohShitfadeOut:ohShitfadeOut
+  ohShitfadeOut:ohShitfadeOut,
+  showModal: showModal,
+  hideModal: hideModal
 }
