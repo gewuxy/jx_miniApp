@@ -22,11 +22,18 @@ Page({
     meetingListPageSize: 6,   //每页个数
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     isCardStatus:false,
+    courseId:"",
+    isEditComplete:false,
+    meetingPassword:""
   },
   // 监听页面加载，只执行一次
-  onLoad: function () {
+  onLoad: function (options) {
     //刷新显示列表
-    this.setData({ meetingListPageNum : 1});
+    if (options.isEditComplete) {
+      this.setData({
+        isEditComplete: options.isEditComplete
+      });
+    }
   },
   /**
    * 生命周期函数--监听页面显示
@@ -35,35 +42,61 @@ Page({
     var that = this;
     var userStorageInfoUser = wx.getStorageSync('userInfo');
     var userStorageToken = wx.getStorageSync('token');
-
-
+    
     //已有Token缓存
     if (userStorageToken && userStorageInfoUser) {
       //设置数据
       this.setData({
-        userInfo: userStorageInfoUser.userInfo
+        userInfo: userStorageInfoUser.userInfo,
+        token: userStorageToken
       });
-      // 加载会议列表
-      wx.request({
-        url: app.host + '/api/meeting/list',
-        method: 'GET',
-        data: {
-          pageSize: that.data.meetingListPageSize,
-          pageNum: that.data.meetingListPageNum
-        },
-        header: {
-          token: userStorageToken
-        },
-        success(res) {
-          console.log(res);
-          that.setData({
-            meetingList: res.data.data.list,
-            token: userStorageToken,
-            avatar: wx.getStorageSync('avatar'),
-          });
+      //判断是否有缓存
+      if (wx.getStorageSync('indexShowMeeting') && that.data.isEditComplete == 'true'){
+        //修改完成后要刷新数据
+        wx.request({
+          url: app.host + '/api/meeting/list',
+          method: 'GET',
+          data: {
+            pageSize: that.data.meetingListPageSize,
+            pageNum: 1
+          },
+          header: {
+            token: userStorageToken
+          },
+          success(res) {
+            console.log(res);
+            that.setData({
+              meetingList: res.data.data.list
+            });
 
-        }
-      });
+          }
+        });
+      } else if (wx.getStorageSync('indexShowMeeting') && that.data.isEditComplete == false){
+        //有缓存
+        console.log('有缓存');
+        that.setData({ meetingList: wx.getStorageSync('indexShowMeeting').meetingList });
+      } else {
+        // 加载会议列表
+        wx.request({
+          url: app.host + '/api/meeting/list',
+          method: 'GET',
+          data: {
+            pageSize: that.data.meetingListPageSize,
+            pageNum: that.data.meetingListPageNum
+          },
+          header: {
+            token: userStorageToken
+          },
+          success(res) {
+            console.log(res);
+            that.setData({
+              meetingList: res.data.data.list,
+              avatar: wx.getStorageSync('avatar'),
+            });
+
+          }
+        });
+      }
       //打印缓存数据
       console.log(userStorageInfoUser);
       console.log('tokenIndex', wx.getStorageSync('token'));
@@ -89,6 +122,7 @@ Page({
               token: app.globalData.UserToken
             },
             success(res) {
+              console.log('show',res);
               that.setData({
                 meetingList: res.data.data.list,
                 token: app.globalData.UserToken,
@@ -149,6 +183,7 @@ Page({
   //上拉加载更多
   onReachBottom:function(){
     var that = this;
+    console.log(that.data.meetingList);
     //新增后的数据
     var result = that.data.meetingList;
     this.setData({ 
@@ -166,12 +201,23 @@ Page({
         token: that.data.token
       },
       success(res) {
+        console.log(res);
         //增加会议到数组里
         for (var i = 0; i < that.data.meetingList.length; i += that.data.meetingListPageSize) {
           result = result.concat(res.data.data.list.slice(i, i+that.data.meetingListPageSize));
         }
         that.setData({
           meetingList: result
+        });
+        // 存储会议数据到本地
+        wx.setStorage({
+          key: 'indexShowMeeting',
+          data: {
+            meetingList: result
+          },
+          success: function (res) {
+            console.log("存储会议成功");
+          }
         });
       },
       complete: function (res) {
@@ -252,12 +298,89 @@ Page({
       urls: ['https://timgsa.baidu.com/timg?image&quality=80&size=b10000_10000&sec=1516084229&di=307386df25650d9d5ab51c33a193c6bb&src=http://www.sd-i.cn/uploadfile/2013/0628/20130628120240861.jpg'] // 需要预览的图片http链接列表
     })
   },
-  showModal: function () {
+  //显示自定义弹窗
+  showModal: function (e) {
     var that = this;
+    console.log(e);
+    that.setData({ 
+      courseId: e.currentTarget.dataset.courseid,
+      meetingPassword: e.currentTarget.dataset.meetingpassword
+    });
     util.showModal(that);
   },
+  //隐藏自定义弹窗
   hideModal: function () {
     var that = this;
     util.hideModal(that);
+  },
+  //编辑标题
+  toMeetingEdit:function() {
+    var that = this;
+    console.log(that.data.courseId);
+    that.hideModal();
+    wx.navigateTo({
+      url: `../../pages/meeting/addMeeting?courseId=${that.data.courseId}&isEditMeeting=true`
+    });
+  },
+  //删除会议
+  deleteMeeting:function(){
+    var that = this;
+    wx.showModal({
+      title: '删除会议?',
+      content: '确认后将无法恢复',
+      success(res){
+        if(res.confirm) {
+          console.log('确认删除',res);
+          wx.showLoading({
+            title: '删除中...',
+          })
+          wx.request({
+            url: app.host + '/api/meeting/delete',
+            method: 'POST',
+            data: {
+              id: that.data.courseId,
+            },
+            header: {
+              token: wx.getStorageSync('token'),
+              "Content-Type": "application/x-www-form-urlencoded"   //处理 POST BUG 问题
+            },
+            success(res) {
+              console.log('是否成功', res)
+              wx.hideLoading();
+              wx.redirectTo({
+                url: '../../pages/index/index?isEditComplete=true',
+              })
+            }
+
+          })
+          wx.hideLoading();
+          that.hideModal();
+        }
+        console.log(res);
+      }
+    })
+
+  },
+  //设置&显示会议密码
+  toMettingPassword:function(){
+    var that = this;
+    that.hideModal();
+    if (that.data.meetingPassword) {
+      wx.navigateTo({
+        url: `../../pages/player/pagePassword?courseId=${that.data.courseId}&meetingPassword=${that.data.meetingPassword}&loadPageType=showMeetingPassword`
+      });
+    } else {
+      wx.navigateTo({
+        url: `../../pages/player/pagePassword?courseId=${that.data.courseId}&loadPageType=setMeetingPassword`
+      });
+    }
+  },
+  //生成二维码
+  toMettingQRcode:function(){
+    var that = this;
+    that.hideModal();
+    wx.navigateTo({
+      url: `../../pages/player/index?courseId=${that.data.courseId}&loadPageType=showQRcode`
+    });
   }
 })

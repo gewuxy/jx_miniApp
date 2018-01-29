@@ -30,8 +30,8 @@
 				{
 					"id": 0,
 					"name": "测试添加",
-					"pathName": "pages/my/index",
-					"query": "loadPageType=editPageInfo"
+					"pathName": "pages/player/index",
+					"query": "courseId=17166"
 				}
 			]
 		}

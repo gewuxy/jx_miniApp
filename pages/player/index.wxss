@@ -1,1 +1,42 @@
 /* pages/player/index.wxss */
+.container {
+  padding:0;
+}
+
+page { background: #fff;}
+
+
+/* meetingQRcode  */
+.player-page .meetingQRcode{ background: #FFFFFF;box-shadow: 0 4px 12px 0 rgba(136,138,169,0.20); border-radius: 8px; width:90%; height:95%; margin:40rpx auto 0; text-align: center; padding:60rpx 0 30rpx;}
+.player-page .meetingQRcode-userInfo { padding:0 0 62rpx; }
+.player-page .meetingQRcode-avatar image{ border-radius: 50%; width:72rpx; height:72rpx;}
+.player-page .meetingQRcode-avatar { margin-bottom:15rpx;}
+.player-page .meetingQRcode-nickName { font-size:24rpx; color:#333;}
+.player-page .meetingQRcode-meeting { width:600rpx; height:450rpx; overflow: hidden;  margin:0 auto 63rpx;}
+.player-page .meetingQRcode-meeting image { max-width: 100%; }
+.player-page .meetingQRcode-main { font-size:24rpx;}
+.player-page .meetingQRcode-main view { margin-bottom:15rpx;}
+.player-page .meetingQRcode-QRcode image { width:190rpx; height:190rpx;  margin-bottom:20rpx;}
+
+
+.fiexd-button-row .button .text {font-size:20rpx; color:#9699A2; line-height: 1; padding-top:5rpx;}
+.fiexd-button-row .button { text-align: center;}
+.player-fixed-button { padding:0 20rpx; display: flex;}
+.player-fixed-button .button { flex: 1; width:100%; padding:0 50rpx;}
+.absolute-button { position: absolute; background:#fff; top:-235rpx; right:20rpx; width:250rpx; font-size:28rpx; color:#9699A2; box-shadow: 0 0 15px 0 rgba(150,153,162,0.20); border-radius: 10px; }
+.absolute-button .icon-meeting-share,
+.absolute-button .icon-meeting-caution { margin-right:15rpx;}
+.absolute-button .flex-center { padding:30rpx 0; }
+.absolute-button .border-bottom { border-bottom:1px solid #e5e5e5;}
+
+
+.player-page .commodity-attr-box .commodity-box-item { width:50%; }
+
+.player-page .playerMeeting { height:calc(100vh - 100rpx);  }
+.playerMeetingBackground { background:#F2F2F4; height:100%; }
+.player-page .playerMeeting .swiper { height:calc(100vh - 300rpx); width: 100%;}
+.player-page .playerMeeting .swiper .img { width:100%; max-height: 100%;  height:100%; background-repeat: no-repeat; background-size:contain; background-position:center center;}
+.player-page .pageNunber { font-size:28rpx; text-align: center; height:100rpx; line-height: 100rpx; }
+.player-page .muted { margin:0 15rpx;}
+
+.pageNumberBer { background:rgba(0,0,0,.5) no-repeat; padding:5rpx 20rpx; border-radius: 15rpx; color:#fff ; vertical-align: middle;}

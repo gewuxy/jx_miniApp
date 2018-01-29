@@ -6,7 +6,11 @@
   <view class="input-item-row">
     <view class="input-row">
       <view class="input-header">标题</view>
-      <view class="input-main"><input type='text' name="meetingTitle" focus="true" placeholder="请输入标题"></input></view>
+      <view class="input-main">
+        <input type='text' wx:if="{{meetingTitle != ''}}" name="meetingTitle" placeholder="请输入标题" value="{{meetingTitle}}" ></input>
+        <input type='text' wx:else  name="meetingTitle" focus="{{!meetingTitle}}" placeholder="请输入标题"></input>
+        
+      </view>
     </view>
   </view>
   <view class="fiexd-button">

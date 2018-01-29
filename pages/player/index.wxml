@@ -1,2 +1,116 @@
 <!--pages/player/index.wxml-->
-<text>pages/player/index.wxml</text>
+<view class="container player-page ">
+  <!--提示语  -->
+  <view class="ad_popError" wx:if="{{popErrorMsg}}">{{popErrorMsg}}</view>
+  <!--自定义弹窗  -->
+  <view class="commodity-screen" bindtap="hideModal" wx:if="{{showModalStatus}}"></view>
+  <view animation="{{animationData}}" class="commodity-attr-box" wx:if="{{showModalStatus}}">
+    <!--举报弹窗  -->
+    <block wx:if="{{popupType == 'reportPopup'}}">
+      <view class="commodity-main">
+        <view class="commodity-row" bindtap="postReport" data-reportType = '1'>违法犯罪</view>
+        <view class="commodity-row" bindtap="postReport" data-reportType = '2'>侵权</view>
+      </view> 
+      <view class="commodity-footer">
+        <view class="commodity-row" bindtap='hideModal'>取消</view>
+      </view>
+    </block>
+    <!--分享弹窗  -->
+    <block wx:else>
+      <view class="commodity-head">
+        <scroll-view scroll-x="true">  
+          <view class="commodity-box" scroll-x="true">
+            <view class="commodity-box-item">
+              <button class="resetButton" open-type="share" size='mini'></button>
+              <image src="https://file.medyaya.cn/wx_mini/images/commodity-image-wechat.png"></image>
+              <view>微信好友</view>
+            </view>
+            <view class="commodity-box-item" bindtap='toMettingQRcode'>
+              <image src="https://file.medyaya.cn/wx_mini/images/commodity-image-wechatCircle.png"></image>
+              <view>朋友圈</view>
+            </view>
+          </view>
+        </scroll-view>  
+      </view>
+      <view class="commodity-footer">
+        <view class="commodity-row" bindtap='hideModal'>取消</view>
+      </view>
+    </block>
+    
+  </view>
+
+
+
+
+  <!-- 观看会议  -->
+  <block wx:if="{{loadPageType == ''}}">
+
+      <view class="playerMeeting">
+        <view class="playerMeetingBackground">
+          <view class="pageNunber"><text class="pageNumberBer"><text>{{changeCurrentIndex+1}}</text> <text class="muted">|</text> <text >{{meetingDetailsList.length}}</text></text></view>
+          <!-- 轮播图 -->
+          <swiper class="swiper" circular="true" interval="3000" duration="500"  bindchange='changeSwiper' current="{{changeCurrentIndex}} ">
+            <block wx:for="{{meetingDetailsList}}" wx:key="{{index}}">
+              <swiper-item data-id="{{item.id}}" data-url="{{item.imgUrl}}" bindtap='showImage' >
+                <view style="background-image:url({{item.imgUrl}})" class="img" ></view>
+                <!-- <image src="{{item.imgUrl}}" class="img" /> -->
+              </swiper-item>
+            </block>
+          </swiper>
+        </view>
+      </view>
+
+
+
+
+      <view class="fiexd-button">
+
+        <view class="input-button" bindtap='chooseImg'>+ 我要制作</view>
+        <view class="fiexd-button-row " >
+          <view class="player-fixed-button pr">
+
+            <view class="button">
+              <view class="playerState"><view class="icon-meeting-play"></view></view>
+              <view class="text">开启</view>
+            </view>
+            <view class="button " bindtap='openMoreButton'>
+                <view class="icon-meeting-more"></view>
+                <view class="text" >更多</view>
+            </view>
+
+            <!--弹出更多  -->
+            <view class="absolute-button" wx:if="{{isOpenMore}}">
+              <view class="flex-center border-bottom" bindtap='showModal'>
+                <text class="icon-meeting-share"></text>
+                <text>分享</text>
+              </view>
+              <view class="flex-center" bindtap='showReportModal'>
+                <text class="icon-meeting-caution"></text>
+                <text>举报</text>
+              </view>
+            </view>
+
+          </view>
+        </view>
+      </view>
+  </block>
+  <!-- 生成二维码图片  -->
+  <block wx:if="{{loadPageType == 'showQRcode'}}">
+    <view class="meetingQRcode">
+      <view class="meetingQRcode-userInfo">
+        <view class="meetingQRcode-avatar"><image src="{{userInfo.avatar}}"></image></view>
+        <view class="meetingQRcode-nickName">{{userInfo.nickName}}</view>
+      </view>
+      <view class="meetingQRcode-meeting">
+        <view class="meetingQRcode-meeting-cover">
+            <image src="{{meetingavatar}}"></image>
+        </view>
+      </view>
+      <view class="meetingQRcode-main">
+        <view class="meetingQRcode-QRcode"><image src="{{QRcode}}"></image></view>
+        <view class="t-center">会讲</view>
+        <view class="t-center color-gray">使用系统截屏，将图片分享到朋友圈吧</view>
+      </view>
+    </view>
+  </block>
+</view>

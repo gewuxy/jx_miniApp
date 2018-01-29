@@ -7,7 +7,8 @@
     "pages/player/index",
     "pages/record/index",
     "pages/meeting/addMeeting",
-    "pages/meeting/addPhoto"
+    "pages/meeting/addPhoto",
+    "pages/player/pagePassword"
   ],
   "window": {
     "backgroundTextStyle": "light",

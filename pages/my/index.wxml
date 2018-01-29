@@ -55,9 +55,13 @@
       <view class="input-item-row ">  
         <view class="input-row" >
         
-          <view class="input-main" wx:if="{{nickName == ''}}"><view class="icon-user"></view> <input type='text' name="nickName" focus="true" placeholder="请输入昵称" bindinput='bindInput'></input></view>
+          <view class="input-main">
 
-          <view class="input-main" wx:else><view class="icon-user"></view> <input type='text' name="nickName" value="{{nickName}}" bindinput='bindInput'></input></view>
+            <view class="input-icon icon-user"></view> 
+            <input class="input"  wx:if="{{nickName == ''}}" type='text' name="nickName" focus="true" placeholder="请输入昵称" bindinput='bindInput'></input>
+            <input type='text' name="nickName" value="{{nickName}}" bindinput='bindInput'></input>
+
+          </view>
 
         </view>
       </view>

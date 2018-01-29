@@ -12,16 +12,23 @@ Page({
     imgsFile: [],
     meetingTitle:"",
     popErrorMsg:"",
-    courseId:""
+    courseId:"",
+    isEditMeeting:false
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    console.log('跳转到addMeeting');
+    console.log('跳转到addMeeting', options);
     var that = this;
     var tokenUser = wx.getStorageSync('token');
+    if (options.courseId) {
+      that.setData({
+        courseId: options.courseId,
+        isEditMeeting: options.isEditMeeting
+      });
+    }
     wx.getStorage({
       key: 'images',
       success: function (res) {
@@ -48,7 +55,30 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-  
+    var that = this;
+    console.log('show',that.data.courseId);
+    console.log(that.data.isEditMeeting);
+
+    if (that.data.isEditMeeting == 'true' && that.data.courseId != "") {
+      console.log('进来了')
+      wx.request({
+        url: app.host + '/api/meeting/view',
+        method: 'GET',
+        data: {
+          courseId: that.data.courseId
+        },
+        header: {
+          token: wx.getStorageSync('token')
+        },
+        success(res) {
+          console.log('show状态', res);
+          // console.log(res.data.data.audioCourse.title);
+          that.setData({ meetingTitle: res.data.data.audioCourse.title });
+        }
+
+      })
+    } 
+
   },
 
   /**
@@ -91,7 +121,6 @@ Page({
   //递归上传图片函数
   uploadDIY(filePaths,  i, length) {
     var that = this;
-    
     wx.uploadFile({
       url: app.host + '/api/meeting/upload/picture',
       filePath: filePaths[i],
@@ -121,10 +150,10 @@ Page({
         }
       },
       fail: (res) => {
-
+        console.log(res);
       },
       complete: () => {
-
+        console.log('complete');
       },
     });
 
@@ -144,10 +173,11 @@ Page({
         "Content-Type": "application/x-www-form-urlencoded"   //处理 POST BUG 问题
       },
       success(res){
-        wx.hideLoading();
-        wx.redirectTo({
-          url: '../../pages/index/index',
-        })
+        console.log(res);
+        // wx.hideLoading();
+        // wx.redirectTo({
+        //   url: '../../pages/index/index?isEditComplete=true',
+        // })
       }
       
     })
@@ -160,6 +190,8 @@ Page({
     var i = 0; //第几个
     var tempFilePaths = that.data.imgs  //上传的图片
     console.log(that.data.imgs);
+    console.log('token缓存',wx.getStorageSync('token'));
+
     if (e.detail.value.meetingTitle != "") {
       //设置标题
       that.setData({ meetingTitle: e.detail.value.meetingTitle});
@@ -168,8 +200,15 @@ Page({
       util.ohShitfadeOut(that);
       return false;
     }
-    wx.showLoading({ title: '上传中'});
-    that.uploadDIY(tempFilePaths, i, length);
+    wx.showLoading({ title: '上传中' });
+    if (that.data.isEditMeeting == 'true' && that.data.courseId != "") {
+      //判断是编辑状态
+      that.createMeeting(that.data.courseId);
+      console.log('进来编辑');
+    } else {
+      that.uploadDIY(tempFilePaths, i, length);
+    }
+    
     
   }
 })

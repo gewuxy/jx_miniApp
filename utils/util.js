@@ -69,6 +69,7 @@ function ohShitfadeOut(that) {
 
 //显示自定义图层
 function showModal(that) {
+  console.log(that);
   // 显示遮罩层
   var animation = wx.createAnimation({
     duration: 200,

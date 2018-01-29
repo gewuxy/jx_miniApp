@@ -12,15 +12,15 @@
           <image src="https://file.medyaya.cn/wx_mini/images/commodity-image-wechat.png"></image>
           <view>微信好友</view>
         </view>
-        <view class="commodity-box-item">
+        <view class="commodity-box-item" bindtap='toMettingQRcode'>
           <image src="https://file.medyaya.cn/wx_mini/images/commodity-image-wechatCircle.png"></image>
           <view>朋友圈</view>
         </view>
-        <view class="commodity-box-item">
+        <view class="commodity-box-item" bindtap='toMeetingEdit'>
           <image src="https://file.medyaya.cn/wx_mini/images/commodity-image-edit.png"></image>
           <view>编辑</view>
         </view>
-        <view class="commodity-box-item">
+        <view class="commodity-box-item" bindtap="toMettingPassword">
           <image src="https://file.medyaya.cn/wx_mini/images/commodity-image-password.png"></image>
           <view>观看密码</view>
         </view>
@@ -28,7 +28,7 @@
     </scroll-view>  
   </view>
   <view class="commodity-main">
-    <view class="commodity-row">删除</view>
+    <view class="commodity-row" bindtap='deleteMeeting'>删除</view>
   </view>
   <view class="commodity-footer">
     <view class="commodity-row" bindtap='hideModal'>取消</view>
@@ -50,7 +50,7 @@
           <view class="meeting-list-row">
             <view class="meeting-list-recordingTime">{{item.playTime}}</view>
             <!-- <button class="meeting-list-share clearButtonStyle" open-type="share"></button> -->
-             <view class="meeting-list-share" bindtap='showModal'></view> 
+             <view class="meeting-list-share" data-courseId="{{item.id}}" data-meetingPassword="{{item.password}}" bindtap='showModal'></view> 
           </view>
         </view>
       </view>
