@@ -1,4 +1,4 @@
-const host = 'https://www.cspmeeting.com/liping';
+const host = 'https://www.cspmeeting.com/csp';
 
 //app.js
 App({

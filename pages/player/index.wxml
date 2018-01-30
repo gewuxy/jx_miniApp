@@ -52,15 +52,12 @@
 
       <view class="playerMeeting">
         <view class="playerMeetingBackground">
-          <view class="pageNunber"><text class="pageNumberBer"><text>{{changeCurrentIndex+1}}</text> <text class="muted">|</text> <text >{{meetingDetailsList.length}}</text></text></view>
+          <view class="pageNunber"><text class="pageNumberBer"><text>{{changeCurrentIndex+1}}</text> <text class="muted"></text> <text >{{meetingDetailsList.length}}</text></text></view>
           <!-- 轮播图 -->
-          <swiper class="swiper" circular="true" interval="3000" duration="500"  bindchange='changeSwiper' current="{{changeCurrentIndex}} ">
+          <swiper class="swiper" circular="true" autoplay="{{isAutoplay}}" interval="3000" duration="500"  bindchange='changeSwiper' current="{{changeCurrentIndex}} ">
             <block wx:for="{{meetingDetailsList}}" wx:key="{{index}}">
               <swiper-item data-id="{{item.id}}" data-key="{{index}}" data-url="{{item.imgUrl}}" bindtap='showImage' >
                 <view style="background-image:url({{item.imgUrl}})" class="img" ></view>
-                <block src="{{item.audioUrl}}">
-                  <audio src="{{item.audioUrl}}" id="player-{{index}}"></audio>
-                </block>
                 <!-- <image src="{{item.imgUrl}}" class="img" /> -->
               </swiper-item>
             </block>
@@ -72,14 +69,19 @@
 
 
       <view class="fiexd-button">
-
         <view class="input-button" bindtap='chooseImg'>+ 我要制作</view>
         <view class="fiexd-button-row " >
           <view class="player-fixed-button pr">
 
-            <view class="button">
-              <view class="playerState"><view class="icon-meeting-play"></view></view>
-              <view class="text">开启</view>
+            <view class="button" bindtap='playState'>
+
+              <view class="playerState">
+                <block wx:if="{{isPlayAudio}}"><view class="icon-meeting-play"></view></block>
+                <block wx:else><view class="icon-meeting-pause"></view></block>
+              </view>
+              <block wx:if="{{isPlayAudio}}"><view class="text">开启</view></block>
+              <block wx:else><view class="text">暂停</view></block>
+              
             </view>
             <view class="button " bindtap='openMoreButton'>
                 <view class="icon-meeting-more"></view>
@@ -102,6 +104,7 @@
         </view>
       </view>
   </block>
+
   <!-- 会议密码  -->
   <block  wx:elif="{{loadPageType == 'meetingPassword'}}">
     <form bindsubmit="meetingPasswordFormSubmit">
@@ -121,6 +124,7 @@
       </view>
     </form>
   </block>
+
   <!-- 生成二维码图片  -->
   <block wx:if="{{loadPageType == 'showQRcode'}}">
     <view class="meetingQRcode">

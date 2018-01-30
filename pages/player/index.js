@@ -10,7 +10,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    loadPageType: "",
+    loadPageType: "", 
     courseId: "",
     QRcode:"",
     userInfo:{},
@@ -23,7 +23,12 @@ Page({
     previewImgs: [],
     isDisabled:true,
     meetingPassword:"",
-    QRpage:""
+    QRpage:"",
+    audioList:[],
+    isPlayAudio:true,
+    isAutoplay:true,
+    ispreviewImage:false,
+    currentAudio:""
   },
 
   /**
@@ -37,7 +42,7 @@ Page({
         popErrorMsg:'截图保存，分享到朋友圈'
       });
     } else if (options.loadPageType == 'meetingPassword') {
-      wx.setNavigationBarTitle({ title: '输入密码' });
+      wx.setNavigationBarTitle({ title: '观看密码' });
     }
     that.setData({
       courseId: options.courseId,
@@ -61,150 +66,94 @@ Page({
     var userStorageInfoUser = wx.getStorageSync('userInfo');
     var userStorageToken = wx.getStorageSync('token');
 
-    //已有Token缓存
-    if (userStorageToken && userStorageInfoUser) {
-
-      userStorageInfoUser = userStorageInfoUser.userInfo
-      //设置数据
-      this.setData({
-        userInfo: userStorageInfoUser
-      });
-      if (that.data.loadPageType == 'showQRcode') {
-        
-        wx.showLoading({  title: '生成中' });
-        
-
-        //加载会议数据
-        wx.request({
-          url: app.host + '/api/meeting/view',
-          method: 'GET',
-          data: {
-            courseId: that.data.courseId
-          },
-          header: {
-            token: wx.getStorageSync('token')
-          },
-          success(res) {
-            var QRpageRes=""
-            that.setData({
-              meetingavatar: res.data.data.audioCourse.details[0].imgUrl,
-              meetingPassword: res.data.data.audioCourse.password
-            });
-            if (that.data.meetingPassword) {
-              QRpageRes = '/pages/player/index' + '?courseId=' + that.data.courseId + '&loadPageType=meetingPassword'
-              that.setData({
-                QRpage: QRpageRes
-              })
-            } else {
-              QRpageRes = '/pages/player/index'+'?courseId=' + that.data.courseId
-              that.setData({
-                QRpage: QRpageRes
-              })
-              console.log('没密码', QRpageRes);
-            }
-            console.log('拿页面数据', that.data);
-
-
-
-            //加载二维码
-            wx.request({
-              url: app.host + '/api/meeting/mini/qrcode',
-              method: 'GET',
-              data: {
-                id: that.data.courseId,
-                page: that.data.QRpage
-              },
-              header: {
-                token: wx.getStorageSync('token')
-              },
-              success(res) {
-                console.log('二维码成功', res.data.data);
-                that.setData({
-                  QRcode: res.data.data
-                });
-                wx.hideLoading();
-                util.ohShitfadeOut(that);
-              }
-            });
-
-
-
-
-          }
-        });
-
-
-
-
-
-
-      } else {
-        wx.showLoading({ title: '加载中' });
-        //加载会议数据
-        wx.request({
-          url: app.host + '/api/meeting/view',
-          method: 'GET',
-          data: {
-            courseId: that.data.courseId
-          },
-          header: {
-            token: wx.getStorageSync('token')
-          },
-          success(res) {
-            var previewList = [];
-            console.log('会议数据', res);
-            console.log('会议密码', res.data.data.audioCourse.password);
-            console.log('会议详情数据', res.data.data.audioCourse.details);
-            console.log('嘿嘿嘿', res.data.data.audioCourse.details[0].imgUrl);
-
-
-            that.setData({
-              meetingavatar: res.data.data.audioCourse.details[0].imgUrl,
-              meetingDetailsList: res.data.data.audioCourse.details,
-              meetingPassword: res.data.data.audioCourse.password
-            });
-            //预览图片
-            for (var i = 0; i < that.data.meetingDetailsList.length; i++) {
-              previewList.push(that.data.meetingDetailsList[i].imgUrl);
-              console.log(that.data.meetingDetailsList[i].imgUrl);
-            }
-            that.setData({ previewImgs: previewList });
-            wx.hideLoading();
-
-            //打印缓存数据
-            console.log('缓存', that.data.meetingavatar);
-          }
-        });
-      }
-      
+    //解决官方图册打开后触发onShow的BUG问题
+    if (that.data.ispreviewImage) {
+      that.setData({ 
+        ispreviewImage:false
+       })
     } else {
-      wx.showLoading({ title: '加载中' });
-      //第一次访问
-      app.getUserInfo().then(function (res) {
-        console.log('访问前', res);
-        if (res.status == 200) {
-          //获取会员信息
-          that.setData({
-            userInfo:res.userInfo
+    //解决官方图册打开后触发onShow的BUG问题
+
+
+      //已有Token缓存
+      if (userStorageToken && userStorageInfoUser) {
+
+        userStorageInfoUser = userStorageInfoUser.userInfo
+        //设置数据
+        this.setData({
+          userInfo: userStorageInfoUser
+        });
+        if (that.data.loadPageType == 'showQRcode') {
+
+          wx.showLoading({ title: '生成中' });
+
+
+          //加载会议数据
+          wx.request({
+            url: app.host + '/api/meeting/view',
+            method: 'GET',
+            data: {
+              courseId: that.data.courseId
+            },
+            header: {
+              token: wx.getStorageSync('token')
+            },
+            success(res) {
+              var QRpageRes = ""
+              that.setData({
+                meetingavatar: res.data.data.audioCourse.details[0].imgUrl,
+                meetingPassword: res.data.data.audioCourse.password
+              });
+              if (that.data.meetingPassword) {
+                QRpageRes = '/pages/player/index' + '?courseId=' + that.data.courseId + '&loadPageType=meetingPassword'
+                that.setData({
+                  QRpage: QRpageRes
+                })
+              } else {
+                QRpageRes = '/pages/player/index' + '?courseId=' + that.data.courseId
+                that.setData({
+                  QRpage: QRpageRes
+                })
+                console.log('没密码', QRpageRes);
+              }
+              console.log('拿页面数据', that.data);
+
+
+
+              //加载二维码
+              wx.request({
+                url: app.host + '/api/meeting/mini/qrcode',
+                method: 'GET',
+                data: {
+                  id: that.data.courseId,
+                  page: that.data.QRpage
+                },
+                header: {
+                  token: wx.getStorageSync('token')
+                },
+                success(res) {
+                  console.log('二维码成功', res.data.data);
+                  that.setData({
+                    QRcode: res.data.data
+                  });
+                  wx.hideLoading();
+                  util.ohShitfadeOut(that);
+                }
+              });
+
+
+
+
+            }
           });
-          //加载二维码
-          // wx.request({
-          //   url: app.host + '/api/meeting/mini/qrcode',
-          //   method: 'GET',
-          //   data: {
-          //     id: that.data.courseId,
-          //     page: '/pages/player/index'
-          //   },
-          //   header: {
-          //     token: wx.getStorageSync('token')
-          //   },
-          //   success(res) {
-          //     console.log('二维码成功', res);
-          //     that.setData({
-          //       QRcode: res.data.data
-          //     })
-          //   }
-          // });
+
+
+
+
+
+
+        } else {
+          wx.showLoading({ title: '加载中' });
           //加载会议数据
           wx.request({
             url: app.host + '/api/meeting/view',
@@ -217,29 +166,86 @@ Page({
             },
             success(res) {
               var previewList = [];
-              console.log('会议数据',res);
-              console.log('会议密码',res.data.data.audioCourse.password);
+              var audioList = [];
+              console.log('会议数据', res);
+              console.log('会议密码', res.data.data.audioCourse.password);
+              console.log('会议详情数据', res.data.data.audioCourse.details);
+              console.log('嘿嘿嘿', res.data.data.audioCourse.details[0].imgUrl);
+
+
               that.setData({
                 meetingavatar: res.data.data.audioCourse.details[0].imgUrl,
-                meetingDetailsList: res.data.data.audioCourse.details
+                meetingDetailsList: res.data.data.audioCourse.details,
+                meetingPassword: res.data.data.audioCourse.password
               });
               //预览图片
               for (var i = 0; i < that.data.meetingDetailsList.length; i++) {
                 previewList.push(that.data.meetingDetailsList[i].imgUrl);
-                console.log(that.data.meetingDetailsList[i].imgUrl);
+                audioList.push(that.data.meetingDetailsList[i].audioUrl);
               }
-              that.setData({ previewImgs: previewList });
+              that.setData({
+                previewImgs: previewList,
+                audioList: audioList
+              });
               wx.hideLoading();
+
+              //打印缓存数据
+              console.log('音频', that.data.audioList);
+              console.log('预览图', that.data.previewList);
             }
           });
-
-
-          console.log('第一次加载',that.data.userInfo);
-        } else {
-          console.log(res.data);
         }
-      });
+
+      } else {
+        wx.showLoading({ title: '加载中' });
+        //第一次访问
+        app.getUserInfo().then(function (res) {
+          console.log('访问前', res);
+          if (res.status == 200) {
+            //获取会员信息
+            that.setData({
+              userInfo: res.userInfo
+            });
+            //加载会议数据
+            wx.request({
+              url: app.host + '/api/meeting/view',
+              method: 'GET',
+              data: {
+                courseId: that.data.courseId
+              },
+              header: {
+                token: wx.getStorageSync('token')
+              },
+              success(res) {
+                var previewList = [];
+                console.log('会议数据', res);
+                console.log('会议密码', res.data.data.audioCourse.password);
+                that.setData({
+                  meetingavatar: res.data.data.audioCourse.details[0].imgUrl,
+                  meetingDetailsList: res.data.data.audioCourse.details
+                });
+                //预览图片
+                for (var i = 0; i < that.data.meetingDetailsList.length; i++) {
+                  previewList.push(that.data.meetingDetailsList[i].imgUrl);
+                }
+                that.setData({ previewImgs: previewList });
+                wx.hideLoading();
+              }
+            });
+
+
+            console.log('第一次加载', that.data.userInfo);
+          } else {
+            console.log(res.data);
+          }
+        });
+      }
+
+
+
     }
+
+    
 
 
 
@@ -258,7 +264,7 @@ Page({
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
-  
+    innerAudioContext.stop();
   },
 
   /**
@@ -401,47 +407,45 @@ Page({
       }
     });
   },
-  //获得当前页位标
-  changeSwiper: function (e) {
-    console.log(e);
-    innerAudioContext.src = 'https://file.medyaya.cn/course/1/audio/17122113442719879482.mp3'
-    innerAudioContext.play();
-    console.log(wx.getSystemInfoSync());
-    innerAudioContext.onPlay(() => {
-      console.log('开始播放');
-    });
-    innerAudioContext.onEnded(() => {
-      console.log('结束播放');
-      console.log(this.data.recorderTempFilePathArray);
-      for (; tempFileNum < this.data.recorderTempFilePathArray.length; tempFileNum++) {
-        innerAudioContext.src = this.data.recorderTempFilePathArray[tempFileNum];
-        innerAudioContext.play();
-      }
-    });
-    console.log(innerAudioContext);
-    // this.audioCtx.play(); 
-    this.setData({
-      changeCurrentIndex: e.detail.current
-    });
-    
-  },
+  
+  //点击放大图片
   showImage: function (e) {
     var that = this;
     console.log('预览e',e);
     console.log(that.data.meetingDetailsList);
-    that.setData({ isOpenMore: false});
+    that.setData({ 
+      isOpenMore: false,
+      ispreviewImage:true
+    });
+    
 
     wx.previewImage({
       current: e.currentTarget.dataset.url, // 当前显示图片的http链接
-      urls: that.data.previewImgs // 需要预览的图片http链接列表
+      urls: that.data.previewImgs, // 需要预览的图片http链接列表
+      success (res) {
+        console.log('success',res);
+        innerAudioContext.pause();
+        //换图标
+        that.setData({
+          isPlayAudio: !that.data.isPlayAudio
+        })
+      },
+      fail (res) {
+        console.log('fail', res);
+      },
+      complete(res) {
+        console.log('comlete',res)
+      }
     })
   },
+  //监控输入框
   bindInput: function (e) {
     var that = this;
     console.log(e);
     //判断是否为空
     e.detail.value.length == 4 ? that.setData({ isDisabled: false }) : that.setData({ isDisabled: true });
   },
+  //提交密码
   meetingPasswordFormSubmit:function(e) {
     var that = this;
     if (e.detail.value.meetingPassword == that.data.meetingPassword) {
@@ -452,6 +456,54 @@ Page({
       that.setData({ popErrorMsg:'密码错误' });
       util.ohShitfadeOut(that);
     }
+  },
+  //切换PPT
+  changeSwiper: function (e) {
+    var that= this;
+    //切换暂停
+    innerAudioContext.stop();
+
+    console.log('切换ppt',e.detail.current);
+    console.log(that.data.audioList[e.detail.current]);
+    //切换播放录音
+    if (that.data.audioList[e.detail.current]) {
+      that.setData({
+        isAutoplay: false,
+        currentAudio: that.data.audioList[e.detail.current]
+      });
+      innerAudioContext.src = that.data.currentAudio;
+      innerAudioContext.play();
+    } else {
+      that.setData({ isAutoplay: true })
+    }
+    //监控播放器
+    innerAudioContext.onPlay(() => {
+      console.log('开始播放');
+      that.setData({ isPlayAudio: false });
+    });
+    innerAudioContext.onEnded(() => {
+      console.log('结束播放');
+      that.setData({  isAutoplay: true });
+    });
+    //修改页码
+    that.setData({
+      changeCurrentIndex: e.detail.current
+    });
+
+  },
+  playState:function() {
+    var that = this;
+    if (that.data.isPlayAudio) {
+      //图标播放状态，音频没播
+      innerAudioContext.play();
+    } else {
+      //图标暂停状态,音频在播
+      innerAudioContext.pause();
+    }
+    //换图标
+    that.setData({
+      isPlayAudio: !that.data.isPlayAudio
+    })
   }
   
 })
