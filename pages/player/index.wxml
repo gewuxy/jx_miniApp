@@ -1,7 +1,12 @@
 <!--pages/player/index.wxml-->
 <view class="container player-page ">
   <!--提示语  -->
-  <view class="ad_popError" wx:if="{{popErrorMsg}}">{{popErrorMsg}}</view>
+  <block wx:if="{{loadPageType == 'showQRcode'}}">
+    <view class="ad_popError" wx:if="{{popErrorMsg}}">{{popErrorMsg}}</view>
+  </block>
+  <block wx:else>
+    <view class="popError" wx:if="{{popErrorMsg}}">{{popErrorMsg}}</view>
+  </block>
   <!--自定义弹窗  -->
   <view class="commodity-screen" bindtap="hideModal" wx:if="{{showModalStatus}}"></view>
   <view animation="{{animationData}}" class="commodity-attr-box" wx:if="{{showModalStatus}}">
@@ -51,8 +56,11 @@
           <!-- 轮播图 -->
           <swiper class="swiper" circular="true" interval="3000" duration="500"  bindchange='changeSwiper' current="{{changeCurrentIndex}} ">
             <block wx:for="{{meetingDetailsList}}" wx:key="{{index}}">
-              <swiper-item data-id="{{item.id}}" data-url="{{item.imgUrl}}" bindtap='showImage' >
+              <swiper-item data-id="{{item.id}}" data-key="{{index}}" data-url="{{item.imgUrl}}" bindtap='showImage' >
                 <view style="background-image:url({{item.imgUrl}})" class="img" ></view>
+                <block src="{{item.audioUrl}}">
+                  <audio src="{{item.audioUrl}}" id="player-{{index}}"></audio>
+                </block>
                 <!-- <image src="{{item.imgUrl}}" class="img" /> -->
               </swiper-item>
             </block>
@@ -93,6 +101,25 @@
           </view>
         </view>
       </view>
+  </block>
+  <!-- 会议密码  -->
+  <block  wx:elif="{{loadPageType == 'meetingPassword'}}">
+    <form bindsubmit="meetingPasswordFormSubmit">
+      <view class="input-item-row meetingPassword-box">  
+        <view class="input-row" >
+        
+          <view class="input-main">
+
+            <view class="input-icon icon-password"></view> 
+            <input type="number" class="input" name="meetingPassword" focus="true" maxlength='4' placeholder="请输入4位数字密码" bindinput='bindInput'></input> 
+
+          </view>
+        </view>
+      </view>
+      <view class="btn-area">
+          <button formType="submit" class="inputButton" disabled="{{isDisabled}}">保存</button>
+      </view>
+    </form>
   </block>
   <!-- 生成二维码图片  -->
   <block wx:if="{{loadPageType == 'showQRcode'}}">

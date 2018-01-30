@@ -174,10 +174,10 @@ Page({
       },
       success(res){
         console.log(res);
-        // wx.hideLoading();
-        // wx.redirectTo({
-        //   url: '../../pages/index/index?isEditComplete=true',
-        // })
+        wx.hideLoading();
+        wx.redirectTo({
+          url: '../../pages/index/index?isEditComplete=true',
+        })
       }
       
     })

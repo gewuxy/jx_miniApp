@@ -40,3 +40,6 @@ page { background: #fff;}
 .player-page .muted { margin:0 15rpx;}
 
 .pageNumberBer { background:rgba(0,0,0,.5) no-repeat; padding:5rpx 20rpx; border-radius: 15rpx; color:#fff ; vertical-align: middle;}
+
+
+.meetingPassword-box{ margin-top:40rpx;}

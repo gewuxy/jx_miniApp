@@ -42,14 +42,17 @@ Page({
     var that = this;
     var userStorageInfoUser = wx.getStorageSync('userInfo');
     var userStorageToken = wx.getStorageSync('token');
+
     
     //已有Token缓存
     if (userStorageToken && userStorageInfoUser) {
       //设置数据
       this.setData({
         userInfo: userStorageInfoUser.userInfo,
-        token: userStorageToken
+        token: userStorageToken,
+        avatar: wx.getStorageSync('avatar')
       });
+      
       //判断是否有缓存
       if (wx.getStorageSync('indexShowMeeting') && that.data.isEditComplete == 'true'){
         //修改完成后要刷新数据
@@ -68,14 +71,24 @@ Page({
             that.setData({
               meetingList: res.data.data.list
             });
-
+            // 存储会议到本地
+            wx.setStorage({
+              key: 'indexShowMeeting',
+              data: {
+                meetingList: res.data.data.list
+              },
+              success: function (res) {
+                console.log("修改完成后要刷新数据,存储成功");
+              }
+            });
           }
         });
       } else if (wx.getStorageSync('indexShowMeeting') && that.data.isEditComplete == false){
         //有缓存
-        console.log('有缓存');
+        console.log('有缓存', wx.getStorageSync('indexShowMeeting'));
         that.setData({ meetingList: wx.getStorageSync('indexShowMeeting').meetingList });
       } else {
+        console.log('没缓存哦');
         // 加载会议列表
         wx.request({
           url: app.host + '/api/meeting/list',
@@ -127,6 +140,16 @@ Page({
                 meetingList: res.data.data.list,
                 token: app.globalData.UserToken,
                 avatar: app.globalData.avatar
+              });
+              // 存储会议到本地
+              wx.setStorage({
+                key: 'indexShowMeeting',
+                data: {
+                  meetingList: res.data.data.list
+                },
+                success: function (res) {
+                  console.log("存储成功");
+                }
               });
             }
           });
@@ -345,11 +368,17 @@ Page({
               "Content-Type": "application/x-www-form-urlencoded"   //处理 POST BUG 问题
             },
             success(res) {
-              console.log('是否成功', res)
+              console.log('是否成功', res);
+
               wx.hideLoading();
-              wx.redirectTo({
-                url: '../../pages/index/index?isEditComplete=true',
-              })
+              if(res.data.code == 0) {
+                wx.redirectTo({
+                  url: '../../pages/index/index?isEditComplete=true',
+                })
+              } else {
+                console.log('删除失败',res.data.err);
+              }
+
             }
 
           })
@@ -382,5 +411,21 @@ Page({
     wx.navigateTo({
       url: `../../pages/player/index?courseId=${that.data.courseId}&loadPageType=showQRcode`
     });
+  },
+  toMeetingDetails:function(e){
+    var that = this;
+    that.setData({
+      courseId: e.currentTarget.dataset.courseid,
+      meetingPassword: e.currentTarget.dataset.meetingpassword
+    });
+    if (e.currentTarget.dataset.meetingpassword) {
+      wx.navigateTo({
+        url: `../../pages/player/index?courseId=${that.data.courseId}&loadPageType=meetingPassword`
+      });
+    } else {
+      wx.navigateTo({
+        url: `../../pages/player/index?courseId=${that.data.courseId}`
+      });
+    }
   }
 })

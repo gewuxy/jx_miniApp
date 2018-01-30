@@ -41,12 +41,12 @@
   <view class="meeting-card" hidden="{{isCardStatus==true}}" wx:for="{{meetingList}}">
     
       <view class="meeting-list-item" >
-        <view class="meeting-list-image">
+        <view class="meeting-list-image" bindtap='toMeetingDetails' data-courseId ="{{item.id}}" data-meetingPassword="{{item.password}}">
           <view class="img" style="background-image:url({{item.coverUrl}})"></view>
           <view class="isSourceType" wx:if="{{item.sourceType == 1}}"></view>
         </view>
         <view class="meeting-list-main">
-          <view class="meeting-list-title">{{item.title}}</view>
+          <view class="meeting-list-title" bindtap='toMeetingDetails' data-courseId ="{{item.id}}" data-meetingPassword="{{item.password}}">{{item.title}}</view>
           <view class="meeting-list-row">
             <view class="meeting-list-recordingTime">{{item.playTime}}</view>
             <!-- <button class="meeting-list-share clearButtonStyle" open-type="share"></button> -->
