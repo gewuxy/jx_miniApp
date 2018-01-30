@@ -24,7 +24,8 @@ Page({
     isCardStatus:false,
     courseId:"",
     isEditComplete:false,
-    meetingPassword:""
+    meetingPassword:"",
+    sharePages:""
   },
   // 监听页面加载，只执行一次
   onLoad: function (options) {
@@ -250,7 +251,13 @@ Page({
   },
   //分享按钮
   onShareAppMessage: function (options){
-    console.log('点击分享');
+    console.log('点击分享',options);
+    var that = this;
+    console.log('为什么没有',that.data);
+    return {
+      title: '你的朋友发来分享',
+      path: that.data.sharePage
+    }
   },
   //切换列表状态
   changeListStatus:function(){
@@ -324,11 +331,19 @@ Page({
   //显示自定义弹窗
   showModal: function (e) {
     var that = this;
-    console.log(e);
+    var sharePage = "";
+    console.log('弹出',e);
+    if (e.currentTarget.dataset.meetingpassword) {
+      sharePage = `/pages/player/index?courseId=${e.currentTarget.dataset.courseid}&loadPageType=meetingPassword`
+    } else {
+      sharePage = `/pages/player/index?courseId=${e.currentTarget.dataset.courseid}`
+    }
     that.setData({ 
       courseId: e.currentTarget.dataset.courseid,
-      meetingPassword: e.currentTarget.dataset.meetingpassword
+      meetingPassword: e.currentTarget.dataset.meetingpassword,
+      sharePage: sharePage
     });
+    console.log(that.data);
     util.showModal(that);
   },
   //隐藏自定义弹窗

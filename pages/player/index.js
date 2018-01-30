@@ -69,7 +69,7 @@ Page({
     //解决官方图册打开后触发onShow的BUG问题
     if (that.data.ispreviewImage) {
       that.setData({ 
-        ispreviewImage:false
+        ispreviewImage:false,
        })
     } else {
     //解决官方图册打开后触发onShow的BUG问题
@@ -185,7 +185,9 @@ Page({
               }
               that.setData({
                 previewImgs: previewList,
-                audioList: audioList
+                audioList: audioList,
+                isPlayAudio: false,
+                isAutoplay: true
               });
               wx.hideLoading();
 
@@ -285,7 +287,7 @@ Page({
    * 用户点击右上角分享
    */
   onShareAppMessage: function () {
-  
+    
   },
   openMoreButton: function() {
     var that = this;
@@ -474,7 +476,9 @@ Page({
       innerAudioContext.src = that.data.currentAudio;
       innerAudioContext.play();
     } else {
-      that.setData({ isAutoplay: true })
+      that.setData({ 
+        isAutoplay: true
+      })
     }
     //监控播放器
     innerAudioContext.onPlay(() => {
@@ -500,9 +504,12 @@ Page({
       //图标暂停状态,音频在播
       innerAudioContext.pause();
     }
+    isPlayAudio: false,
+      
     //换图标
     that.setData({
-      isPlayAudio: !that.data.isPlayAudio
+      isPlayAudio: !that.data.isPlayAudio,
+      isAutoplay: !that.data.isAutoplay
     })
   }
   

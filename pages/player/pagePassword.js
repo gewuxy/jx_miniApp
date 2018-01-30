@@ -45,7 +45,7 @@ Page({
    * 生命周期函数--监听页面隐藏
    */
   onHide: function () {
-    wx.redirectTo({
+    wx.navigateTo({
       url: '../../pages/index/index?isEditComplete=true',
     })
   },
@@ -115,7 +115,7 @@ Page({
       success(res) {
         console.log('是否成功', res);
         wx.hideLoading();
-        wx.redirectTo({
+        wx.navigateTo({
           url: '../../pages/index/index?isEditComplete=true',
         })
       }

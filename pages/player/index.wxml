@@ -106,7 +106,7 @@
   </block>
 
   <!-- 会议密码  -->
-  <block  wx:elif="{{loadPageType == 'meetingPassword'}}">
+  <block  wx:if="{{loadPageType == 'meetingPassword'}}">
     <form bindsubmit="meetingPasswordFormSubmit">
       <view class="input-item-row meetingPassword-box">  
         <view class="input-row" >
