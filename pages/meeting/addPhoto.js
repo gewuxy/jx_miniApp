@@ -48,7 +48,7 @@ Page({
    * 生命周期函数--监听页面隐藏
    */
   onHide: function () {
-  
+
   },
 
   /**
@@ -96,8 +96,9 @@ Page({
       }, 2500);
       return false;
     }
+    console.log('阿萨德',images.length);
     wx.chooseImage({
-      // count: 1, // 默认9
+      count: 9 - images.length, // 默认9
       sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
       sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
       success: function (res) {
@@ -106,9 +107,10 @@ Page({
         // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
         var tempFilePaths = res.tempFilePaths;
         var images = that.data.imgs;
+        console.log(tempFilePaths.length);
         // console.log(tempFilePaths + '----');
         for (var i = 0; i < tempFilePaths.length; i++) {
-          if (images.length >= 9) {
+          if (images.length > 9) {
             that.setData({
               imgs: images
             });

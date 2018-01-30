@@ -175,7 +175,7 @@ Page({
       success(res){
         console.log(res);
         wx.hideLoading();
-        wx.navigateTo({
+        wx.reLaunch({
           url: '../../pages/index/index?isEditComplete=true',
         })
       }

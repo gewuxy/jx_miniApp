@@ -123,6 +123,7 @@ App({
                         });
 
                       } else {
+                        console.log('获取不到')
                         //获取不到unionuid
                         wx.request({
                           url: `${host}/api/user/mini/info`,

@@ -44,6 +44,10 @@ Page({
     var userStorageInfoUser = wx.getStorageSync('userInfo');
     var userStorageToken = wx.getStorageSync('token');
 
+    this.setData({
+      popErrorMsg: '小程序只显示录播会议哦！'
+    });
+
     
     //已有Token缓存
     if (userStorageToken && userStorageInfoUser) {
@@ -160,6 +164,8 @@ Page({
       });
     }
 
+    util.ohShitfadeOut(that);
+
   },
   /**
  * 生命周期函数--监听页面卸载
@@ -211,7 +217,6 @@ Page({
     //新增后的数据
     var result = that.data.meetingList;
     this.setData({ 
-      popErrorMsg: '小程序只显示录播会议哦！' ,
       meetingListPageNum: that.data.meetingListPageNum + 1
     });
     wx.request({
