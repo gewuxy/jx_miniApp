@@ -104,6 +104,7 @@ Page({
                 meetingavatar: res.data.data.audioCourse.details[0].imgUrl,
                 meetingPassword: res.data.data.audioCourse.password
               });
+              wx.setNavigationBarTitle({ title: res.data.data.audioCourse.title });
               if (that.data.meetingPassword) {
                 QRpageRes = '/pages/player/index' + '?courseId=' + that.data.courseId + '&loadPageType=meetingPassword'
                 that.setData({
@@ -172,6 +173,7 @@ Page({
               console.log('会议详情数据', res.data.data.audioCourse.details);
               console.log('嘿嘿嘿', res.data.data.audioCourse.details[0].imgUrl);
 
+              wx.setNavigationBarTitle({ title: res.data.data.audioCourse.title });
 
               that.setData({
                 meetingavatar: res.data.data.audioCourse.details[0].imgUrl,
