@@ -9,6 +9,7 @@ page { background-color:#F2F2F4; }
   /*justify-content: space-between;*/
   padding: 40rpx 0;
   box-sizing: border-box;
+  
 }
 
 

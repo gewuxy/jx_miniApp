@@ -43,3 +43,5 @@ page { background: #fff;}
 
 
 .meetingPassword-box{ margin-top:40rpx;}
+
+ .player-page .meetingQRcode-meeting .meetingQRcode-meeting-cover .img{ width:100%; height:450rpx; background-repeat: no-repeat; background-size:cover; border-radius: 12rpx 12rpx 0 0; }

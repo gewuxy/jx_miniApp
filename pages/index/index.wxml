@@ -1,7 +1,7 @@
 <!--提示语  -->
 <view class="ad_popError" wx:if="{{popErrorMsg}}">{{popErrorMsg}}</view>
 <!--自定义弹窗  -->
-<view class="commodity-screen" bindtap="hideModal" wx:if="{{showModalStatus}}"></view>
+<view class="commodity-screen" bindtap="hideModal" wx:if="{{showModalStatus}}" catchtouchmove='true'></view>
 <view animation="{{animationData}}" class="commodity-attr-box" wx:if="{{showModalStatus}}">
 
   <view class="commodity-head">
@@ -104,7 +104,7 @@
 
   <!--固定的按钮-->
   <view class="fixedButton">
-    <!-- <view class="fixed-button-min changeMettingButton" bindtap='changeListStatus'><view class="icon"></view></view> -->
+     <!-- <view class="fixed-button-min changeMettingButton" bindtap='toRecordPage'><view class="icon"></view></view>  -->
     <!--<view class="qrcodeButton"><view class="icon"></view></view>-->
     <view class="qrcodeButton"><view class="icon" bindtap='chooseImg'></view></view>
     <view class="fixed-button-min userButton" bindtap='bindViewTap'>

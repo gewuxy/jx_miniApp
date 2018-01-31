@@ -470,8 +470,9 @@ Page({
     var that= this;
     //切换暂停
     innerAudioContext.stop();
+    e.detail.source = "";
 
-    console.log('切换ppt',e.detail.current);
+    console.log('切换ppt',e);
     console.log(that.data.audioList[e.detail.current]);
     //切换播放录音
     if (that.data.audioList[e.detail.current]) {

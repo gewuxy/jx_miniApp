@@ -8,7 +8,7 @@
     <view class="popError" wx:if="{{popErrorMsg}}">{{popErrorMsg}}</view>
   </block>
   <!--自定义弹窗  -->
-  <view class="commodity-screen" bindtap="hideModal" wx:if="{{showModalStatus}}"></view>
+  <view class="commodity-screen" bindtap="hideModal" wx:if="{{showModalStatus}}" catchtouchmove='true'></view>
   <view animation="{{animationData}}" class="commodity-attr-box" wx:if="{{showModalStatus}}">
     <!--举报弹窗  -->
     <block wx:if="{{popupType == 'reportPopup'}}">
@@ -54,7 +54,7 @@
         <view class="playerMeetingBackground">
           <view class="pageNunber"><text class="pageNumberBer"><text>{{changeCurrentIndex+1}}</text> <text class="muted"></text> <text >{{meetingDetailsList.length}}</text></text></view>
           <!-- 轮播图 -->
-          <swiper class="swiper" circular="true" autoplay="{{isAutoplay}}" interval="3000" duration="500"  bindchange='changeSwiper' current="{{changeCurrentIndex}} ">
+          <swiper class="swiper" autoplay="{{isAutoplay}}" interval="3000" duration="500"  bindchange='changeSwiper' current="{{changeCurrentIndex}} ">
             <block wx:for="{{meetingDetailsList}}" wx:key="{{index}}">
               <swiper-item data-id="{{item.id}}" data-key="{{index}}" data-url="{{item.imgUrl}}" bindtap='showImage' >
                 <view style="background-image:url({{item.imgUrl}})" class="img" ></view>
@@ -134,7 +134,8 @@
       </view>
       <view class="meetingQRcode-meeting">
         <view class="meetingQRcode-meeting-cover">
-            <image src="{{meetingavatar}}"></image>
+          <view class="img" style="background-image:url({{meetingavatar}})"></view>
+          <!-- <image src="{{meetingavatar}}"></image> -->
         </view>
       </view>
       <view class="meetingQRcode-main">

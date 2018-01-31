@@ -447,5 +447,11 @@ Page({
         url: `../../pages/player/index?courseId=${that.data.courseId}`
       });
     }
+  },
+  toRecordPage:function() {
+    var that = this;
+    wx.navigateTo({
+      url: `../../pages/record/index?courseId=17004`
+    });
   }
 })
