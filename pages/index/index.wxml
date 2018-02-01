@@ -104,7 +104,7 @@
 
   <!--固定的按钮-->
   <view class="fixedButton">
-     <!-- <view class="fixed-button-min changeMettingButton" bindtap='toRecordPage'><view class="icon"></view></view>  -->
+      <view class="fixed-button-min changeMettingButton" bindtap='toRecordPage'><view class="icon"></view></view>  
     <!--<view class="qrcodeButton"><view class="icon"></view></view>-->
     <view class="qrcodeButton"><view class="icon" bindtap='chooseImg'></view></view>
     <view class="fixed-button-min userButton" bindtap='bindViewTap'>

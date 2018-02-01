@@ -9,8 +9,17 @@
           <swiper class="swiper"interval="3000" duration="500"  bindchange='changeSwiper' current="{{changeCurrentIndex}} "   >
             <block wx:for="{{meetingDetailsList}}" wx:key="{{index}}">
               <swiper-item data-id="{{item.id}}" data-key="{{index}}" data-url="{{item.imgUrl}}" bindtap='showImage' >
-                <view style="background-image:url({{item.imgUrl}})" class="img" ></view>
-                <!-- <image src="{{item.imgUrl}}" class="img" /> -->
+                <block wx:if="{{item.videoUrl}}">
+                  <block wx:if="{{playVideo}}">
+                    <video  class="video" id="videoSwiper-{{index}}" controls="false" src='{{item.videoUrl}} 'autoplay="true"  bindended ="videoEndChange" data-currentIndex = "{{changeCurrentIndex}}"></video> 
+                  </block>
+                  <block wx:else>
+                     <view style="background-image:url({{item.imgUrl}})" class="img" bindtap='playViedoFunction' data-videoId = "videoSwiper-{{index}}" ></view>
+                  </block>
+                </block>
+                <block wx:else>
+                  <view style="background-image:url({{item.imgUrl}})" class="img" ></view>
+                </block>
               </swiper-item>
             </block>
           </swiper>
@@ -25,16 +34,36 @@
           </view>
         </view>
         <view class="record-meeting-timeArea-times">
-          <text class="times">00:10</text>
+          <text class="times">{{currentRecordTimes}}</text>
         </view>
       </view>
       <view class="record-meeting-functionBox flexBox">
+        <!--试听按钮  -->
         <view class="record-meeting-playState flexRow">
-          <view class="record-meeting-playState-play">
-            <view class="icon"></view>
-            <view class="text">试听</view>
-          </view>
+          <!--已按录音后的按钮  -->
+          <block wx:if="{{startButtonState}}">
+            <block wx:if="{{isPlayRecord}}">
+              <view class="record-meeting-playState-pause"  bindtap='pauseRecord'>
+                <view class="icon"></view>
+                <view class="text">继续</view>
+              </view>
+            </block>
+            <block wx:else>
+              <view class="record-meeting-playState-play" bindtap='playRecord'>
+                <view class="icon"></view>
+                <view class="text">试听</view>
+              </view>
+            </block>
+          </block>
+          <!--刚开始的按钮状态  -->
+          <block wx:else>
+              <view class="record-meeting-playState-play disabledButton" >
+                <view class="icon"></view>
+                <view class="text">试听</view>
+              </view>
+          </block>
         </view>
+        <!--录音按钮  -->
         <view class="record-meeting-recordState flexRow">
           <view class="record-meeting-recordState-default" bindtap='startRecord' wx:if="{{recordState == 'default'}}">
             <view class="icon"></view>
@@ -55,20 +84,30 @@
             <view class="start-button-bg-animation"></view>
           </view>
         </view>
+        <!--重录按钮  -->
         <view class="record-meeting-resetState flexRow">
-          <view class="record-meeting-resetState-reset">
-            <view class="icon"></view>
-            <view class="text">重录</view>
-          </view>
+          <block wx:if="{{startButtonState}}">
+            <view class="record-meeting-resetState-reset ">
+              <view class="icon"></view>
+              <view class="text">重录</view>
+            </view>
+          </block>
+          <block wx:else >
+            <view class="record-meeting-resetState-reset disabledButton">
+              <view class="icon"></view>
+              <view class="text">重录</view>
+            </view>
+          </block>
+
         </view>
       </view>
       <view class="record-meeting-player-progressBox">
 
         <view class="record-meeting-player-progressBox-scrubber">
-          <view class="progress" style="width:30%"><text class="progressDot"></text></view>
+          <view class="progress" style="width:{{finishProgress}}%"><text class="progressDot"></text></view>
           <div class="loaded" ></div> 
         </view>
-        <view class="times">00:05</view>
+        <view class="times">{{currentRecordTimes}}</view>
       </view>
       <view class="record-meeting-shareButton"><view class="icon"></view></view>
       <view class="record-meeting-endMeetingBUtton"></view>

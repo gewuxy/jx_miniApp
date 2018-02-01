@@ -1,36 +1,58 @@
-const formatTime = date => {
-  const year = date.getFullYear()
-  const month = date.getMonth() + 1
-  const day = date.getDate()
-  const hour = date.getHours()
-  const minute = date.getMinutes()
-  const second = date.getSeconds()
+//秒转时分
+const formatTime = (number, format) => {
 
-  return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute, second].map(formatNumber).join(':')
-}
-//转化时间
-const formatTimes = msd => {
+  var formateArr = ['h', 'm', 's'];
+  var returnArr = [];
 
-  var time = parseFloat(msd) ;
-  if (null != time && "" != time) {
-    if (time > 60 && time < 60 * 60) {
-      time = parseInt(time / 60.0) + ":" + parseInt((parseFloat(time / 60.0) -
-        parseInt(time / 60.0)) * 60) + "";
-    }
-    // else if (time >= 60 * 60 && time < 60 * 60 * 24) {
-    else if (time >= 60 * 60) {
-      time = parseInt(time / 3600.0) + ":" + parseInt((parseFloat(time / 3600.0) -
-        parseInt(time / 3600.0)) * 60) + ":" +
-        parseInt((parseFloat((parseFloat(time / 3600.0) - parseInt(time / 3600.0)) * 60) -
-          parseInt((parseFloat(time / 3600.0) - parseInt(time / 3600.0)) * 60)) * 60) + "";
-    }
-    else {
-      time = parseInt(time) + "";
-    }
+  var date = new Date(number * 1000);
+  // returnArr.push(date.getFullYear());
+  // returnArr.push(formatNumber(date.getMonth() + 1));
+  // returnArr.push(formatNumber(date.getDate()));
+
+  returnArr.push(formatNumber(date.getHours()));
+  returnArr.push(formatNumber(date.getMinutes()));
+  returnArr.push(formatNumber(date.getSeconds()));
+
+  for (var i in returnArr) {
+    format = format.replace(formateArr[i], returnArr[i]);
   }
-  return time;
+  return format;
 
 }
+//毫秒转时分
+const formatTimes = (number, format) => {
+
+  var formateArr = [ 'h', 'm', 's'];
+  var returnArr = [];
+
+  var date = new Date(number);
+  // returnArr.push(date.getFullYear());
+  // returnArr.push(formatNumber(date.getMonth() + 1));
+  // returnArr.push(formatNumber(date.getDate()));
+
+  returnArr.push(formatNumber(date.getHours()));
+  returnArr.push(formatNumber(date.getMinutes()));
+  returnArr.push(formatNumber(date.getSeconds()));
+
+  for (var i in returnArr) {
+    format = format.replace(formateArr[i], returnArr[i]);
+  }
+  return format;  
+
+}
+//时分转秒
+const timeToSec = function (time) {
+  var s = '';
+
+  // var hour = time.split(':')[0];
+  var min = time.split(':')[0];
+  var sec = time.split(':')[1];
+
+  // s = Number(hour * 3600) + Number(min * 60) + Number(sec);
+  s = Number(min * 60) + Number(sec);
+
+  return s;
+};
 
 const formatNumber = n => {
   n = n.toString()
@@ -112,6 +134,14 @@ function hideModal(that) {
   }.bind(that), 200)
 }
 
+//数组相加
+function arraySum(DurationArray) {
+  var result = 0;
+  for (var i = 0; i < DurationArray.length; i++) {
+    result += DurationArray[i];
+  }
+  return result;
+};
 
 
 module.exports = {
@@ -119,5 +149,7 @@ module.exports = {
   formatTimes: formatTimes,
   ohShitfadeOut:ohShitfadeOut,
   showModal: showModal,
-  hideModal: hideModal
+  hideModal: hideModal,
+  arraySum: arraySum,
+  timeToSec: timeToSec
 }
