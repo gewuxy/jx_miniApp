@@ -1,12 +1,14 @@
 <!--pages/record/index.wxml-->
-<view class="container record-page ">
+<view class="container record-page "  catchtouchmove='true'>
   <!-- 观看会议  -->
   <block wx:if="{{loadPageType == ''}}">
 
       <view class="playerMeeting">
         <view class="playerMeetingBackground">
+          <view class="full-stop-click" wx:if="{{recordButtonState}}" bindtouchstart='stopChange' ></view>
           <!-- 轮播图 -->
-          <swiper class="swiper"interval="3000" duration="500"  bindchange='changeSwiper' current="{{changeCurrentIndex}} "   >
+          <swiper class="swiper"interval="3000" duration="500" bindanimationfinish='bindanimationfinishButton' bindchange='changeSwiper' current="{{changeCurrentIndex}} "   >
+            
             <block wx:for="{{meetingDetailsList}}" wx:key="{{index}}">
               <swiper-item data-id="{{item.id}}" data-key="{{index}}" data-url="{{item.imgUrl}}" bindtap='showImage' >
                 <block wx:if="{{item.videoUrl}}">
@@ -29,12 +31,17 @@
       <view class="record-meeting-timeArea">
         <view class="record-meeting-timeArea-tips">
           <view class="record-meeting-timeArea-tips-item" wx:if="{{isShowTips}}">
-            结束录音可切换下一张录制
+            {{ShowTipsText}}
             <view class="icon"></view>
           </view>
         </view>
         <view class="record-meeting-timeArea-times">
-          <text class="times">{{currentRecordTimes}}</text>
+            <block wx:if="{{currentAudioDuration}}">
+              <text class="times" >{{currentAudioDuration}}</text>
+            </block>
+            <block wx:else>
+              <text class="times" >{{currentRecordTimes}}</text>
+            </block>
         </view>
       </view>
       <view class="record-meeting-functionBox flexBox">
@@ -68,8 +75,6 @@
           <view class="record-meeting-recordState-default" bindtap='startRecord' wx:if="{{recordState == 'default'}}">
             <view class="icon"></view>
             <view class="text">录制</view>
-            <view class="start-button-bg"  ></view>
-            <view class="start-button-bg-animation"></view>
           </view>
           <view class="record-meeting-recordState-start" bindtap='EndRecord' wx:if="{{recordState == 'start'}}">
             <view class="icon"></view>
@@ -80,8 +85,10 @@
           <view class="record-meeting-recordState-default" bindtap='startRecord' wx:if="{{recordState == 'continue'}}">
             <view class="icon"></view>
             <view class="text">续录</view>
-            <view class="start-button-bg"  ></view>
-            <view class="start-button-bg-animation"></view>
+          </view>
+          <view class="record-meeting-recordState-default disabledButton"  wx:if="{{recordState == 'end'}}">
+            <view class="icon"></view>
+            <view class="text">录制</view>
           </view>
         </view>
         <!--重录按钮  -->
@@ -101,13 +108,13 @@
 
         </view>
       </view>
-      <view class="record-meeting-player-progressBox">
+      <view class="record-meeting-player-progressBox" wx:if="{{showPlayer}}">
 
-        <view class="record-meeting-player-progressBox-scrubber">
+        <view class="record-meeting-player-progressBox-scrubber" >
           <view class="progress" style="width:{{finishProgress}}%"><text class="progressDot"></text></view>
           <div class="loaded" ></div> 
         </view>
-        <view class="times">{{currentRecordTimes}}</view>
+        <text class="times" >{{showPlayTime}}</text>
       </view>
       <view class="record-meeting-shareButton"><view class="icon"></view></view>
       <view class="record-meeting-endMeetingBUtton"></view>
