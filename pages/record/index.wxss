@@ -6,7 +6,7 @@ page { background-color:#3B3E46; border-top:1rpx solid #4C4F56; height:clac(100v
 
 .record-page .playerMeeting { position: relative;}
 .record-page .playerMeeting .swiper { height:562rpx;  text-align: center;}
-.record-page .playerMeeting .swiper .img { width:100%; max-height: 100%;  height:100%; background-repeat: no-repeat; background-size:contain; background-position:top center;}
+.record-page .playerMeeting .swiper .img { width:100%; max-height: 100%;  height:100%; background-repeat: no-repeat; background-size:contain; background-position:center center;}
 .record-page .playerMeeting .swiper .video{ width:95%; height:100%; }
 
 .flexBox{ display: flex; align-items: flex-end; justify-content: center;}
@@ -38,7 +38,15 @@ page { background-color:#3B3E46; border-top:1rpx solid #4C4F56; height:clac(100v
 
 .record-page .full-stop-click { width:100%; height:100%; position: absolute; top:0; left:0; z-index: 10; background-color:transparent;}
 
-.record-meeting-shareButton { position: absolute; bottom:40rpx; left:0; background-color:#262931; border-radius: 0 28rpx 28rpx 0; padding:0rpx 10rpx 0rpx 30rpx;}
-.record-meeting-shareButton .icon {display: inline-block; background:url(https://file.medyaya.cn/wx_mini/images/button-record-shareIcon.png) no-repeat center center; width:56rpx; height:56rpx; background-size:56rpx;}
+.record-meeting-shareButton { position: absolute; bottom:50rpx; left:0; background-color:#262931; border-radius: 0 28rpx 28rpx 0; padding:0rpx 10rpx 0rpx 30rpx; height:48rpx;}
+.record-meeting-shareButton .icon {display: inline-block; background:url(https://file.medyaya.cn/wx_mini/images/button-record-shareIcon.png) no-repeat center center; width:48rpx; height:48rpx; background-size:56rpx;}
 
 .disabledButton { opacity: .3; }
+
+
+.record-meeting-endMeetingBUtton { position: absolute; bottom:40rpx; right:-10rpx; height:48rpx; }
+.record-meeting-endMeetingBUtton input{ }
+.endButtonSlider { background-color:#2B2F38; border: 2rpx solid #282A30; height:48rpx; width:158rpx; border-radius: 48rpx; position: relative; top:-32rpx; }
+.endButtonSlider .text { position: absolute; top:50%; margin-top:-12rpx; left:50%; margin-left:-40rpx; font-size:20rpx; }
+.endButtonSlider .finish { width:100%; background:#ACE400; height:100%; position: absolute; left:0; top:0; border-radius: 48rpx; }
+.endButtonSlider .buttonIcon { position: absolute; display: inline-block; width:56rpx; height:56rpx; top:-7rpx; background:url(https://file.medyaya.cn/wx_mini/images/endButton-icon.png) no-repeat center center ; border-radius: 50%;  z-index: 2; background-size: 48rpx; }

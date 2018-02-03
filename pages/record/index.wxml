@@ -35,7 +35,7 @@
             <view class="icon"></view>
           </view>
         </view>
-        <view class="record-meeting-timeArea-times">
+        <view class="record-meeting-timeArea-times" >
             <block wx:if="{{currentAudioDuration}}">
               <text class="times" >{{currentAudioDuration}}</text>
             </block>
@@ -94,7 +94,7 @@
         <!--重录按钮  -->
         <view class="record-meeting-resetState flexRow">
           <block wx:if="{{startButtonState}}">
-            <view class="record-meeting-resetState-reset ">
+            <view class="record-meeting-resetState-reset " bindtap='resetRecord'>
               <view class="icon"></view>
               <view class="text">重录</view>
             </view>
@@ -117,7 +117,9 @@
         <text class="times" >{{showPlayTime}}</text>
       </view>
       <view class="record-meeting-shareButton"><view class="icon"></view></view>
-      <view class="record-meeting-endMeetingBUtton"></view>
+      <view class="record-meeting-endMeetingBUtton" wx:if="{{showEndButton}}">
+        <slider class="endButtonSlider" bindchanging="sliderChange" bindchange="sliderChange" value="{{endButtonFinishValue}}" block-size='28' selected-color="#ACE400" backgroundColor="#2B2F38" block-color="#36394B" ><view class="text">结束按钮</view><view class="finish" style="width:{{endButtonFinishValue}}%"></view><view class="buttonIcon" style="left:-28rpx" wx:if="{{endButtonLeft == 'start'}}"></view><view class="buttonIcon" style="left:128rpx" wx:if="{{endButtonLeft == 'end'}}"></view></slider>
+      </view>
 
 
 

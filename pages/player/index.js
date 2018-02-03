@@ -154,7 +154,10 @@ Page({
 
 
         } else {
-          wx.showLoading({ title: '加载中' });
+          wx.showLoading({ 
+            title: '加载中',
+            mask: true 
+          });
           //加载会议数据
           wx.request({
             url: app.host + '/api/meeting/view',
@@ -201,7 +204,10 @@ Page({
         }
 
       } else {
-        wx.showLoading({ title: '加载中' });
+        wx.showLoading({ 
+          title: '加载中',
+          mask: true 
+        });
         //第一次访问
         app.getUserInfo().then(function (res) {
           console.log('访问前', res);

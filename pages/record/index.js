@@ -23,10 +23,10 @@ Page({
     loadPageType:"",
     meetingDetailsList:[],
     meetingPages:"",
-    ShowTipsText:"每张最长10分钟",
+    ShowTipsText:"",
     changeCurrentIndex:0,
     isAutoplay: false,
-    isShowTips:true,
+    isShowTips:false,
     recordState:'default',
     currentRecordArray: [],
     currentRecordTimes: '00:00',
@@ -46,7 +46,11 @@ Page({
     isPauseState:false,    //是否暂停
     playedTime:0,          //已播放时间
     showPlayer:false,       //是否显示播放器
-    showPlayTime: '00:00'
+    showPlayTime: '00:00',
+    endButtonFinishValue:0,
+    endButtonLeft: 'start',
+    defaultSort:0,
+    showEndButton:false
   },
 
   /**
@@ -73,6 +77,10 @@ Page({
    */
   onShow: function () {
     var that = this;
+    wx.showLoading({
+      title: '加载中',
+      mask:true
+    })
     wx.request({
       url: app.host + '/api/meeting/view',
       method: 'GET',
@@ -87,18 +95,24 @@ Page({
         var audioList = [];
         var videoList = [];
         var duration = [];
+        var currentTimes = 0
         console.log('会议数据', res);
         console.log('会议密码', res.data.data.audioCourse.password);
         console.log('会议详情数据', res.data.data.audioCourse.details);
 
         wx.setNavigationBarTitle({ title: res.data.data.audioCourse.title });
+        //如果第一页有音频时间
+        if (res.data.data.audioCourse.details[that.data.changeCurrentIndex].duration) {
+          console.log('没音频');
+          currentTimes = res.data.data.audioCourse.details[that.data.changeCurrentIndex].duration
+        }
 
         that.setData({
           meetingavatar: res.data.data.audioCourse.details[0].imgUrl,
           meetingDetailsList: res.data.data.audioCourse.details,
           meetingPassword: res.data.data.audioCourse.password,
           meetingPages: res.data.data.audioCourse.details.length,
-          currentAudioDuration: util.formatTime(res.data.data.audioCourse.details[that.data.changeCurrentIndex].duration,'m:s')
+          currentAudioDuration: util.formatTime(currentTimes,'m:s')
         });
         //修改标题为页码
         wx.setNavigationBarTitle({ 
@@ -190,6 +204,8 @@ Page({
     var sort = that.data.meetingDetailsList[that.data.changeCurrentIndex].sort
     var detailId = that.data.meetingDetailsList[that.data.changeCurrentIndex].id
 
+    
+
     console.log(that.data.meetingDetailsList[that.data.changeCurrentIndex].duration);
 
     var current = "meetingDetailsList["+that.data.changeCurrentIndex+"].duration"
@@ -204,7 +220,7 @@ Page({
     })
 
     console.log(that.data.playVideo);
-    
+    console.log('e',e.detail.current);
     
 
     
@@ -218,6 +234,20 @@ Page({
     wx.setNavigationBarTitle({
       title: (that.data.changeCurrentIndex + 1) + ' / ' + that.data.meetingPages
     });
+
+    //判断已经是最后一页
+    if (that.data.meetingDetailsList[that.data.changeCurrentIndex].sort == that.data.meetingDetailsList.length) {
+      that.setData({
+        showEndButton:true
+      })
+    } else {
+      that.setData({
+        showEndButton: false
+      })
+    }
+
+
+
     //如果已有录音，修改播放时间
     if (that.data.meetingDetailsList[that.data.changeCurrentIndex].audioUrl) {
       innerAudioContext.src = that.data.meetingDetailsList[that.data.changeCurrentIndex].audioUrl
@@ -229,7 +259,9 @@ Page({
         playedTime: 0,      //播放完成后归零
         showPlayTime: util.formatTime(that.data.playedTime, 'm:s'),
         isPauseState: false,
-        isPlayRecord: false
+        isPlayRecord: false,
+        ShowTipsText: "",
+        isShowTips: false
       })
     } else {
       that.setData({
@@ -240,7 +272,11 @@ Page({
         playedTime: 0,      //播放完成后归零
         showPlayTime: util.formatTime(that.data.playedTime, 'm:s'),
         isPauseState: false,
-        isPlayRecord: false
+        isPlayRecord: false,
+        currentRecordTimes: util.formatTime(that.data.recordTime, 'm:s'),   //如果没有清空显示
+        recordTime: 0,   //如果没有清空显示
+        ShowTipsText: "每张最长10分钟",
+        isShowTips:true
       })
     }
     //暂停定时器
@@ -255,16 +291,27 @@ Page({
     if (that.data.meetingDetailsList[sort-1].duration) {
       console.log('已有音频')
     } else {
-      that.uploadAudio(tempFilePaths, audioUploadIndex, length, detailId, sort);
+      //如果没有任何录音
+      console.log('length',length);
+      if (length > 0){
+        console.log('有录音' )
+        that.uploadAudio(tempFilePaths, audioUploadIndex, length, detailId, sort, sort-1);
+      } else {
+        console.log('没任何录音，正常切换');
+      }
+      
     }
+
     
 
+  
 
   },
   //进去录音
   startRecord: function () {
     console.log('进来了');
     var that = this;
+
     that.setData({
       recordState:'start',
       recordButtonState:true    //启动录音状态
@@ -272,16 +319,25 @@ Page({
     recorderManager.start(recordingOptions);
     recorderManager.onStart((res) => {
       console.log('进入录音',res);
+
       recordTimeInterval = setInterval(function () {
         var recordTime = that.data.recordTime += 1
         that.setData({
           currentRecordTimes: util.formatTime(that.data.recordTime, 'm:s'),
           recordTime: recordTime
         })
+        if (that.data.recordTime > 480) {
+          that.setData({
+            ShowTipsText: "剩余录制时间不足2分钟，注意控制时间哦",
+            isShowTips: true
+          })
+        }
+        if (that.data.recordTime > 599) {
+          recorderManager.stop();
+        } 
       }, 1000)
-    })
 
-    
+    })
 
     // var animation = wx.createAnimation({
     //   duration: 1000,
@@ -298,7 +354,9 @@ Page({
     var currentRecordArray =[];
     
     that.setData({
-      recordState: 'default',
+      recordState: 'continue',
+      isShowTips:true,
+      ShowTipsText:'录制已暂停',
       startButtonState:true,
       recordButtonState:false
     })
@@ -309,6 +367,9 @@ Page({
       // const { tempFilePath } = res
       that.data.currentRecordArray[that.data.currentIndex] = res.tempFilePath;
       that.data.currentRecordDurationArray[that.data.currentIndex] = res.duration;
+      console.log('暂停之后', res.tempFilePath);
+      console.log('暂停之后', that.data.currentIndex);
+      console.log('暂停之后', res.duration);
       that.setData({
         currentRecordArray: that.data.currentRecordArray,
         currentRecordTimes: util.formatTimes(res.duration, 'm:s')
@@ -319,13 +380,13 @@ Page({
       console.log('录音毫秒数组', that.data.currentRecordDurationArray);
       if (that.data.currentRecordDurationArray.length > 1) {
         that.setData({
-          currentRecordTimes: util.formatTimes(util.arraySum(that.data.currentRecordDurationArray), 'm:s'),
-          recordTime: util.timeToSec(util.formatTimes(util.arraySum(that.data.currentRecordDurationArray), 'm:s'))
+          recordTime: util.timeToSec(util.formatTimes(util.arraySum(that.data.currentRecordDurationArray), 'm:s')),
+          currentRecordTimes: util.formatTimes(util.arraySum(that.data.currentRecordDurationArray), 'm:s')
+          
         })
         console.log('合体毫秒数组', util.arraySum(that.data.currentRecordDurationArray));
         console.log('格式化时间', util.formatTimes(util.arraySum(that.data.currentRecordDurationArray), 'm:s'));
         console.log('时分转为秒', util.timeToSec(util.formatTimes(util.arraySum(that.data.currentRecordDurationArray), 'm:s')));
-
       }
 
       
@@ -346,11 +407,6 @@ Page({
     var toPlay = 0;
     var index = 0;
 
-    //打开进度条
-    that.setData({
-      showPlayer: true
-    })
-
     allTime = that.data.finishProgress
 
     //如果是暂停状态
@@ -361,19 +417,34 @@ Page({
       if (that.data.meetingDetailsList[that.data.changeCurrentIndex].duration) {
         playTime = 100 / that.data.meetingDetailsList[that.data.changeCurrentIndex].duration
         console.log('点击开始进度条', that.data.finishProgress);
-      } else {
-
-      }
+        //打开进度条
+        that.setData({
+          showPlayer: true
+        })
+      } 
 
     } else {
-
+      console.log('已有录音', that.data.meetingDetailsList[that.data.changeCurrentIndex].audioUrl)
       //如果有录音
-      if (that.data.meetingDetailsList[that.data.changeCurrentIndex].duration) {
-        innerAudioContext.src = that.data.meetingDetailsList[that.data.changeCurrentIndex].audioUrl;
-        playTime = 100 / that.data.meetingDetailsList[that.data.changeCurrentIndex].duration
+      if (that.data.meetingDetailsList[that.data.changeCurrentIndex].audioUrl) {
+        //如果音频是有问题
+        if (that.data.meetingDetailsList[that.data.changeCurrentIndex].duration){
+          innerAudioContext.src = that.data.meetingDetailsList[that.data.changeCurrentIndex].audioUrl;
+          playTime = 100 / that.data.meetingDetailsList[that.data.changeCurrentIndex].duration
+          //打开进度条
+          that.setData({
+            showPlayer: true
+          })
+        } else {
+          console.log('当前音频有问题，请重新录制', that.data.changeCurrentIndex);
+          wx.showToast({
+            title: '当前音频有问题，请重新录制',
+            icon: 'none'
+          })
+          return false;
+        }
       } else {
         innerAudioContext.src = that.data.currentRecordArray[index];
-
       }
 
     }
@@ -407,13 +478,10 @@ Page({
       }
     })
     innerAudioContext.onError((res) => {
-      
-      console.log('开始播放', that.data.meetingDetailsList[that.data.changeCurrentIndex].duration);
-      wx.showToast({
-        title: '当前音频有问题，请重录',
-        icon:'none'
-      })
+      console.log('播放错误');
       innerAudioContext.stop;
+      //暂停定时器
+      clearInterval(playTimeInterval)
     })
       
     innerAudioContext.onCanplay((res) => {
@@ -430,7 +498,7 @@ Page({
           finishProgress: 0,    //播放完成后归零
           playedTime: 0,      //播放完成后归零
           showPlayTime: util.formatTime(that.data.playedTime, 'm:s'),
-          showPlayer: false      //播放完成后隐藏进度条
+          showPlayer: false ,     //播放完成后隐藏进度条
         })
 
         innerAudioContext.stop();
@@ -465,12 +533,6 @@ Page({
 
       }
       
-
-      // index += 1;
-
-
-
-
 
 
     })
@@ -514,9 +576,20 @@ Page({
       title: (nextNumber + 1) + ' / ' + that.data.meetingPages
     });
   },
-  uploadAudio(filePaths, i, length, detailId, pageNum) {
+  //上传录音递归函数
+  uploadAudio(filePaths, i, length, detailId, pageNum, defaultPage) {
     var that = this;
-    console.log('filePaths',filePaths);
+
+    wx.showLoading({
+      title: '上传中',
+    })
+    if( length == 1) {
+      that.setData({
+        hasNext:'false'
+      })
+    }
+    console.log('filePathIndex', filePaths[i]);
+    console.log('filePath', filePaths);
     console.log('i', i);
     console.log('length', length);
     console.log('detailId', detailId);
@@ -533,27 +606,80 @@ Page({
         detailId: detailId,
         pageNum: pageNum,
         audioNum: i,
-        hasNext: 'false'
+        hasNext: that.data.hasNext
       },
       header: {
         token: wx.getStorageSync('token')
       },
       success: (resp) => {
-        console.log('服务器返回',resp)
-        i++;
-        if (i == length) {
-          console.log('已经完成',resp);
-          //完成后去到生成会议函数
-          that.setData({
-            hasNext:'false'
-          })
-          console.log('已经完成', that.data.hasNext);
-        } else {
-          that.setData({ hasNext: 'false'});
+        console.log('服务器返回', resp);
+        //如果不等于1
+        if (length != 1) {
+          i++;
+          if ((i+1) > length) {
+            var data = JSON.parse(resp.data)
+            console.log('c完成了', resp);
+            //到最后一个到生成会议函数
+            console.log('完成后音频地址', data.data.audioUrl)
+            console.log('完成后音频时长', data.data.duration)
 
-          //递归 将图片传到对应ID里
-          that.uploadAudio(filePaths, i, length, detailId, pageNum);
+            //立即修改页面data数据，已经服务器返回成功
+            var currentAudioUrl = "meetingDetailsList[" + defaultPage + "].audioUrl"
+            var currentDuration = "meetingDetailsList[" + defaultPage + "].duration"
+            console.log('change', currentAudioUrl, '-', that.data.currentAudioUrl)
+            console.log('change', currentDuration, '-', that.data.currentDuration)
+
+
+
+            that.setData({
+              [currentAudioUrl]: data.data.audioUrl,
+              [currentDuration]: data.data.duration,
+              currentRecordArray: [],     //清空原录音列表
+              currentRecordTimes: util.formatTime(that.data.recordTime, 'm:s'),      //完成后清空录音时间，
+              recordTime:0,
+              currentIndex: 0,      //每次切换录音数为0
+              currentRecordDurationArray:[],   //清空时间列表
+              hasNext: 'true'       //每次完成后都需要还原
+            })
+            wx.hideLoading();
+
+
+          } else if ((i + 1) <= length) {
+            length == (i + 1) ? that.setData({ hasNext: 'false' }) : that.setData({ hasNext: 'true' });
+            //递归 将图片传到对应ID里
+            that.uploadAudio(filePaths, i, length, detailId, pageNum, defaultPage);
+            
+          } 
+        } else {
+          console.log('只有一个直接返回', resp)
+          var data = JSON.parse(resp.data)
+          console.log('完成了', resp);
+          //到最后一个到生成会议函数
+          console.log('完成后音频地址', data.data.audioUrl)
+          console.log('完成后音频时长', data.data.duration)
+
+          //立即修改页面data数据，已经服务器返回成功
+          var currentAudioUrl = "meetingDetailsList[" + defaultPage + "].audioUrl"
+          var currentDuration = "meetingDetailsList[" + defaultPage + "].duration"
+          console.log('change', currentAudioUrl, '-', that.data.currentAudioUrl)
+          console.log('change', currentDuration, '-', that.data.currentDuration)
+
+
+
+          that.setData({
+            [currentAudioUrl]: data.data.audioUrl,
+            [currentDuration]: data.data.duration,
+            currentRecordArray: [],     //清空原录音列表
+            currentRecordTimes: util.formatTime(that.data.recordTime, 'm:s'),      //完成后清空录音时间，
+            recordTime: 0,
+            currentIndex: 0,      //每次切换录音数为0
+            currentRecordDurationArray:[],   //清空时间列表
+            hasNext: 'true'       //每次完成后都需要还原
+          })
+          wx.hideLoading();
         }
+
+
       },
       fail: (res) => {
         console.log(res);
@@ -582,5 +708,72 @@ Page({
     // that.setData({
     //   ShowTipsText:'请录制完成当前页面后再切换'
     // })
+  },
+  //重新录制
+  resetRecord:function(){
+    var that = this;
+    wx.showModal({
+      content: '重录将覆盖原有录音',
+      success(res) {
+        console.log(wx.getStorageSync('token'));
+        if (res.confirm) {
+          console.log('重录咯', that.data.meetingDetailsList[that.data.changeCurrentIndex].id);
+          wx.request({
+            url: app.host + '/api/meeting/delete/audio',
+            data: {
+              detailId: that.data.meetingDetailsList[that.data.changeCurrentIndex].id
+            },
+            header: {
+              token: wx.getStorageSync('token')
+            },
+            success (res) {
+              //立即修改页面data数据，已经服务器返回成功
+              var currentAudioUrl = "meetingDetailsList[" + that.data.changeCurrentIndex + "].audioUrl"
+              var currentDuration = "meetingDetailsList[" + that.data.changeCurrentIndex + "].duration"
+              console.log()
+              that.setData({
+                [currentAudioUrl]:"",
+                [currentDuration]:0,
+                currentAudioDuration: 0,    //播放时间为0秒
+                recordState: 'default',     //按钮状态为默认
+                startButtonState: false,    //修改按钮状态
+                currentRecordArray: [],     //清空原录音列表
+                currentRecordTimes: util.formatTime(that.data.recordTime, 'm:s'),      //完成后清空录音时间，
+                recordTime: 0
+              })
+              console.log('重录结果',res);
+            }
+          })
+        }
+      }
+    })
+  },
+  //结束拖动按钮
+  sliderChange:function(e) {
+    var that = this;
+    console.log('滑动',e)
+    if(e.type == "changing") {
+      that.setData({
+        endButtonFinishValue:e.detail.value,
+        endButtonLeft: false
+      })
+      
+    }
+    if (e.type =="change") {
+      if (e.detail.value < 70) {
+        that.setData({
+          endButtonFinishValue: 0,
+          endButtonLeft: 'start'
+        })
+      } else {
+        that.setData({
+          endButtonFinishValue: 100,
+          endButtonLeft: 'end',
+          loadPageType:'pageEnd'
+        })
+        
+      }
+    }
   }
+  
 })
