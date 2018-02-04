@@ -1,7 +1,7 @@
 const app = getApp();
 var util = require('../../utils/util.js');
 const innerAudioContext = wx.createInnerAudioContext();   //实例音频
-
+var playVideo;
 
 // pages/player/index.js
 Page({
@@ -25,10 +25,15 @@ Page({
     meetingPassword:"",
     QRpage:"",
     audioList:[],
-    isPlayAudio:true,
-    isAutoplay:true,
+    videoList:[],
+    isPlayAudio:true,     //按钮状态
+    isAutoplay:true,      //是否自动切换
     ispreviewImage:false,
-    currentAudio:""
+    currentAudio:"",
+    isVideo:false,
+    isAudio:false,
+    playVideo:false,
+    videoBgcolor:""
   },
 
   /**
@@ -171,6 +176,8 @@ Page({
             success(res) {
               var previewList = [];
               var audioList = [];
+              var videoList = [];
+              var thisIsAutoPlay;
               console.log('会议数据', res);
               console.log('会议密码', res.data.data.audioCourse.password);
               console.log('会议详情数据', res.data.data.audioCourse.details);
@@ -187,17 +194,26 @@ Page({
               for (var i = 0; i < that.data.meetingDetailsList.length; i++) {
                 previewList.push(that.data.meetingDetailsList[i].imgUrl);
                 audioList.push(that.data.meetingDetailsList[i].audioUrl);
+                videoList.push(that.data.meetingDetailsList[i].videoUrl);
+              }
+              //如果第一个是视频，就不自动播放
+              if (that.data.meetingDetailsList[0].videoUrl){
+                thisIsAutoPlay = false;
+              } else {
+                thisIsAutoPlay = true;
               }
               that.setData({
                 previewImgs: previewList,
                 audioList: audioList,
+                videoList: videoList,
                 isPlayAudio: false,
-                isAutoplay: true
+                isAutoplay: thisIsAutoPlay      //自动切换
               });
               wx.hideLoading();
 
               //打印缓存数据
               console.log('音频', that.data.audioList);
+              console.log('视频', that.data.videoList)
               console.log('预览图', that.data.previewList);
             }
           });
@@ -228,6 +244,8 @@ Page({
               },
               success(res) {
                 var previewList = [];
+                var audioList = [];
+                var videoList = [];
                 console.log('会议数据', res);
                 console.log('会议密码', res.data.data.audioCourse.password);
                 that.setData({
@@ -237,9 +255,24 @@ Page({
                 //预览图片
                 for (var i = 0; i < that.data.meetingDetailsList.length; i++) {
                   previewList.push(that.data.meetingDetailsList[i].imgUrl);
+                  audioList.push(that.data.meetingDetailsList[i].audioUrl);
+                  videoList.push(that.data.meetingDetailsList[i].videoUrl);
+                  
                 }
-                that.setData({ previewImgs: previewList });
+                that.setData({ 
+                  previewImgs: previewList,
+                  audioList: audioList,
+                  videoList: videoList,
+                  isPlayAudio: false,
+                  isAutoplay: true      //自动切换
+                });
                 wx.hideLoading();
+
+                //打印缓存数据
+                console.log('音频', that.data.audioList);
+                console.log('视频', that.data.videoList)
+                console.log('预览图', that.data.previewList);
+
               }
             });
 
@@ -477,53 +510,95 @@ Page({
     //切换暂停
     innerAudioContext.stop();
     e.detail.source = "";
+    that.setData({
+      playVideo: false,
+      videoBgcolor: ""
+    })
 
     console.log('切换ppt',e);
     console.log(that.data.audioList[e.detail.current]);
-    //切换播放录音
-    if (that.data.audioList[e.detail.current]) {
+    if (that.data.videoList[e.detail.current]) {
+      console.log('老大的滋味');
       that.setData({
-        isAutoplay: false,
-        currentAudio: that.data.audioList[e.detail.current]
+        isAutoplay: false
       });
-      innerAudioContext.src = that.data.currentAudio;
-      innerAudioContext.play();
     } else {
-      that.setData({ 
-        isAutoplay: true
-      })
+      //切换播放录音
+      if (that.data.audioList[e.detail.current]) {
+        that.setData({
+          isAutoplay: false,
+          currentAudio: that.data.audioList[e.detail.current]
+        });
+        innerAudioContext.src = that.data.currentAudio;
+        innerAudioContext.play();
+      } else {
+        that.setData({
+          isAutoplay: true
+        })
+      }
+      //监控播放器
+      innerAudioContext.onPlay(() => {
+        console.log('开始播放');
+        that.setData({ isPlayAudio: false });
+      });
+      innerAudioContext.onEnded(() => {
+        console.log('结束播放');
+        that.setData({ isAutoplay: true });
+      });
     }
-    //监控播放器
-    innerAudioContext.onPlay(() => {
-      console.log('开始播放');
-      that.setData({ isPlayAudio: false });
-    });
-    innerAudioContext.onEnded(() => {
-      console.log('结束播放');
-      that.setData({  isAutoplay: true });
-    });
+
+
     //修改页码
     that.setData({
       changeCurrentIndex: e.detail.current
     });
 
   },
+  //开始暂停按钮
   playState:function() {
     var that = this;
+    
+    //换图标
     if (that.data.isPlayAudio) {
       //图标播放状态，音频没播
       innerAudioContext.play();
     } else {
       //图标暂停状态,音频在播
       innerAudioContext.pause();
+
     }
-    isPlayAudio: false,
-      
-    //换图标
     that.setData({
       isPlayAudio: !that.data.isPlayAudio,
       isAutoplay: !that.data.isAutoplay
     })
-  }
+   
+      
+
+  },
+  playViedoFunction: function (e) {
+    var that = this;
+    console.log('播放视频',e);
+    playVideo = wx.createVideoContext(e.currentTarget.dataset.videoid);
+    console.log('playVideo', playVideo)
+    that.setData({
+      playVideo: true,
+      videoBgcolor: '#000',
+      enableProgress:false
+    })
+    playVideo.play();
+  },
+  //视频结束后切换页面
+  videoEndChange: function (e) {
+    var that = this;
+    console.log(e.currentTarget.dataset.currentindex);
+    console.log('结束后视频ID', e.currentTarget.id)
+    var nextNumber = e.currentTarget.dataset.currentindex + 1
+
+    
+    that.setData({
+      changeCurrentIndex: nextNumber,
+      videoBgcolor:""
+    });
+  },
   
 })

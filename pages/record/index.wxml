@@ -1,5 +1,33 @@
 <!--pages/record/index.wxml-->
 <view class="container record-page "  catchtouchmove='true'>
+
+    <!--自定义弹窗  -->
+  <view class="commodity-screen" bindtap="hideModal" wx:if="{{showModalStatus}}" catchtouchmove='true'></view>
+  <view animation="{{animationData}}" class="commodity-attr-box" wx:if="{{showModalStatus}}">
+    <!--分享弹窗  -->
+    <view class="commodity-head">
+      <scroll-view scroll-x="true">  
+        <view class="commodity-box" scroll-x="true">
+          <view class="commodity-box-item">
+            <button class="resetButton" open-type="share" size='mini'></button>
+            <image src="https://file.medyaya.cn/wx_mini/images/commodity-image-wechat.png"></image>
+            <view>微信好友</view>
+          </view>
+          <view class="commodity-box-item" bindtap='toMettingQRcode'>
+            <image src="https://file.medyaya.cn/wx_mini/images/commodity-image-wechatCircle.png"></image>
+            <view>朋友圈</view>
+          </view>
+        </view>
+      </scroll-view>  
+    </view>
+    <view class="commodity-footer">
+      <view class="commodity-row" bindtap='hideModal'>取消</view>
+    </view>
+    
+    
+  </view>
+
+
   <!-- 观看会议  -->
   <block wx:if="{{loadPageType == ''}}">
 
@@ -13,10 +41,10 @@
               <swiper-item data-id="{{item.id}}" data-key="{{index}}" data-url="{{item.imgUrl}}" bindtap='showImage' >
                 <block wx:if="{{item.videoUrl}}">
                   <block wx:if="{{playVideo}}">
-                    <video  class="video" id="videoSwiper-{{index}}" controls="false" src='{{item.videoUrl}} 'autoplay="true"  bindended ="videoEndChange" data-currentIndex = "{{changeCurrentIndex}}"></video> 
+                    <video  class="video" id="videoSwiper-{{index}}" controls="false" src='{{item.videoUrl}}' bindended ="videoEndChange" data-currentIndex = "{{changeCurrentIndex}}"></video> 
                   </block>
                   <block wx:else>
-                     <view style="background-image:url({{item.imgUrl}})" class="img" bindtap='playViedoFunction' data-videoId = "videoSwiper-{{index}}" ></view>
+                     <view style="background-image:url({{item.imgUrl}})" class="img viedoImg" bindtap='playViedoFunction' data-videoId = "videoSwiper-{{index}}" ><view class="icon"></view></view>
                   </block>
                 </block>
                 <block wx:else>
@@ -38,6 +66,9 @@
         <view class="record-meeting-timeArea-times" >
             <block wx:if="{{currentAudioDuration}}">
               <text class="times" >{{currentAudioDuration}}</text>
+            </block>
+            <block wx:elif="{{isViedo}}">
+              <text class="times" ></text>
             </block>
             <block wx:else>
               <text class="times" >{{currentRecordTimes}}</text>
@@ -116,12 +147,37 @@
         </view>
         <text class="times" >{{showPlayTime}}</text>
       </view>
-      <view class="record-meeting-shareButton"><view class="icon"></view></view>
+      <view class="record-meeting-shareButton" bindtap='showModal'><view class="icon"></view></view>
       <view class="record-meeting-endMeetingBUtton" wx:if="{{showEndButton}}">
         <slider class="endButtonSlider" bindchanging="sliderChange" bindchange="sliderChange" value="{{endButtonFinishValue}}" block-size='28' selected-color="#ACE400" backgroundColor="#2B2F38" block-color="#36394B" ><view class="text">结束按钮</view><view class="finish" style="width:{{endButtonFinishValue}}%"></view><view class="buttonIcon" style="left:-28rpx" wx:if="{{endButtonLeft == 'start'}}"></view><view class="buttonIcon" style="left:128rpx" wx:if="{{endButtonLeft == 'end'}}"></view></slider>
       </view>
 
 
 
+  </block>
+
+  <!--结束后页面  -->
+  <block wx:if="{{loadPageType == 'endPage'}}">
+    <view class="record-meeting-endPage-img">
+      <image src='https://file.medyaya.cn/wx_mini/images/record-last-img.png'></image>
+    </view>
+    <view class="record-meeting-endPage-info">
+      <view class="title color-gary">讲本总时长</view>
+      <view class="times">{{endPageTimes}}</view>
+    </view>
+    <view class="record-meeting-endPage-button flexBox">
+      <view class="record-meeting-endPage-preview flexRow" bindtap='toMeetingPreview'>
+        <view class="icon"></view>
+        <view class="text">预览</view>
+      </view>
+      <!-- <view class="record-meeting-endPage-pageStyle flexRow">
+        <view class="icon"></view>
+        <view class="text">选择主题</view>
+      </view>
+      <view class="record-meeting-endPage-muisc flexRow">
+        <view class="icon"></view>
+        <view class="text">背景音乐</view>
+      </view> -->
+    </view>
   </block>
 </view>

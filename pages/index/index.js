@@ -206,6 +206,20 @@ Page({
         });
       },
       complete: function (res) {
+        console.log(res);
+        that.setData({
+          meetingList: res.data.data.list
+        });
+        // 存储会议到本地
+        wx.setStorage({
+          key: 'indexShowMeeting',
+          data: {
+            meetingList: res.data.data.list
+          },
+          success: function (res) {
+            console.log("下拉后获取最新数据");
+          }
+        });
         wx.stopPullDownRefresh();
       }
     });
@@ -451,7 +465,7 @@ Page({
   toRecordPage:function() {
     var that = this;
     wx.navigateTo({
-      url: `../../pages/record/index?courseId=17166`
+      url: `../../pages/record/index?courseId=16898`
     });
   }
 })

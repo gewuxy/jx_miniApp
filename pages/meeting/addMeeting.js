@@ -13,7 +13,8 @@ Page({
     meetingTitle:"",
     popErrorMsg:"",
     courseId:"",
-    isEditMeeting:false
+    isEditMeeting:false,
+    submitButtonType:""     //提交后的信息
   },
 
   /**
@@ -175,9 +176,16 @@ Page({
       success(res){
         console.log(res);
         wx.hideLoading();
-        wx.reLaunch({
-          url: '../../pages/index/index?isEditComplete=true',
-        })
+        if (that.data.submitButtonType == 'save') {
+          wx.reLaunch({
+            url: '../../pages/index/index?isEditComplete=true',
+          })
+        } else if (that.data.submitButtonType == 'record') {
+          wx.reLaunch({
+            url: '../../pages/record/index?courseId='+courseId,
+          })
+        }
+        
       }
       
     })
@@ -191,6 +199,7 @@ Page({
     var tempFilePaths = that.data.imgs  //上传的图片
     console.log(that.data.imgs);
     console.log('token缓存',wx.getStorageSync('token'));
+    console.log('提交后得到的信息',e);
 
     if (e.detail.value.meetingTitle != "") {
       //设置标题
@@ -206,9 +215,14 @@ Page({
       that.createMeeting(that.data.courseId);
       console.log('进来编辑');
     } else {
+      //判断是那个按钮进入上传
+      that.setData({
+        submitButtonType: e.detail.target.dataset.buttontype
+      })
+      
       that.uploadDIY(tempFilePaths, i, length);
     }
     
     
-  }
+  },
 })

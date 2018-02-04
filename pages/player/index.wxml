@@ -1,5 +1,5 @@
 <!--pages/player/index.wxml-->
-<view class="container player-page ">
+<view class="container player-page " catchtouchmove='true'>
   <!--提示语  -->
   <block wx:if="{{loadPageType == 'showQRcode'}}">
     <view class="ad_popError" wx:if="{{popErrorMsg}}">{{popErrorMsg}}</view>
@@ -51,13 +51,27 @@
   <block wx:if="{{loadPageType == ''}}">
 
       <view class="playerMeeting">
-        <view class="playerMeetingBackground">
+        <view class="playerMeetingBackground" style="background-color:{{videoBgcolor}};">
           <view class="pageNunber"><text class="pageNumberBer"><text>{{changeCurrentIndex+1}}</text> <text class="muted"></text> <text >{{meetingDetailsList.length}}</text></text></view>
           <!-- 轮播图 -->
           <swiper class="swiper" autoplay="{{isAutoplay}}" interval="3000" duration="500"  bindchange='changeSwiper' current="{{changeCurrentIndex}} ">
             <block wx:for="{{meetingDetailsList}}" wx:key="{{index}}">
-              <swiper-item data-id="{{item.id}}" data-key="{{index}}" data-url="{{item.imgUrl}}" bindtap='showImage' >
-                <view style="background-image:url({{item.imgUrl}})" class="img" ></view>
+              <swiper-item data-id="{{item.id}}" data-key="{{index}}" data-url="{{item.imgUrl}}" >
+
+                <block wx:if="{{item.videoUrl}}">
+                  <block wx:if="{{playVideo}}">
+                      <video  class="video" id="videoSwiper-{{index}}" controls="false" src='{{item.videoUrl}}' bindended ="videoEndChange" data-currentIndex = "{{changeCurrentIndex}}" enable-progress-gesture="{{enableProgress}}" catchtouchmove="true"></video> 
+                  </block>
+                  <block wx:else>
+                     <view style="background-image:url({{item.imgUrl}})" class="img viedoImg" bindtap='playViedoFunction' data-videoId = "videoSwiper-{{index}}" ><view class="icon"></view></view>
+                  </block>
+                </block>
+                <block wx:else>
+                  <view style="background-image:url({{item.imgUrl}})" class="img" data-id="{{item.id}}" data-key="{{index}}" data-url="{{item.imgUrl}}" bindtap='showImage'></view>
+                </block>
+
+
+                
                 <!-- <image src="{{item.imgUrl}}" class="img" /> -->
               </swiper-item>
             </block>

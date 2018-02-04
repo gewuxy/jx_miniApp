@@ -14,7 +14,8 @@
     </view>
   </view>
   <view class="fiexd-button">
-    <button formType="submit" class="upload-img-btn">保存讲本</button>
+    <button formType="submit" data-buttonType="save" class="upload-img-btn">保存讲本</button>
+    <button formType="submit" data-buttonType="record" class="input-button">继续录音</button>
   </view>
   </form>
 </view>
