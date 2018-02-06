@@ -162,6 +162,7 @@ Page({
   },
   createMeeting: function (courseId){
     var that = this;
+    
     wx.request({
       url: app.host + '/api/meeting/mini/update',
       method:'POST',
@@ -181,7 +182,7 @@ Page({
             url: '../../pages/index/index?isEditComplete=true',
           })
         } else if (that.data.submitButtonType == 'record') {
-          wx.reLaunch({
+          wx.navigateTo({
             url: '../../pages/record/index?courseId='+courseId,
           })
         }
@@ -200,6 +201,10 @@ Page({
     console.log(that.data.imgs);
     console.log('token缓存',wx.getStorageSync('token'));
     console.log('提交后得到的信息',e);
+    //判断是那个按钮进入上传
+    that.setData({
+      submitButtonType: e.detail.target.dataset.buttontype
+    })
 
     if (e.detail.value.meetingTitle != "") {
       //设置标题
@@ -215,10 +220,7 @@ Page({
       that.createMeeting(that.data.courseId);
       console.log('进来编辑');
     } else {
-      //判断是那个按钮进入上传
-      that.setData({
-        submitButtonType: e.detail.target.dataset.buttontype
-      })
+
       
       that.uploadDIY(tempFilePaths, i, length);
     }

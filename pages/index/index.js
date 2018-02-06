@@ -25,15 +25,28 @@ Page({
     courseId:"",
     isEditComplete:false,
     meetingPassword:"",
-    sharePages:""
+    sharePages:"",
+    pageType:"",
+    activityId:0,
+    spreakingAnimation:""
   },
   // 监听页面加载，只执行一次
   onLoad: function (options) {
+    var that = this;
+    console.log('在页面获取',options);
     //刷新显示列表
     if (options.isEditComplete) {
-      this.setData({
+      that.setData({
         isEditComplete: options.isEditComplete
       });
+    }
+    if (options.type){
+      that.setData({
+        pageType: options.type,
+        activityId: options.activityId
+      })
+      console.log(that.data.pageType);
+      console.log(that.data.activityId);
     }
   },
   /**
@@ -452,20 +465,47 @@ Page({
       courseId: e.currentTarget.dataset.courseid,
       meetingPassword: e.currentTarget.dataset.meetingpassword
     });
-    if (e.currentTarget.dataset.meetingpassword) {
-      wx.navigateTo({
-        url: `../../pages/player/index?courseId=${that.data.courseId}&loadPageType=meetingPassword`
-      });
-    } else {
-      wx.navigateTo({
-        url: `../../pages/player/index?courseId=${that.data.courseId}`
-      });
-    }
+    wx.navigateTo({
+      url: `../../pages/record/index?courseId=${that.data.courseId}`
+    });
   },
   toRecordPage:function() {
     var that = this;
     wx.navigateTo({
       url: `../../pages/record/index?courseId=16898`
     });
+  },
+  gotoQRcode:function(){
+    // 允许从相机和相册扫码
+    wx.scanCode({
+      success: (res) => {
+        console.log(res)
+        wx.navigateTo({
+          url: '/'+res.path,
+        })
+      }
+    })
+  },
+  //红包旋转
+  rotateAni:function(){
+    console.log('转啊转');
+    var that = this;
+    var animation = wx.createAnimation({
+      duration: 500,
+    })
+    animation.rotateY(180 * (2)).step();//修改透明度,放大  
+    that.setData({
+      spreakingAnimation: animation.export()
+    })
+    wx.navigateTo({
+      url: `../../pages/player/index?courseId=17004`
+    });
+  },
+  //关闭红包
+  closeRedPacket:function() {
+    var that = this;
+    that.setData({
+      pageType:""
+    })
   }
 })

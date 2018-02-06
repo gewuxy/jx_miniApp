@@ -132,7 +132,10 @@ Page({
    * 用户点击右上角分享
    */
   onShareAppMessage: function () {
-  
+    //分享该页面返回首页
+    return {
+      path: '/pages/index/index'
+    }
   },
   bindAction: function () {
     console.log('进入登录事件');

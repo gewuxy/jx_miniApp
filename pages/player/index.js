@@ -1,7 +1,10 @@
 const app = getApp();
 var util = require('../../utils/util.js');
 const innerAudioContext = wx.createInnerAudioContext();   //实例音频
-var playVideo;
+innerAudioContext.obeyMuteSwitch = false;      //开启静音按钮也能播放声音
+var playVideo;    //视频实例
+
+
 
 // pages/player/index.js
 Page({
@@ -27,21 +30,36 @@ Page({
     audioList:[],
     videoList:[],
     isPlayAudio:true,     //按钮状态
-    isAutoplay:true,      //是否自动切换
+    isAutoplay:false,      //是否自动切换
     ispreviewImage:false,
     currentAudio:"",
     isVideo:false,
     isAudio:false,
     playVideo:false,
-    videoBgcolor:""
+    videoBgcolor:"",
+    isTruePassword:false,      //密码是否正确
+    isPassword:false,          //是否有密码
+    isRecordPage:false
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    console.log('到页面接收',options);
+    
+    var optionsA = decodeURIComponent(options.scene)
+    var optionsB = optionsA.split('&')
     var that = this;
+    //如果是二维码进来的
+    if (options.scene) {
+      options.courseId = optionsB[0]
+      if (optionsB[1]) {
+        options.loadPageType = 'meetingPassword'
+      }
+    } 
+    console.log('到页面接收', options);
+    console.log('页面接收转换', optionsB);
+    console.log(options);
     if (options.loadPageType == 'showQRcode') {
       that.setData({
         popErrorMsg:'截图保存，分享到朋友圈'
@@ -52,6 +70,7 @@ Page({
     that.setData({
       courseId: options.courseId,
       loadPageType: options.loadPageType,
+      isRecordPage: options.recordPage
     });
 
   },
@@ -88,6 +107,7 @@ Page({
         this.setData({
           userInfo: userStorageInfoUser
         });
+        //生成二维码
         if (that.data.loadPageType == 'showQRcode') {
 
           wx.showLoading({ title: '生成中' });
@@ -111,12 +131,12 @@ Page({
               });
               wx.setNavigationBarTitle({ title: res.data.data.audioCourse.title });
               if (that.data.meetingPassword) {
-                QRpageRes = '/pages/player/index' + '?courseId=' + that.data.courseId + '&loadPageType=meetingPassword'
+                QRpageRes = '/pages/player/index' + '?' + that.data.courseId + '&FPS'
                 that.setData({
                   QRpage: QRpageRes
                 })
               } else {
-                QRpageRes = '/pages/player/index' + '?courseId=' + that.data.courseId
+                QRpageRes = '/pages/player/index' + '?' + that.data.courseId
                 that.setData({
                   QRpage: QRpageRes
                 })
@@ -178,12 +198,15 @@ Page({
               var audioList = [];
               var videoList = [];
               var thisIsAutoPlay;
+              var thatIsPassword;
               console.log('会议数据', res);
               console.log('会议密码', res.data.data.audioCourse.password);
               console.log('会议详情数据', res.data.data.audioCourse.details);
               console.log('嘿嘿嘿', res.data.data.audioCourse.details[0].imgUrl);
 
               wx.setNavigationBarTitle({ title: res.data.data.audioCourse.title });
+
+              
 
               that.setData({
                 meetingavatar: res.data.data.audioCourse.details[0].imgUrl,
@@ -196,17 +219,46 @@ Page({
                 audioList.push(that.data.meetingDetailsList[i].audioUrl);
                 videoList.push(that.data.meetingDetailsList[i].videoUrl);
               }
-              //如果第一个是视频，就不自动播放
-              if (that.data.meetingDetailsList[0].videoUrl){
-                thisIsAutoPlay = false;
+              //判断是否有密码
+              if (!res.data.data.hasPassword || that.data.isRecordPage) {
+                console.log('onshow是有密码的');
+                //如果第一个是视频，就不自动播放
+                if (that.data.meetingDetailsList[0].videoUrl) {
+                  console.log('是老大');
+                  //自动播放第一个视频
+                  that.playAutoState('videoSwiper-0');
+
+                  that.setData({
+                    isPlayAudio: false
+                  })
+                  
+                  thisIsAutoPlay = false;
+                } else if (that.data.meetingDetailsList[0].audioUrl) {
+                  console.log('onshow有音频')
+                  thisIsAutoPlay = false;
+                  innerAudioContext.src = that.data.meetingDetailsList[0].audioUrl
+                  innerAudioContext.play();
+                  that.setData({
+                    isPlayAudio: true
+                  })
+                } else {
+                  thisIsAutoPlay = true;
+                  that.setData({
+                    isPlayAudio: true
+                  })
+                }
               } else {
-                thisIsAutoPlay = true;
+                that.setData({
+                  isPassword:res.data.data.hasPassword,
+                })
               }
+
+
               that.setData({
                 previewImgs: previewList,
                 audioList: audioList,
                 videoList: videoList,
-                isPlayAudio: false,
+                
                 isAutoplay: thisIsAutoPlay      //自动切换
               });
               wx.hideLoading();
@@ -246,6 +298,8 @@ Page({
                 var previewList = [];
                 var audioList = [];
                 var videoList = [];
+                var thisIsAutoPlay;
+                var thatIsPassword;
                 console.log('会议数据', res);
                 console.log('会议密码', res.data.data.audioCourse.password);
                 that.setData({
@@ -259,12 +313,48 @@ Page({
                   videoList.push(that.data.meetingDetailsList[i].videoUrl);
                   
                 }
+                //判断是否有密码
+                if (!res.data.data.hasPassword || that.data.isRecordPage) {
+                  console.log('onshow是有密码的');
+                  //如果第一个是视频，就不自动播放
+                  if (that.data.meetingDetailsList[0].videoUrl) {
+                    console.log('是老大');
+                    //自动播放第一个视频
+                    that.playAutoState('videoSwiper-0');
+
+                    that.setData({
+                      isPlayAudio: false
+                    })
+
+                    thisIsAutoPlay = false;
+                  } else if (that.data.meetingDetailsList[0].audioUrl) {
+                    console.log('onshow有音频')
+                    thisIsAutoPlay = false;
+                    innerAudioContext.src = that.data.meetingDetailsList[0].audioUrl
+                    innerAudioContext.play();
+                    that.setData({
+                      isPlayAudio: true
+                    })
+                  } else {
+                    thisIsAutoPlay = true;
+                    that.setData({
+                      isPlayAudio: true
+                    })
+                  }
+                } else {
+                  that.setData({
+                    isPassword: res.data.data.hasPassword,
+                  })
+                }
+
+
+
+                
                 that.setData({ 
                   previewImgs: previewList,
                   audioList: audioList,
                   videoList: videoList,
-                  isPlayAudio: false,
-                  isAutoplay: true      //自动切换
+                  isAutoplay: thisIsAutoPlay      //自动切换
                 });
                 wx.hideLoading();
 
@@ -287,6 +377,25 @@ Page({
 
 
     }
+
+
+
+
+    //监控音频播放器
+    innerAudioContext.onPlay(() => {
+      console.log('开始播放');
+      that.setData({ isPlayAudio: false });
+    });
+    innerAudioContext.onEnded(() => {
+      console.log('结束播放');
+      //判断是最后一页，不再自动切换
+      if (that.data.changeCurrentIndex + 1 == that.data.meetingDetailsList.length){
+        that.setData({ isPlayAudio: false });
+      } else {
+        that.setData({ isAutoplay: true });
+      }
+      
+    });
 
     
 
@@ -332,7 +441,18 @@ Page({
    * 用户点击右上角分享
    */
   onShareAppMessage: function () {
-    
+    var that = this;
+    if (that.data.isPassword){
+      //分享该页面返回首页
+      return {
+        path: `/pages/player/index?courseId=${that.data.courseId}&loadPageType=meetingPassword`
+      }
+    } else {
+      //分享该页面返回首页
+      return {
+        path: `/pages/player/index?courseId=${that.data.courseId}`
+      }
+    }
   },
   openMoreButton: function() {
     var that = this;
@@ -474,7 +594,7 @@ Page({
         innerAudioContext.pause();
         //换图标
         that.setData({
-          isPlayAudio: !that.data.isPlayAudio
+          isPlayAudio: true
         })
       },
       fail (res) {
@@ -495,9 +615,26 @@ Page({
   //提交密码
   meetingPasswordFormSubmit:function(e) {
     var that = this;
+    var thisIsAutoPlay;
     if (e.detail.value.meetingPassword == that.data.meetingPassword) {
+
+      //如果第一个是视频，就不自动播放
+      if (that.data.meetingDetailsList[0].videoUrl) {
+        thisIsAutoPlay = false;
+      } else if (that.data.meetingDetailsList[0].audioUrl) {
+        console.log('onshow有音频')
+        thisIsAutoPlay = false;
+        innerAudioContext.src = that.data.meetingDetailsList[0].audioUrl
+        innerAudioContext.play();
+      } else {
+        thisIsAutoPlay = true;
+      }
+
       that.setData({
-        loadPageType:""
+        loadPageType:"",
+        isTruePassword:true,
+        isPlayAudio: false,
+        isAutoplay: thisIsAutoPlay      //自动切换
       })
     } else {
       that.setData({ popErrorMsg:'密码错误' });
@@ -536,15 +673,7 @@ Page({
           isAutoplay: true
         })
       }
-      //监控播放器
-      innerAudioContext.onPlay(() => {
-        console.log('开始播放');
-        that.setData({ isPlayAudio: false });
-      });
-      innerAudioContext.onEnded(() => {
-        console.log('结束播放');
-        that.setData({ isAutoplay: true });
-      });
+
     }
 
 
@@ -554,27 +683,65 @@ Page({
     });
 
   },
-  //开始暂停按钮
-  playState:function() {
+  //自动播放
+  playAutoState:function(viedoId) {
     var that = this;
+    console.log('播放视频', viedoId);
+    playVideo = wx.createVideoContext(viedoId);
+    console.log('playVideo', playVideo)
+    that.setData({
+      playVideo: true,
+      videoBgcolor: '#000',
+      enableProgress: false
+    })
+    playVideo.play();
     
-    //换图标
-    if (that.data.isPlayAudio) {
-      //图标播放状态，音频没播
-      innerAudioContext.play();
-    } else {
-      //图标暂停状态,音频在播
-      innerAudioContext.pause();
+  },
+  //开始暂停按钮
+  playState:function(e) {
+    var that = this;
+    console.log(that.data.changeCurrentIndex);
+    console.log(e);
 
+    //判断是视频
+    if (that.data.videoList[that.data.changeCurrentIndex]) {
+      console.log('老大');
+      
+      //换图标
+      if (that.data.isPlayAudio) {
+        //图标播放状态，音频没播
+        playVideo.play();
+      } else {
+        //图标暂停状态,音频在播
+        playVideo.pause();
+      }
+    } else if (that.data.audioList[that.data.changeCurrentIndex]) {
+      console.log('有语音')
+      //换图标
+      if (that.data.isPlayAudio) {
+        //图标播放状态，音频没播
+        innerAudioContext.play();
+      } else {
+        //图标暂停状态,音频在播
+        innerAudioContext.pause();
+      }
+    } else {
+      console.log('图片');
+      that.setData({
+        isAutoplay: !that.data.isAutoplay
+      })
     }
+    
+
     that.setData({
       isPlayAudio: !that.data.isPlayAudio,
-      isAutoplay: !that.data.isAutoplay
+      
     })
    
       
 
   },
+  //播放视频
   playViedoFunction: function (e) {
     var that = this;
     console.log('播放视频',e);
@@ -593,7 +760,7 @@ Page({
     console.log(e.currentTarget.dataset.currentindex);
     console.log('结束后视频ID', e.currentTarget.id)
     var nextNumber = e.currentTarget.dataset.currentindex + 1
-
+    
     
     that.setData({
       changeCurrentIndex: nextNumber,

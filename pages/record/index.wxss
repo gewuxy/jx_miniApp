@@ -26,7 +26,7 @@ page { background-color:#3B3E46; border-top:1rpx solid #4C4F56; height:clac(100v
 .record-meeting-player-progressBox-scrubber .progressDot{ background:#ACE400; border-radius: 50%; width:12rpx; height:12rpx; position: absolute; right:-6rpx; top:50%; margin-top:-6rpx;  }
 
 .record-meeting-timeArea-tips { text-align: center; margin:20rpx 0 16rpx; height:66rpx;}
-.record-meeting-timeArea-tips-item { display: inline-block; color:#ACE400; background-color:#2B2F38; padding:16rpx 32rpx;border-radius: 8rpx;border: 2rpx solid #282A30; position: relative; min-width: 60rpx;}
+.record-meeting-timeArea-tips-item { display: inline-block; color:#ACE400; background-color:#2B2F38; padding:16rpx 32rpx;border-radius: 8rpx;border: 2rpx solid #282A30; position: relative; min-width: 120rpx;}
 .record-meeting-timeArea-tips-item .icon { position: absolute; width:0; height:0; bottom:-28rpx; border: 16rpx solid transparent; border-top-color: #2B2F38; left:50%; margin-left:-16rpx; content:''; }
 .record-meeting-timeArea-times { text-align: center; font-weight: bold; font-size:40rpx; margin-bottom:25rpx; height:52rpx;}
 

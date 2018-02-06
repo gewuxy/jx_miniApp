@@ -101,10 +101,20 @@
     </view>
   </view>
 
+  <!--红包活动  -->
+  <block wx:if="{{pageType == 'redPacket'}}">
+    <view class="redPacketPage" catchtouchmove='true'>
+      <view class="redPacketPageBg redPacketPageBg-01">
+        <view class="openButton" animation="{{spreakingAnimation}}" bindtap="rotateAni"></view>
+        <view class="closeButton" bindtap='closeRedPacket'></view>
+      </view>
+    </view>
+  </block>
 
   <!--固定的按钮-->
   <view class="fixedButton">
-      <view class="fixed-button-min changeMettingButton" bindtap='toRecordPage'><view class="icon"></view></view>  
+      <!-- <view class="fixed-button-min changeMettingButton" bindtap='toRecordPage'><view class="icon"></view></view>   -->
+      <view class="fixed-button-min changeMettingButton" bindtap='gotoQRcode'><view class="icon"></view></view>  
     <!--<view class="qrcodeButton"><view class="icon"></view></view>-->
     <view class="qrcodeButton"><view class="icon" bindtap='chooseImg'></view></view>
     <view class="fixed-button-min userButton" bindtap='bindViewTap'>

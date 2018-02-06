@@ -103,16 +103,17 @@
             </view>
 
             <!--弹出更多  -->
-            <view class="absolute-button" wx:if="{{isOpenMore}}">
-              <view class="flex-center border-bottom" bindtap='showModal'>
-                <text class="icon-meeting-share"></text>
-                <text>分享</text>
-              </view>
-              <view class="flex-center" bindtap='showReportModal'>
-                <text class="icon-meeting-caution"></text>
-                <text>举报</text>
-              </view>
-            </view>
+            <cover-view class="absolute-button" wx:if="{{isOpenMore}}">
+              <cover-view class="flex-center" bindtap='showModal'>
+                <cover-image class="icon-meeting-share" src="https://file.medyaya.cn/wx_mini/images/icon-index-share.png"></cover-image>
+                <cover-view>分享</cover-view>
+              </cover-view>
+              <cover-view class="share-border"></cover-view>
+              <cover-view class="flex-center" bindtap='showReportModal'>
+                <cover-image class="icon-meeting-caution" src="https://file.medyaya.cn/wx_mini/images/icon-player-caution.png"></cover-image>
+                <cover-view>举报</cover-view>
+              </cover-view>
+            </cover-view>
 
           </view>
         </view>
@@ -128,7 +129,7 @@
           <view class="input-main">
 
             <view class="input-icon icon-password"></view> 
-            <input type="number" class="input" name="meetingPassword" focus="true" maxlength='4' placeholder="请输入4位数字密码" bindinput='bindInput'></input> 
+            <input type="number" class="input" name="meetingPassword" maxlength='4' placeholder="请输入4位数字密码" bindinput='bindInput'></input> 
 
           </view>
         </view>
