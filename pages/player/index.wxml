@@ -60,7 +60,7 @@
 
                 <block wx:if="{{item.videoUrl}}">
                   <block wx:if="{{playVideo}}">
-                      <video  class="video" id="videoSwiper-{{index}}" controls="false" src='{{item.videoUrl}}' bindended ="videoEndChange" data-currentIndex = "{{changeCurrentIndex}}" enable-progress-gesture="{{enableProgress}}" catchtouchmove="true"></video> 
+                      <video  class="video" id="videoSwiper-{{index}}" controls="false" src='{{item.videoUrl}}' bindended ="videoEndChange" bindpause="videoPause"  bindplay="videoPlay" data-currentIndex = "{{changeCurrentIndex}}" enable-progress-gesture="{{enableProgress}}" catchtouchmove="true"></video> 
                   </block>
                   <block wx:else>
                      <view style="background-image:url({{item.imgUrl}})" class="img viedoImg" bindtap='playViedoFunction' data-videoId = "videoSwiper-{{index}}" ><view class="icon"></view></view>
@@ -83,7 +83,13 @@
 
 
       <view class="fiexd-button">
-        <view class="input-button" bindtap='chooseImg'>+ 我要制作</view>
+        <block wx:if="{{activityType == 'redPack'}}">
+          <view class="input-button" bindtap='toRedPackActivity'>+ 我要制作</view>
+        </block>
+        <block wx:else>
+          <view class="input-button" bindtap='chooseImg'>+ 我要制作</view>
+        </block>
+        
         <view class="fiexd-button-row " >
           <view class="player-fixed-button pr">
 
@@ -138,6 +144,58 @@
           <button formType="submit" class="inputButton" disabled="{{isDisabled}}">保存</button>
       </view>
     </form>
+  </block>
+
+  <!-- 红包会议选择  -->
+  <block  wx:if="{{loadPageType == 'redPack'}}">
+    <view class="redPackPage">
+      <view class="redPackPage-box">
+        <view class="redPackPage-row">
+          <view class="float-right"><view class="input-min-button " bindtap='toRedPackTemplate'>开始制作</view></view>
+          <text>你可以使用我们的模版：</text>
+        </view>
+        <view class="redPackPage-row">
+          <image class="redPackPage-img-01" src="https://file.medyaya.cn/wx_mini/images/redPack-info-img-01.png"></image>
+        </view>
+        <view class="redPackPage-row" >
+          <view class="float-right"><view class="input-min-button " bindtap='chooseImg'>开始制作</view></view>
+          <text>或者自己拍照</text>
+        </view>
+        <view class="redPackPage-row">
+        <image class="redPackPage-img-02" src="https://file.medyaya.cn/wx_mini/images/redPack-info-img-02.png"></image>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 红包模版选择  -->
+  <block  wx:if="{{loadPageType == 'redPackTemplate'}}">
+    <view class="redPackPage">
+      <view class="redPackTemplate-box">
+        <form bindsubmit="upLoadRedPack"  >
+        <view class="redPackPage-row">
+          <view class="color-gray">选择贺卡模版</view>
+        </view>
+        <view class="redPackPage-row">
+          <radio-group class="radio-group-redPack" bindchange="radioChange">
+          <block wx:for="{{redPackList}}">
+            <label class="radioLabel {{radioCheckVal==item.id?'active':''}}"  >
+              <radio value="{{item.id}}" class="radio" hidden="true"></radio>
+              <view class="icon"></view>
+              <image src="{{item.coverUrl}}"></image>
+            </label>
+          </block>
+            
+          </radio-group>
+          
+        </view>
+        <view class="btn-area">
+          <button formType="submit" class="inputButton" data-radioValue="{{radioCheckVal}}" disabled="{{radioIsDisabled}}" >制作我的有声祝福</button>
+        </view>
+        </form>
+
+      </view>
+    </view>
   </block>
 
   <!-- 生成二维码图片  -->

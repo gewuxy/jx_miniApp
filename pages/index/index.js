@@ -33,7 +33,8 @@ Page({
   // 监听页面加载，只执行一次
   onLoad: function (options) {
     var that = this;
-    console.log('在页面获取',options);
+   
+    
     //刷新显示列表
     if (options.isEditComplete) {
       that.setData({
@@ -57,9 +58,6 @@ Page({
     var userStorageInfoUser = wx.getStorageSync('userInfo');
     var userStorageToken = wx.getStorageSync('token');
 
-    this.setData({
-      popErrorMsg: '小程序只显示录播会议哦！'
-    });
 
     
     //已有Token缓存
@@ -132,7 +130,7 @@ Page({
       console.log(userStorageInfoUser);
       console.log('tokenIndex', wx.getStorageSync('token'));
     } else {
-      wx.showLoading({ title: '加载中' });
+      wx.showLoading({ title: '加载中', mask:true });
       //第一次访问
       app.getUserInfo().then(function (res) {
         console.log('访问前', res);
@@ -153,11 +151,16 @@ Page({
               token: app.globalData.UserToken
             },
             success(res) {
+              var randomNum = parseInt(4 * Math.random()) + 1
+              console.log('红包随机数', randomNum)
               console.log('show',res);
               that.setData({
                 meetingList: res.data.data.list,
                 token: app.globalData.UserToken,
-                avatar: app.globalData.avatar
+                avatar: app.globalData.avatar,
+                popErrorMsg: '小程序只显示录播会议哦！',
+                pageType:'redPacket',
+                activityId: randomNum
               });
               // 存储会议到本地
               wx.setStorage({
@@ -169,6 +172,7 @@ Page({
                   console.log("存储成功");
                 }
               });
+              util.ohShitfadeOut(that);
             }
           });
         } else {
@@ -176,21 +180,32 @@ Page({
         }
       });
     }
-
+    
     util.ohShitfadeOut(that);
+
+    //还原红包动画
+    that.animation = wx.createAnimation()
+    that.animation.rotateY(0, 0).step({ duration: 0 })
+    that.setData({ spreakingAnimation: that.animation.export() })
+    
 
   },
   /**
  * 生命周期函数--监听页面卸载
  */
   onUnload: function () {
-
+    var that = this;
+    console.log('首页卸载咯');
+    that.setData({
+      spreakingAnimation: ""
+    })
+    
   },
   /**
  * 生命周期函数--监听页面初次渲染完成
  */
   onReady: function () {
-
+    
   },
   //事件处理函数
   bindViewTap: function() {
@@ -403,6 +418,7 @@ Page({
           console.log('确认删除',res);
           wx.showLoading({
             title: '删除中...',
+            mask:true
           })
           wx.request({
             url: app.host + '/api/meeting/delete',
@@ -487,19 +503,39 @@ Page({
     })
   },
   //红包旋转
-  rotateAni:function(){
+  rotateAni:function(e){
     console.log('转啊转');
     var that = this;
-    var animation = wx.createAnimation({
+    that.animation = wx.createAnimation({
       duration: 500,
     })
-    animation.rotateY(180 * (2)).step();//修改透明度,放大  
+    that.animation.rotateY(180 * (2)).step();//修改透明度,放大  
     that.setData({
-      spreakingAnimation: animation.export()
+      spreakingAnimation: that.animation.export()
     })
-    wx.navigateTo({
-      url: `../../pages/player/index?courseId=17004`
-    });
+    console.log('点击打开',e.currentTarget.dataset.redpackid);
+    if (e.currentTarget.dataset.redpackid == 1){
+      console.log('打开被爱红包')
+      wx.navigateTo({
+        url: `../../pages/player/index?courseId=3&activityType=redPack`
+      });
+    } else if (e.currentTarget.dataset.redpackid == 2){
+      console.log('打开多福红包')
+      wx.navigateTo({
+        url: `../../pages/player/index?courseId=4&activityType=redPack`
+      });
+    } else if (e.currentTarget.dataset.redpackid == 3) {
+      console.log('打开进步红包')
+      wx.navigateTo({
+        url: `../../pages/player/index?courseId=5&activityType=redPack`
+      });
+    } else {
+      console.log('打开有钱红包')
+      wx.navigateTo({
+        url: `../../pages/player/index?courseId=6&activityType=redPack`
+      });
+    }
+
   },
   //关闭红包
   closeRedPacket:function() {

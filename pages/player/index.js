@@ -39,7 +39,11 @@ Page({
     videoBgcolor:"",
     isTruePassword:false,      //密码是否正确
     isPassword:false,          //是否有密码
-    isRecordPage:false
+    isRecordPage:false,
+    activityType:'',    //活动按钮
+    radioCheckVal:0,
+    radioIsDisabled:true,
+    redPackList:[]
   },
 
   /**
@@ -67,11 +71,23 @@ Page({
     } else if (options.loadPageType == 'meetingPassword') {
       wx.setNavigationBarTitle({ title: '观看密码' });
     }
+
+    if (options.activityType == 'redPack') {
+      that.setData({
+        activityType: 'redPack'
+      })
+    }
+
+
+
     that.setData({
       courseId: options.courseId,
       loadPageType: options.loadPageType,
       isRecordPage: options.recordPage
     });
+
+
+    
 
   },
 
@@ -110,7 +126,7 @@ Page({
         //生成二维码
         if (that.data.loadPageType == 'showQRcode') {
 
-          wx.showLoading({ title: '生成中' });
+          wx.showLoading({ title: '生成中' ,mask:true});
 
 
           //加载会议数据
@@ -657,7 +673,8 @@ Page({
     if (that.data.videoList[e.detail.current]) {
       console.log('老大的滋味');
       that.setData({
-        isAutoplay: false
+        isAutoplay: false,
+        isPlayAudio: true
       });
     } else {
       //切换播放录音
@@ -767,5 +784,78 @@ Page({
       videoBgcolor:""
     });
   },
-  
+  //暂停状态按钮
+  videoPause:function(e) {
+    var that = this;
+    console.log(e);
+    that.setData({
+      isPlayAudio: true
+    })
+  },
+  //播放状态按钮
+  videoPlay:function(e){
+    var that = this;
+    console.log(e);
+    that.setData({
+      isPlayAudio: false
+    })
+  },
+  //切换红包选中
+  radioChange:function(e) {
+    var that = this;
+    console.log(e)
+    this.setData({
+      radioCheckVal: e.detail.value,
+      radioIsDisabled:false
+    }) 
+  },
+  //提交红包
+  upLoadRedPack:function(e) {
+    console.log(e.detail.target.dataset.radiovalue);
+    wx.request({
+      url: app.host + '/api/meeting/mini/create/course',
+      method: 'POST',
+      data: {
+        id:e.detail.target.dataset.radiovalue
+      },
+      header: {
+        token: wx.getStorageSync('token'),
+        "Content-Type": "application/x-www-form-urlencoded"   //处理 POST BUG 问题
+      },
+      success(res) {
+        console.log('红包模版生成成功')
+        wx.reLaunch({
+          url: '../../pages/index/index?isEditComplete=true',
+        })
+      }
+
+    })
+  },
+  //红包活动的我要制作按钮
+  toRedPackActivity:function(){
+    var that = this;
+    that.setData({
+      loadPageType:'redPack'
+    })
+  },
+  //红包活动去到选择模版
+  toRedPackTemplate:function(){
+    var that = this;
+    innerAudioContext.stop();
+    console.log('红包内容');
+    wx.request({
+      url: app.host + '/api/meeting/mini/template/list',
+      method: 'GET',
+      header: {
+        token: wx.getStorageSync('token')
+      },
+      success(res) {
+        that.setData({
+          redPackList: res.data.data,
+          loadPageType: 'redPackTemplate'
+        })
+        console.log('贺卡列表', res.data.data)
+      }
+    })
+  }
 })

@@ -104,10 +104,32 @@
   <!--红包活动  -->
   <block wx:if="{{pageType == 'redPacket'}}">
     <view class="redPacketPage" catchtouchmove='true'>
+    <block wx:if="{{activityId == 1}}">
       <view class="redPacketPageBg redPacketPageBg-01">
-        <view class="openButton" animation="{{spreakingAnimation}}" bindtap="rotateAni"></view>
+        <view class="openButton" animation="{{spreakingAnimation}}" data-redPackId="{{activityId}}" bindtap="rotateAni"></view>
         <view class="closeButton" bindtap='closeRedPacket'></view>
       </view>
+    </block>
+    <block wx:if="{{activityId == 2}}">
+      <view class="redPacketPageBg redPacketPageBg-02">
+        <view class="openButton" animation="{{spreakingAnimation}}" data-redPackId="{{activityId}}" bindtap="rotateAni"></view>
+        <view class="closeButton" bindtap='closeRedPacket'></view>
+      </view>
+    </block>
+    <block wx:if="{{activityId == 3}}">
+      <view class="redPacketPageBg redPacketPageBg-03">
+        <view class="openButton" animation="{{spreakingAnimation}}" data-redPackId="{{activityId}}" bindtap="rotateAni"></view>
+        <view class="closeButton" bindtap='closeRedPacket'></view>
+      </view>
+    </block>
+    <block wx:if="{{activityId == 4}}">
+      <view class="redPacketPageBg redPacketPageBg-04">
+        <view class="openButton" animation="{{spreakingAnimation}}" data-redPackId="{{activityId}}" bindtap="rotateAni"></view>
+        <view class="closeButton" bindtap='closeRedPacket'></view>
+      </view>
+    </block>
+
+      
     </view>
   </block>
 

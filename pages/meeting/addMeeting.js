@@ -214,7 +214,7 @@ Page({
       util.ohShitfadeOut(that);
       return false;
     }
-    wx.showLoading({ title: '上传中' });
+    wx.showLoading({ title: '上传中', mask:true });
     if (that.data.isEditMeeting == 'true' && that.data.courseId != "") {
       //判断是编辑状态
       that.createMeeting(that.data.courseId);

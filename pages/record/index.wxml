@@ -38,7 +38,7 @@
           <swiper class="swiper"interval="3000" duration="500" bindanimationfinish='bindanimationfinishButton' bindchange='changeSwiper' current="{{changeCurrentIndex}} "   >
             
             <block wx:for="{{meetingDetailsList}}" wx:key="{{index}}">
-              <swiper-item data-id="{{item.id}}" data-key="{{index}}" data-url="{{item.imgUrl}}" bindtap='showImage' >
+              <swiper-item data-id="{{item.id}}" data-key="{{index}}" data-url="{{item.imgUrl}}"  >
                 <block wx:if="{{item.videoUrl}}">
                   <block wx:if="{{playVideo}}">
                     <video  class="video" id="videoSwiper-{{index}}" controls="false" src='{{item.videoUrl}}' bindended ="videoEndChange" data-currentIndex = "{{changeCurrentIndex}}"></video> 
@@ -48,7 +48,7 @@
                   </block>
                 </block>
                 <block wx:else>
-                  <view style="background-image:url({{item.imgUrl}})" class="img" ></view>
+                  <view style="background-image:url({{item.imgUrl}})" data-id="{{item.id}}" data-key="{{index}}" data-url="{{item.imgUrl}}" class="img" bindtap='showImage'></view>
                 </block>
               </swiper-item>
             </block>

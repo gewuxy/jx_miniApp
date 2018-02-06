@@ -52,3 +52,20 @@ page { background: #fff;}
 
  .player-page .playerMeeting .swiper .viedoImg .icon{ width:100%; height:100%; background:url(https://file.medyaya.cn/wx_mini/images/record-video-bg.png) no-repeat center center rgba(242,242,244,.4) ; background-size:116rpx;  }
 .player-page .playerMeeting .swiper .video{ width:95%; height:100%; left:2.5%; }
+
+.player-page .redPackPage { position: fixed; width:100%; height:100%; top:0; left:0;  background-color:#F2F2F4;}
+.player-page .redPackPage-box {  background-color:#fff; border-radius: 12rpx; box-shadow: 0 0 31px 0 rgba(150,153,162,0.20); margin:30rpx; padding:30rpx; }
+.player-page .redPackPage-img-02,
+.player-page .redPackPage-img-01 { width:622rpx; height:389rpx; margin-bottom:32rpx;}
+.player-page .redPackPage-row {  font-size:34rpx; margin-bottom:32rpx;}
+.player-page .redPackPage-row .color-gray { font-size:28rpx; padding:0 20rpx;}
+
+.redPackTemplate-box { background-color:#fff; padding:30rpx 15rpx;}
+.radio-group-redPack { display: block; align-items:center;  justify-content:center;  text-align: center;}
+.radio-group-redPack .radioLabel{ position: relative; display: inline-block; margin-bottom:15rpx; margin:0 10rpx 15rpx; }
+.radio-group-redPack .radioLabel .radio{ position:absolute;right:0;top:-16rpx;}
+.radio-group-redPack .radioLabel  image { width:330rpx; height:248rpx; border-radius: 12rpx; border:5rpx solid #fff;}
+
+.radio-group-redPack .icon { display: none;}
+.radio-group-redPack .active .icon { display: block; width:38rpx; height:38rpx; background:url(https://file.medyaya.cn/wx_mini/images/icon-redPack-current.png) no-repeat; background-size:38rpx; position: absolute; right:0; top:-16rpx;}
+.radio-group-redPack .active image{ border: 5rpx solid #ACE400;  }

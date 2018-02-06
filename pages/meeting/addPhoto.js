@@ -151,6 +151,16 @@ Page({
           that.setData({
             imgs: images
           });
+          //缓存数据
+          wx.setStorage({
+            key: 'images',
+            data: {
+              imgs: images
+            },
+            success: function (res) {
+              console.log("存储成功");
+            }
+          });
         }
       },
       fail(res) {
