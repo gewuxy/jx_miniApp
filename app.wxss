@@ -44,6 +44,7 @@ page { background-color:#F2F2F4; }
 .icon-meeting-more {display: inline-block; background:url(https://file.medyaya.cn/wx_mini/images/icon-player-more.png) no-repeat center center; width:50rpx; height:50rpx; background-size:38rpx;}
 .icon-meeting-caution {  display: inline-block; background:url(https://file.medyaya.cn/wx_mini/images/icon-player-caution.png) no-repeat center center; width:38rpx; height:38rpx; background-size:38rpx; }
 .icon-meeting-share {  display: inline-block; background:url(https://file.medyaya.cn/wx_mini/images/icon-index-share.png) no-repeat center center; width:38rpx; height:38rpx; background-size:38rpx; }
+.icon-meeting-home { display: inline-block; background:url(https://file.medyaya.cn/wx_mini/images/icon-meeting-home.png) no-repeat center center; width:50rpx; height:50rpx; background-size:50rpx;}
 
 .my-page .input-row .input-main{ padding:0 50rpx 0 0;}
 .btn-area { margin:20rpx 40rpx;}
@@ -75,7 +76,7 @@ page { background-color:#F2F2F4; }
 .fiexd-button { position: fixed; bottom:0; left:0; display: flex; width:100%; z-index: 5; }
 .fiexd-button > button,
 .fiexd-button > view{ flex: 1;  text-align: center; display: flex; align-items: center; justify-content:center;  height:100rpx; background-color:#fff; font-size:34rpx;  }
-.fiexd-button .input-button {  color:#fff;border-radius:0;  background:linear-gradient( #7a768f ,#202432 65%,#262B3B ); }
+.fiexd-button .input-button { color:#fff;border-radius:0;  background:linear-gradient( #7a768f ,#202432 65%,#262B3B ); }
 .fiexd-button .fiexd-button-row { display: flex; }
 .fiexd-button .fiexd-button-row .button{ flex: 1;}
 

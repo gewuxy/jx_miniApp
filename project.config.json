@@ -25,13 +25,13 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": -1,
+			"current": 0,
 			"list": [
 				{
 					"id": 0,
 					"name": "测试添加",
 					"pathName": "pages/player/index",
-					"query": "courseId=17295&activityType=redPack&loadPageType=redPackTemplate"
+					"query": "courseId=17295"
 				}
 			]
 		}

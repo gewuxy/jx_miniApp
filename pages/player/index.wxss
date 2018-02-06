@@ -69,3 +69,7 @@ page { background: #fff;}
 .radio-group-redPack .icon { display: none;}
 .radio-group-redPack .active .icon { display: block; width:38rpx; height:38rpx; background:url(https://file.medyaya.cn/wx_mini/images/icon-redPack-current.png) no-repeat; background-size:38rpx; position: absolute; right:0; top:-16rpx;}
 .radio-group-redPack .active image{ border: 5rpx solid #ACE400;  }
+
+.player-page .player-fixed-button .button { padding:0 30rpx; }
+.player-page .fiexd-button .fiexd-button-row,
+.player-page .fiexd-button .input-button { width:50%;}

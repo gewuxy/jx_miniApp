@@ -410,11 +410,13 @@ Page({
     if (that.data.isPassword) {
       //分享该页面返回首页
       return {
+        title: '你的朋友发来分享',
         path: `/pages/player/index?courseId=${that.data.courseId}&loadPageType=meetingPassword`
       }
     } else {
       //分享该页面返回首页
       return {
+        title: '你的朋友发来分享',
         path: `/pages/player/index?courseId=${that.data.courseId}`
       }
     }

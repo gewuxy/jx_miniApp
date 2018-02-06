@@ -452,7 +452,6 @@ Page({
   onReachBottom: function () {
   
   },
-
   /**
    * 用户点击右上角分享
    */
@@ -461,11 +460,13 @@ Page({
     if (that.data.isPassword){
       //分享该页面返回首页
       return {
+        title: '你的朋友发来分享',
         path: `/pages/player/index?courseId=${that.data.courseId}&loadPageType=meetingPassword`
       }
     } else {
       //分享该页面返回首页
       return {
+        title: '你的朋友发来分享',
         path: `/pages/player/index?courseId=${that.data.courseId}`
       }
     }
@@ -856,6 +857,13 @@ Page({
         })
         console.log('贺卡列表', res.data.data)
       }
+    })
+  },
+  //回到首页
+  toHome:function() {
+    var that = this;
+    wx.reLaunch({
+      url: '../../pages/index/index?isEditComplete=true',
     })
   }
 })

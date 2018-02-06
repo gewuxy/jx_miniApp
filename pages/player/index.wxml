@@ -92,6 +92,11 @@
         
         <view class="fiexd-button-row " >
           <view class="player-fixed-button pr">
+            
+            <view class="button " bindtap='toHome'>
+              <view class="icon-meeting-home"></view>
+              <view class="text" >首页</view>
+            </view>
 
             <view class="button" bindtap='playState'>
 
