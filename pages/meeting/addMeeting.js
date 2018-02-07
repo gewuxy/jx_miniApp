@@ -1,12 +1,14 @@
 // pages/meeting/addMeeting.js
 const app = getApp();
 var util = require('../../utils/util.js');
+const innerAudioContext = wx.createInnerAudioContext();   //实例音频
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
+    loadPageType:"",     //判断页面
     imgs:[],
     token:"",
     imgsFile: [],
@@ -14,7 +16,21 @@ Page({
     popErrorMsg:"",
     courseId:"",
     isEditMeeting:false,
-    submitButtonType:""     //提交后的信息
+    submitButtonType:"",     //提交后的信息
+    addMeetingBgList:[],       //主题背景列表
+    radioCheckVal:"",         //背景的值
+    firstCoverImg:"",        //封面或者第一张上传的图片
+    isShowMeetingBg:false,    //是否主题预览图
+    showMeetingImg:"",       //传过去的主题
+    meetingBgTitle:"更多",
+    musicList:[],          //音乐列表
+    isMusicPlay:0,
+    radioCheckMusicVal:"",
+    meetingBgChecked:false,
+    currentMusicTitle:"",
+    currentMusicTime:0,
+    isCurrentMusic:false,
+    addMeetingBgMoreList:[]
   },
 
   /**
@@ -34,12 +50,36 @@ Page({
       key: 'images',
       success: function (res) {
         that.setData({
-          imgs: res.data.imgs
+          imgs: res.data.imgs,
+          firstCoverImg: res.data.imgs[0]
         });
-
         console.log('哇哈哈哈', that.data.imgs);
+        console.log('获取第一张图', that.data.firstCoverImg);
       },
     });
+    //页面Page切换不同页面
+    if (options.loadPageType == "addMeetingMusic") {
+      wx.setNavigationBarTitle({ title: '添加音乐' });
+      that.setData({
+        loadPageType: options.loadPageType
+      })
+      wx.request({
+        url: app.host + '/api/meeting/theme/music/more',
+        method: 'GET',
+        header: {
+          token: wx.getStorageSync('token')
+        },
+        success(res) {
+          console.log('加载更多音乐', res);
+          that.setData({
+            musicList:res.data.data.list
+          })
+        }
+
+      })
+
+    }
+    
     console.log(that.data.imgs);
     console.log('tokenIndex', wx.getStorageSync('token'));
 
@@ -60,10 +100,33 @@ Page({
     console.log('show',that.data.courseId);
     console.log(that.data.isEditMeeting);
 
+    //更新主题缓存
+    if(wx.getStorageSync('addMeetingBg')){
+      //更新现在的数据
+      this.setData({
+        meetingBgTitle: wx.getStorageSync('addMeetingBg').meetingBgTitle,
+        radioCheckVal: wx.getStorageSync('addMeetingBg').id
+      })
+    }
+    //更新标题缓存
+    if (wx.getStorageSync('addMeetingTitle')){
+      //更新现在的数据
+      this.setData({
+        meetingTitle: wx.getStorageSync('addMeetingTitle')
+      })
+    }
+
+
+    //如果是从编辑进来
     if (that.data.isEditMeeting == 'true' && that.data.courseId != "") {
-      console.log('进来了')
+      console.log('进来了');
+      //清空缓存（主题，背景音乐，标题）
+      wx.removeStorageSync('addMeetingBg');
+      wx.removeStorageSync('addMeetingMusic');
+      wx.removeStorageSync('addMeetingTitle');
+
       wx.request({
-        url: app.host + '/api/meeting/view',
+        url: app.host + '/api/meeting/edit',
         method: 'GET',
         data: {
           courseId: that.data.courseId
@@ -72,13 +135,80 @@ Page({
           token: wx.getStorageSync('token')
         },
         success(res) {
-          console.log('show状态', res);
-          // console.log(res.data.data.audioCourse.title);
-          that.setData({ meetingTitle: res.data.data.audioCourse.title });
+          console.log('编辑状态', res);
+          //如果没有主题
+          if(res.data.data.theme) {
+
+            var isShowMusic = res.data.data.theme.url > 0 ? true : false
+            // console.log(res.data.data.audioCourse.title);
+            that.setData({
+              meetingTitle: res.data.data.course.title,
+              addMeetingBgList: res.data.data.imageList,
+              currentMusicTitle: res.data.data.theme.name,
+              currentMusicTime: res.data.data.theme.duration,
+              meetingBgTitle: res.data.data.theme.imgName,
+              radioCheckVal: res.data.data.theme.imageId,
+              isCurrentMusic: isShowMusic
+            });
+
+            //更新所有的缓存
+            //标题缓存
+            wx.setStorageSync('addMeetingTitle', res.data.data.course.title);
+            //音乐缓存
+            wx.setStorage({
+              key: 'addMeetingMusic',
+              data: {
+                meetingMuiscTitle: res.data.data.theme.name,
+                id: res.data.data.theme.musicId,
+                meetingMuiscTime: res.data.data.theme.duration
+              },
+              success: function (res) {
+                console.log("存储成功");
+              }
+            });
+            //主题缓存
+            wx.setStorage({
+              key: 'addMeetingBg',
+              data: {
+                meetingBgTitle: res.data.data.theme.imgName,
+                id: res.data.data.theme.imageId
+              },
+              success: function (res) {
+                console.log("存储成功");
+              }
+            });
+          } else {
+            that.setData({
+              meetingTitle: res.data.data.course.title,
+              addMeetingBgList: res.data.data.imageList,
+              meetingBgTitle: "更多",
+              radioCheckVal: 0
+            });
+          }
+
         }
 
       })
-    } 
+    } else {
+      console.log('新建进来')
+      //新建进来
+      wx.request({
+        url: app.host + '/api/meeting/edit',
+        method: 'GET',
+        header: {
+          token: wx.getStorageSync('token')
+        },
+        success(res) {
+          console.log('新建状态', res);
+          that.setData({
+            addMeetingBgList:res.data.data.imageList
+          })
+        }
+
+      })
+    }
+
+
 
   },
 
@@ -162,13 +292,17 @@ Page({
   },
   createMeeting: function (courseId){
     var that = this;
-    
+    var thatMeetingBg = wx.getStorageSync('addMeetingBg') ? wx.getStorageSync('addMeetingBg').id:0
+    var thatMeetingMusic = wx.getStorageSync('addMeetingMusic') ? wx.getStorageSync('addMeetingMusic').id : 0
+
     wx.request({
       url: app.host + '/api/meeting/mini/update',
       method:'POST',
       data:{
         courseId: courseId,
-        title: that.data.meetingTitle
+        title: that.data.meetingTitle,
+        musicId:thatMeetingMusic,
+        imgId: thatMeetingBg
       },
       header: {
         token: wx.getStorageSync('token'),
@@ -201,7 +335,9 @@ Page({
     console.log(that.data.imgs);
     console.log('token缓存',wx.getStorageSync('token'));
     console.log('提交后得到的信息',e);
-    //判断是那个按钮进入上传
+
+
+    // 判断是那个按钮进入上传
     that.setData({
       submitButtonType: e.detail.target.dataset.buttontype
     })
@@ -227,4 +363,178 @@ Page({
     
     
   },
+  //切换主题
+  radioChange:function(e){
+    var that = this;
+    console.log('切换主题',e)
+    this.setData({
+      radioCheckVal: e.detail.value
+    })
+  },
+  //点击图片切换标题
+  radioChangeImg:function(e) {
+    var that = this;
+    console.log('点击后获取',e.currentTarget.dataset)
+    console.log(that.data.radioCheckVal, "-", e.currentTarget.dataset.valueid);
+    if (e.currentTarget.dataset.valueid == that.data.radioCheckVal) {
+      //重复点选，删除背景
+      wx.setStorage({
+        key: 'addMeetingBg',
+        data: {
+          meetingBgTitle: "更多",
+          id: 0
+        },
+        success: function (res) {
+          console.log("存储成功");
+        }
+      });
+      //更新现在的数据
+      this.setData({
+        meetingBgTitle: "更多",
+        radioCheckVal: 0
+      })
+    } else {
+      //选择新的列表
+      wx.setStorage({
+        key: 'addMeetingBg',
+        data: {
+          meetingBgTitle: e.currentTarget.dataset.meetingimgtitle,
+          id: e.currentTarget.dataset.valueid
+        },
+        success: function (res) {
+          console.log("存储成功");
+        }
+      });
+      //更新现在的数据
+      this.setData({
+        meetingBgTitle: e.currentTarget.dataset.meetingimgtitle,
+        radioCheckVal: e.currentTarget.dataset.valueid
+      })
+    }
+
+
+  },
+  //点击预览主题
+  showAddMeetingBg:function(e) {
+    var that = this;
+    console.log('获得背景图', e);
+    console.log('获得背景图', e.currentTarget.dataset.addmeetingbg);
+    that.setData({
+      isShowMeetingBg: true,
+      showMeetingImg:e.currentTarget.dataset.addmeetingbg
+    })
+
+    
+  },
+  //关闭预览主题
+  showMeetingBgClose:function() {
+    var that = this;
+    that.setData({
+      isShowMeetingBg:false
+    })
+    console.log('关闭');
+  },
+  //背景音乐页面
+  toAddmeetingMusic:function() {
+    var that = this;
+    wx.navigateTo({
+      url: '../../pages/meeting/addMeeting?loadPageType=addMeetingMusic'
+    })
+  },
+  //监控输入框(实时保存)
+  addMeetingTitle:function(e){
+    console.log('实时输入',e.detail.value);
+    wx.setStorageSync('addMeetingTitle', e.detail.value);
+  },
+  //播放音乐
+  playMusic:function(e){
+    var that = this;
+    console.log('播放音乐',e);
+    innerAudioContext.src = e.currentTarget.dataset.musicurl;
+    innerAudioContext.play();
+    that.setData({
+      isMusicPlay:e.currentTarget.dataset.index
+    })
+    
+  },
+  //暂停音乐
+  pauseMusic:function(e){
+    var that = this;
+    innerAudioContext.pause();
+    that.setData({
+      isMusicPlay: false
+    })
+  },
+  //选中音乐
+  radioMusic:function(e) {
+    var that = this;
+    console.log(e.currentTarget.dataset);
+    //选择新的列表
+    wx.setStorage({
+      key: 'addMeetingMusic',
+      data: {
+        meetingMuiscTitle: e.currentTarget.dataset.muisctitle,
+        id: e.currentTarget.dataset.id,
+        meetingMuiscTime: e.currentTarget.dataset.muisctime
+      },
+      success: function (res) {
+        console.log("存储成功");
+      }
+    });
+    //更新现在的数据
+    this.setData({
+      loadPageType: "",
+      currentMusicTitle: e.currentTarget.dataset.muisctitle,
+      currentMusicTime: e.currentTarget.dataset.muisctime,
+      isCurrentMusic:true
+    })
+    //暂停音乐
+    innerAudioContext.stop();
+  },
+  //删除音乐
+  removeMusic:function(e){
+    var that = this;
+    console.log(e);
+    //更新缓存
+    wx.setStorage({
+      key: 'addMeetingMusic',
+      data: {
+        meetingMuiscTitle: "",
+        id: 0,
+        meetingMuiscTime: 0
+      },
+      success: function (res) {
+        console.log("存储成功");
+      }
+    });
+    //更新现在的数据
+    this.setData({
+      currentMusicTitle: "",
+      currentMusicTime: 0,
+      isCurrentMusic: false
+    })
+  },
+  //更多主题
+  moreAddMeetingBg:function(e) {
+    var that = this;
+    that.setData({
+      loadPageType:"moreAddMettingBg"
+    })
+    //加载更多主题
+    wx.request({
+      url: app.host + '/api/meeting/theme/image/more',
+      method: 'GET',
+      header: {
+        token: wx.getStorageSync('token')
+      },
+      success(res) {
+        console.log('加载更多背景', res);
+        that.setData({
+          addMeetingBgMoreList: res.data.data.list
+        })
+      }
+
+    })
+    console.log(e);
+  }
 })

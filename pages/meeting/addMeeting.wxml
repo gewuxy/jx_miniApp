@@ -1,21 +1,132 @@
 <!--pages/meeting/addMeeting.wxml-->
 <view class="popError" wx:if="{{popErrorMsg}}">{{popErrorMsg}}</view>  
 
-<view class="container">
- <form bindsubmit="upLoadMeeting" bindreset="formReset">
-  <view class="input-item-row">
-    <view class="input-row">
-      <view class="input-header">标题</view>
-      <view class="input-main">
-        <input type='text' wx:if="{{meetingTitle != ''}}" name="meetingTitle" placeholder="请输入标题" value="{{meetingTitle}}" ></input>
-        <input type='text' wx:else  name="meetingTitle" focus="{{!meetingTitle}}" placeholder="请输入标题"></input>
-        
+<view class="container addMeeting">
+  <block wx:if="{{loadPageType==''}}">
+    <form bindsubmit="upLoadMeeting" bindreset="formReset">
+      <view class="input-item-row">
+        <view class="input-row">
+          <view class="input-header">标题</view>
+          <view class="input-main">
+            <input type='text' wx:if="{{meetingTitle != ''}}" name="meetingTitle" placeholder="请输入标题" value="{{meetingTitle}}" ></input>
+            <input type='text' wx:else  name="meetingTitle" focus="{{!meetingTitle}}" placeholder="请输入标题" bindinput='addMeetingTitle'></input>
+            
+          </view>
+        </view>
+      </view>
+      <view class="input-item-row">
+        <view class="input-row input-row-line" bindtap='moreAddMeetingBg'>
+          <view class="input-header inputAuto-title">选择主题(非必选)</view>
+          <view class="input-main text-right"><view class="me-input-text color-gray">{{meetingBgTitle}}</view><view class="icon-arrows"></view></view>
+          
+        </view>
+        <view class="input-row" >
+          <view class="addMeetingBgList">
+              <radio-group class="radio-group-addMeetingBg" bindchange="radioChange" >
+
+                <block wx:for="{{addMeetingBgList}}">
+                  <label class="radioLabel {{radioCheckVal==item.id?'active':''}}"  >
+                    <radio value="{{item.id}}"  data-value="{{item.id}}" class="radio" hidden="true" ></radio>
+                    <view class="icon"></view>
+                    <image src="{{item.imgUrl}}" bindtap='radioChangeImg' data-meetingImgTitle="{{item.imgName}}" data-valueId="{{item.id}}"></image>
+                    <view class="inputButtonBox">
+                      <view class="input-min-button " bindtap='showAddMeetingBg' data-addMeetingBg="{{item.imgUrl}}">预览</view>
+                    </view>
+                  </label>
+                </block>
+                  
+              </radio-group>
+          </view>
+          
+        </view>
+      </view>
+      <view class="input-item-row">
+        <view class="input-row" bindtap='toAddmeetingMusic'>
+          <view class="input-header inputAuto-title">背景音乐(非必选)</view>
+          <view class="input-main text-right"><view class="me-input-text color-gray">更多</view><view class="icon-arrows"></view></view>
+          
+        </view>
+        <view class="input-row" wx:if="{{isCurrentMusic}}">
+          <view class="input-header inputAuto-title">{{currentMusicTitle}}  <text class="musicTime">{{currentMusicTime}}</text></view>
+          <view class="input-main text-right"><view class="icon-remove" bindtap='removeMusic'></view></view>
+          
+        </view>
+      </view>
+      <view class="fiexd-button">
+        <button formType="submit" data-buttonType="save" class="upload-img-btn">保存讲本</button>
+        <button formType="submit" data-buttonType="record" class="input-button">继续录音</button>
+      </view>
+    </form>
+
+  </block>
+
+  <!--背景音乐  -->
+  <block wx:if="{{loadPageType == 'addMeetingMusic'}}">
+    <view class="addMeetingMusic">
+      <view class="title">选择音乐</view>
+      <view class="input-item-row">
+       
+
+          <radio-group class="radio-group-addMeetingMusic" >
+            <block wx:for="{{musicList}}">
+              <view  class="input-row radioLabel" >
+                  <view class="input-header inputAuto-title">
+                    <label class="radio-positon"><radio value="{{item.id}}"  data-id="{{item.id}}" data-muiscTitle="{{item.name}}" data-muiscTime="{{item.duration}}" class="radio"  bindtap="radioMusic" ></radio></label>
+                    <view class="addMeetingMusic-info">
+                      <block wx:if="{{isMusicPlay  == index+1}}">
+                        <view class="addMeetingMusic-cover pause" bindtap='pauseMusic' data-index="{{index+1}}" data-musicUrl="{{item.url}}"><view class="icon "></view></view>
+                      </block>
+                       <block wx:else>
+                        <view class="addMeetingMusic-cover play" bindtap='playMusic' data-index="{{index+1}}" data-musicUrl="{{item.url}}"><view class="icon "></view></view>
+                      </block> 
+                      
+                      <view class="addMeetingMusic-title">
+                        <view class="MusicTitle">{{item.name}}</view>
+                        <view class="time">00:{{item.duration}}</view>
+                      </view>
+                    </view>
+                  </view>
+              </view>
+            </block>
+
+          </radio-group>
+
+          
       </view>
     </view>
+  </block>
+
+  <!--背景主题  -->
+  <block wx:if="{{loadPageType == 'moreAddMettingBg'}}">
+    <view class="addMeetingMusic">
+      <view class="title">选择音乐</view>
+        <view class="addMeetingBgList">
+            <radio-group class="radio-group-addMeetingBg" bindchange="radioChange" >
+
+              <block wx:for="{{addMeetingBgMoreList}}">
+                <label class="radioLabel {{radioCheckVal==item.id?'active':''}}"  >
+                  <radio value="{{item.id}}"  data-value="{{item.id}}" class="radio" hidden="true" ></radio>
+                  <view class="icon"></view>
+                  <image src="{{item.imgUrl}}" bindtap='radioChangeImg' data-meetingImgTitle="{{item.imgName}}" data-valueId="{{item.id}}"></image>
+                  <view class="inputButtonBox">
+                    <view class="input-min-button " bindtap='showAddMeetingBg' data-addMeetingBg="{{item.imgUrl}}">预览</view>
+                  </view>
+                </label>
+              </block>
+                
+            </radio-group>
+        </view>
+    </view>
+  </block>
+
+
+  <!--预览图片  -->
+  <view class="showMeetingBg-fiexd" wx:if="{{isShowMeetingBg}}">
+    <view class="showMeetingBg-fiexdBg" style="background-image:url({{showMeetingImg}})">
+      <view class="showMeetingBg-fiexdImage" style="background-image:url({{firstCoverImg}})"></view>
+      <view class="closeButton close-button-black" bindtap='showMeetingBgClose'></view>
+    </view>
   </view>
-  <view class="fiexd-button">
-    <button formType="submit" data-buttonType="save" class="upload-img-btn">保存讲本</button>
-    <button formType="submit" data-buttonType="record" class="input-button">继续录音</button>
-  </view>
-  </form>
+
+
 </view>

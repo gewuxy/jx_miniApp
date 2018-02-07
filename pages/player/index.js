@@ -199,6 +199,8 @@ Page({
             title: '加载中',
             mask: true 
           });
+          //获取会议密码
+
           //加载会议数据
           wx.request({
             url: app.host + '/api/meeting/view',
@@ -352,6 +354,7 @@ Page({
                       isPlayAudio: true
                     })
                   } else {
+                    console.log('来到这里');
                     thisIsAutoPlay = true;
                     that.setData({
                       isPlayAudio: true

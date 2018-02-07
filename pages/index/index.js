@@ -151,7 +151,8 @@ Page({
               token: app.globalData.UserToken
             },
             success(res) {
-              var randomNum = parseInt(4 * Math.random()) + 1
+              // var randomNum = parseInt(4 * Math.random()) + 1
+              var randomNum = parseInt(1 * Math.random()) + 1
               console.log('红包随机数', randomNum)
               console.log('show',res);
               that.setData({

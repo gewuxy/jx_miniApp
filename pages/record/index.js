@@ -255,6 +255,41 @@ Page({
         } 
       }, 1000)
     })
+    recorderManager.onError((res) => {
+      console.log('录音错误');
+      that.setData({
+        recordState:'default'
+      })
+      wx.showModal({
+        title: '授权提示',
+        content: '小程序功能需要授权才能正常使用噢！请点击“确定”-“录音功能”再次授权',
+        showCancel: false,
+        success: function(res){
+          wx.openSetting({
+            success: (res) => {
+              that.setData({
+                recordState: 'default'
+              })
+              // if (app.globalData.errorBoll){
+              //   console.log('回调');
+              //   //回调获取缓存
+                
+              //   //防止二次加载
+              //   app.globalData.errorBoll = true;
+              // }
+            },
+            fail: function(res){
+              // 提示版本过低
+              wx.showModal({
+                title: '提示',
+                content: '当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。'
+              })
+            }
+          });
+        }
+      })
+
+    })
     //监控录音停止
     recorderManager.onStop((res) => {
       console.log('recorder stop', res)
@@ -327,15 +362,19 @@ Page({
     
     //切换还原封面播放图
     that.setData({
+      recordTime: 0,   //如果没有清空显示
       playVideo: false,
+      currentIndex: 0,
       showPlayer: false,  //隐藏播放条
       finishProgress: 0,    //播放完成后归零
       playedTime: 0,      //播放完成后归零
       showPlayTime: util.formatTime(that.data.playedTime, 'm:s'),
       isPauseState: false,
       isPlayRecord: false,
-      currentRecordTimes: util.formatTime(that.data.recordTime, 'm:s'),   //如果没有清空显示
-      recordTime: 0,   //如果没有清空显示
+      currentRecordDurationArray: [],
+      currentRecordTimes: util.formatTime(0, 'm:s'),   //如果没有清空显示
+      
+
     })
     //暂停定时器
     clearInterval(playTimeInterval)
@@ -556,7 +595,8 @@ Page({
     that.setData({
       recordState:'start',
       recordButtonState:true,    //启动录音状态
-      currentAudioDuration:0
+      currentAudioDuration:0,
+      startButtonState:false
     });
     recorderManager.start(recordingOptions);
 
@@ -1004,10 +1044,35 @@ Page({
         }
       })
     } else {  //没有音频
-      wx.showToast({
-        title: '请保存录音后，再重录',
-        icon:'none'
+      console.log('暂停音乐');
+
+
+      wx.showModal({
+        content: '重录将覆盖原有录音',
+        success(res) {
+          console.log(wx.getStorageSync('token'));
+          if (res.confirm) {
+            console.log('清空时间')
+            //切换还原封面播放图
+            that.setData({
+              recordTime: 0,   //如果没有清空显示
+              playVideo: false,
+              currentIndex: 0,
+              showPlayer: false,  //隐藏播放条
+              finishProgress: 0,    //播放完成后归零
+              playedTime: 0,      //播放完成后归零
+              showPlayTime: util.formatTime(that.data.playedTime, 'm:s'),
+              isPauseState: false,
+              isPlayRecord: false,
+              currentRecordDurationArray: [],
+              currentRecordTimes: util.formatTime(0, 'm:s'),   //如果没有清空显示
+            })
+            //暂停定时器
+            clearInterval(playTimeInterval)
+          }
+        }
       })
+
     }
 
   },
