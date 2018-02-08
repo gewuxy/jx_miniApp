@@ -303,7 +303,7 @@ Page({
     var that = this;
     console.log('为什么没有',that.data);
     return {
-      title: '你的朋友发来分享',
+      title: '快来看，我的图片会说话',
       path: that.data.sharePage
     }
   },
@@ -361,6 +361,13 @@ Page({
             console.log("存储成功");
           }
         });
+
+        //清空缓存（主题，背景音乐，标题）
+        wx.removeStorageSync('addMeetingBg');
+        wx.removeStorageSync('addMeetingMusic');
+        wx.removeStorageSync('addMeetingTitle');
+        wx.removeStorageSync('addMeetingEdit');
+        
         //跳转到新增图片页面
         wx.navigateTo({
           url: '../../pages/meeting/addPhoto'

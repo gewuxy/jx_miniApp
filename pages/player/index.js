@@ -3,6 +3,8 @@ var util = require('../../utils/util.js');
 const innerAudioContext = wx.createInnerAudioContext();   //实例音频
 innerAudioContext.obeyMuteSwitch = false;      //开启静音按钮也能播放声音
 var playVideo;    //视频实例
+const BginnerAudioContext = wx.getBackgroundAudioManager();   //实例背景音乐
+
 
 
 
@@ -43,7 +45,9 @@ Page({
     activityType:'',    //活动按钮
     radioCheckVal:0,
     radioIsDisabled:true,
-    redPackList:[]
+    redPackList:[],
+    meetingThemeBg:"",   //背景主题
+    audioInterval:3000    //切换快慢
   },
 
   /**
@@ -105,6 +109,8 @@ Page({
     var that = this;
     var userStorageInfoUser = wx.getStorageSync('userInfo');
     var userStorageToken = wx.getStorageSync('token');
+
+
 
     //解决官方图册打开后触发onShow的BUG问题
     if (that.data.ispreviewImage) {
@@ -221,8 +227,45 @@ Page({
               console.log('会议密码', res.data.data.audioCourse.password);
               console.log('会议详情数据', res.data.data.audioCourse.details);
               console.log('嘿嘿嘿', res.data.data.audioCourse.details[0].imgUrl);
-
+              //修改标题
               wx.setNavigationBarTitle({ title: res.data.data.audioCourse.title });
+              //背景音乐和主题
+              if(res.data.data.courseTheme) {
+                //背景音乐
+                if (res.data.data.courseTheme.url) {
+                  BginnerAudioContext.title = '正在为你播放'
+                  BginnerAudioContext.epname = res.data.data.courseTheme.name
+                  BginnerAudioContext.singer = '会讲小程序'
+                  BginnerAudioContext.src = res.data.data.courseTheme.url
+                  BginnerAudioContext.onEnded(() => {
+                    console.log('背景循环播放');
+                    BginnerAudioContext.title = '正在为你播放'
+                    BginnerAudioContext.epname = res.data.data.courseTheme.name
+                    BginnerAudioContext.singer = '会讲小程序'
+                    BginnerAudioContext.src = res.data.data.courseTheme.url
+                  })
+
+                  BginnerAudioContext.onPause(() => {
+                    console.log('暂停了');
+                    BginnerAudioContext.title = '正在为你播放'
+                    BginnerAudioContext.epname = res.data.data.courseTheme.name
+                    BginnerAudioContext.singer = '会讲小程序'
+                    BginnerAudioContext.src = res.data.data.courseTheme.url
+                  })
+
+                  BginnerAudioContext.onError(() => {
+                    console.log('错误了');
+                  })
+                }
+                //背景主题
+                if (res.data.data.courseTheme.imgUrl) {
+                  that.setData({
+                    meetingThemeBg: res.data.data.courseTheme.imgUrl
+                  })
+                }
+                
+              }
+              
 
               
 
@@ -238,8 +281,8 @@ Page({
                 videoList.push(that.data.meetingDetailsList[i].videoUrl);
               }
               //判断是否有密码
-              if (!res.data.data.hasPassword || that.data.isRecordPage) {
-                console.log('onshow是有密码的');
+              if (!res.data.data.audioCourse.password || that.data.isRecordPage) {
+                console.log('onshow是没密码的');
                 //如果第一个是视频，就不自动播放
                 if (that.data.meetingDetailsList[0].videoUrl) {
                   console.log('是老大');
@@ -252,7 +295,7 @@ Page({
                   
                   thisIsAutoPlay = false;
                 } else if (that.data.meetingDetailsList[0].audioUrl) {
-                  console.log('onshow有音频')
+                  console.log('onshow有音频', that.data.meetingDetailsList[0].audioUrl)
                   thisIsAutoPlay = false;
                   innerAudioContext.src = that.data.meetingDetailsList[0].audioUrl
                   innerAudioContext.play();
@@ -262,7 +305,7 @@ Page({
                 } else {
                   thisIsAutoPlay = true;
                   that.setData({
-                    isPlayAudio: true
+                    isPlayAudio: false
                   })
                 }
               } else {
@@ -411,7 +454,10 @@ Page({
       if (that.data.changeCurrentIndex + 1 == that.data.meetingDetailsList.length){
         that.setData({ isPlayAudio: false });
       } else {
-        that.setData({ isAutoplay: true });
+        that.setData({ 
+          isAutoplay: true,
+          audioInterval:1000 
+        });
       }
       
     });
@@ -439,7 +485,9 @@ Page({
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
+    console.log('卸载播放端');
     innerAudioContext.stop();
+    BginnerAudioContext.stop();
   },
 
   /**
@@ -463,13 +511,13 @@ Page({
     if (that.data.isPassword){
       //分享该页面返回首页
       return {
-        title: '你的朋友发来分享',
+        title: '快来看，我的图片会说话',
         path: `/pages/player/index?courseId=${that.data.courseId}&loadPageType=meetingPassword`
       }
     } else {
       //分享该页面返回首页
       return {
-        title: '你的朋友发来分享',
+        title: '快来看，我的图片会说话',
         path: `/pages/player/index?courseId=${that.data.courseId}`
       }
     }
@@ -587,6 +635,11 @@ Page({
             console.log("存储成功");
           }
         });
+        //清空缓存（主题，背景音乐，标题）
+        wx.removeStorageSync('addMeetingBg');
+        wx.removeStorageSync('addMeetingMusic');
+        wx.removeStorageSync('addMeetingTitle');
+        wx.removeStorageSync('addMeetingEdit');
         //跳转到新增图片页面
         wx.navigateTo({
           url: '../../pages/meeting/addPhoto'
@@ -678,21 +731,34 @@ Page({
       console.log('老大的滋味');
       that.setData({
         isAutoplay: false,
-        isPlayAudio: true
+        isPlayAudio: true,
       });
     } else {
       //切换播放录音
       if (that.data.audioList[e.detail.current]) {
         that.setData({
           isAutoplay: false,
-          currentAudio: that.data.audioList[e.detail.current]
+          currentAudio: that.data.audioList[e.detail.current],
         });
         innerAudioContext.src = that.data.currentAudio;
         innerAudioContext.play();
       } else {
-        that.setData({
-          isAutoplay: true
-        })
+        console.log('最后一页', e.detail.current+1 + '-' + that.data.meetingDetailsList.length)
+        if (e.detail.current + 1 == that.data.meetingDetailsList.length) {
+          //如果是最后一页
+          that.setData({
+            isAutoplay: false,
+            isPlayAudio:true,
+            audioInterval: 3000
+          })
+        } else {
+          that.setData({
+            isAutoplay: true,
+            audioInterval: 3000
+          })
+        }
+       
+
       }
 
     }

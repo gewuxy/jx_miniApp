@@ -1,5 +1,5 @@
 <!--pages/record/index.wxml-->
-<view class="container record-page "  catchtouchmove='true'>
+<view class="container record-page " style="position:{{isPageMore ? 'absolute' :'fixed'}}" >
 
     <!--自定义弹窗  -->
   <view class="commodity-screen" bindtap="hideModal" wx:if="{{showModalStatus}}" catchtouchmove='true'></view>
@@ -31,7 +31,7 @@
   <!-- 观看会议  -->
   <block wx:if="{{loadPageType == ''}}">
 
-      <view class="playerMeeting">
+      <view class="playerMeeting"  catchtouchmove='true'>
         <view class="playerMeetingBackground">
           <view class="full-stop-click" wx:if="{{recordButtonState}}" bindtouchstart='stopChange' ></view>
           <!-- 轮播图 -->
@@ -170,14 +170,104 @@
         <view class="icon"></view>
         <view class="text">预览</view>
       </view>
-      <!-- <view class="record-meeting-endPage-pageStyle flexRow">
+       <view class="record-meeting-endPage-pageStyle flexRow" bindtap='moreAddMeetingBg'>
         <view class="icon"></view>
         <view class="text">选择主题</view>
       </view>
-      <view class="record-meeting-endPage-muisc flexRow">
-        <view class="icon"></view>
-        <view class="text">背景音乐</view>
-      </view> -->
+      <view class="record-meeting-endPage-muisc flexRow" >
+        <view class="icon" bindtap='toAddmeetingMusic'><view class="icon-true-green" wx:if="{{isCurrentMusic}}"></view></view>
+        <view class="text" bindtap='toAddmeetingMusic'>背景音乐</view>
+
+        <view class="record-meeting-music-tips" wx:if="{{isCurrentMusic}}">
+          <view class="record-meeting-music-tips-item" >
+              {{currentMusicTitle}}  {{currentMusicTime}}
+            <view class="musicIcon"></view>
+            <view class="icon-remove-green" bindtap='removeMusic'></view>
+          </view>
+        </view>
+
+      </view> 
     </view>
   </block>
+
+  <!--背景音乐  -->
+  <block wx:if="{{loadPageType == 'addMeetingMusic'}}">
+    <view class="addMeetingMusic">
+      <view class="title">选择音乐</view>
+      <view class="input-item-row">
+       
+
+          <radio-group class="radio-group-addMeetingMusic" >
+            <block wx:for="{{musicList}}">
+              <view  class="input-row radioLabel" >
+                  <view class="input-header inputAuto-title">
+                    <block wx:if="{{currentMusicId == index+1}}">
+                      <label class="radio-positon"><radio value="{{item.id}}"  data-id="{{item.id}}" data-muiscTitle="{{item.name}}" data-muiscTime="{{item.timeStr}}" class="radio"checked="{{currentMusicId == index+1}}" data-a="{{currentMusicId}}" data-b="{{index+1}}"  bindtap="radioMusic" ></radio></label>
+                    </block>
+                    <block wx:else>
+                      <label class="radio-positon"><radio value="{{item.id}}"  data-id="{{item.id}}" data-muiscTitle="{{item.name}}" data-muiscTime="{{item.timeStr}}" class="radio" data-a="{{currentMusicId}}" data-b="{{index+1}}"  bindtap="radioMusic" ></radio></label>
+                    </block>
+                    
+
+                    <view class="addMeetingMusic-info">
+                      <block wx:if="{{isMusicPlay  == index+1}}">
+                        <view class="addMeetingMusic-cover pause" bindtap='pauseMusic' data-index="{{index+1}}" data-musicUrl="{{item.url}}"><view class="icon "></view></view>
+                      </block>
+                       <block wx:else>
+                        <view class="addMeetingMusic-cover play" bindtap='playMusic' data-index="{{index+1}}" data-musicUrl="{{item.url}}"><view class="icon "></view></view>
+                      </block> 
+                      
+                      <view class="addMeetingMusic-title">
+                        <view class="MusicTitle">{{item.name}}</view>
+                        <view class="time">{{item.timeStr}}</view>
+                      </view>
+                    </view>
+                  </view>
+              </view>
+            </block>
+
+          </radio-group>
+
+          
+      </view>
+    </view>
+  </block>
+
+  <!--背景主题  -->
+  <block wx:if="{{loadPageType == 'moreAddMettingBg'}}">
+    <view class="addMeetingMusic">
+      <view class="title">选择音乐</view>
+        <view class="addMeetingBgList">
+            <radio-group class="radio-group-addMeetingBg" bindchange="radioChange" >
+
+              <block wx:for="{{addMeetingBgMoreList}}">
+                <label class="radioLabel {{radioCheckVal==item.id?'active':''}}"  >
+                  <radio value="{{item.id}}"  data-value="{{item.id}}" class="radio" hidden="true" ></radio>
+                  <view class="icon"></view>
+                  <image src="{{item.imgUrl}}" bindtap='radioChangeImg' data-meetingImgTitle="{{item.imgName}}" data-valueId="{{item.id}}"></image>
+                  <view class="inputButtonBox">
+                    <view class="input-min-button " bindtap='showAddMeetingBg' data-addMeetingBg="{{item.imgUrl}}">预览</view>
+                  </view>
+                </label>
+              </block>
+                
+            </radio-group>
+            <view class="btn-area">
+                <button class="inputButton" bindtap='toaddMeetingPage'>保存</button>
+            </view>
+        </view>
+    </view>
+  </block>
+
+
+  <!--预览图片  -->
+  <view class="showMeetingBg-fiexd" wx:if="{{isShowMeetingBg}}">
+    <view class="showMeetingBg-fiexdBg" style="background-image:url({{showMeetingImg}})">
+      <view class="showMeetingBg-fiexdImage" style="background-image:url({{meetingavatar}})"></view>
+      <view class="closeButton close-button-black" bindtap='showMeetingBgClose'></view>
+    </view>
+  </view>
+
+
+
 </view>

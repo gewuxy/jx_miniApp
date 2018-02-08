@@ -186,10 +186,8 @@ Page({
   toAddMeeting: function(){
     var that = this;
     console.log('图片个数',that.data.imgs.length);
-    //清空缓存（主题，背景音乐，标题）
-    wx.removeStorageSync('addMeetingBg');
-    wx.removeStorageSync('addMeetingMusic');
-    wx.removeStorageSync('addMeetingTitle');
+    
+    
     
     if (that.data.imgs.length > 0) {
       //跳转到新增图片页面

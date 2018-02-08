@@ -1,7 +1,7 @@
 /* pages/record/index.wxss */
 page { background-color:#3B3E46; border-top:1rpx solid #4C4F56; height:clac(100vh - 1rpx); overflow:hidden}
 
-.record-page { height:calc(100vh - 80rpx); margin-top:80rpx;  position: relative; font-size:24rpx; color:#C6C5CB; }
+.record-page { height:calc(100vh - 80rpx); margin-top:80rpx;  position: fixed; font-size:24rpx; color:#C6C5CB; width:100%; }
 .container { padding:0; }
 
 .record-page .playerMeeting { position: relative;}
@@ -49,7 +49,6 @@ page { background-color:#3B3E46; border-top:1rpx solid #4C4F56; height:clac(100v
 
 
 .record-meeting-endMeetingBUtton { position: absolute; bottom:40rpx; right:-10rpx; height:48rpx; }
-.record-meeting-endMeetingBUtton input{ }
 .endButtonSlider { background-color:#2B2F38; border: 2rpx solid #282A30; height:48rpx; width:158rpx; border-radius: 48rpx; position: relative; top:-32rpx; }
 .endButtonSlider .text { position: absolute; top:50%; margin-top:-12rpx; left:50%; margin-left:-40rpx; font-size:20rpx; }
 .endButtonSlider .finish { width:100%; background:#ACE400; height:100%; position: absolute; left:0; top:0; border-radius: 48rpx; }
@@ -64,3 +63,55 @@ page { background-color:#3B3E46; border-top:1rpx solid #4C4F56; height:clac(100v
 .record-meeting-endPage-preview .icon { display: inline-block; background:url(https://file.medyaya.cn/wx_mini/images/button-record-preview.png) no-repeat center center; width:106rpx; height:106rpx; background-size:106rpx; }
 .record-meeting-endPage-pageStyle .icon { display: inline-block; background:url(https://file.medyaya.cn/wx_mini/images/button-record-pageStyle.png) no-repeat center center; width:106rpx; height:106rpx; background-size:106rpx; }
 .record-meeting-endPage-muisc .icon { display: inline-block; background:url(https://file.medyaya.cn/wx_mini/images/button-record-music.png) no-repeat center center; width:106rpx; height:106rpx; background-size:106rpx; }
+
+
+
+
+/* //新增的 */
+
+.input-row .input-main {padding:0 30rpx 0 0;}
+
+.addMeetingBgList { width:100%;}
+.addMeetingBgList .radio-group-addMeetingBg image{ width:150rpx; height:220rpx; border-radius: 12rpx; border:5rpx solid #fff;}
+.addMeetingBgList .radioLabel { display: inline-block; width:25%; text-align: center; position: relative; height:304rpx; vertical-align:top;}
+.addMeetingMusic .addMeetingBgList { background-color:#fff; padding:28rpx 0 60rpx;}
+.addMeetingMusic .addMeetingBgList .radio-group-addMeetingBg { padding:0 20rpx;}
+.addMeetingMusic .addMeetingBgList .radioLabel { margin-bottom:20rpx;}
+.addMeetingBgList .inputButtonBox { height:48rpx;}
+.addMeetingBgList .input-min-button { margin:21rpx 10rpx 0;}
+.addMeetingBgList .input-min-button,
+.addMeetingBgList .icon { display: none;}
+ .addMeetingBgList .active .icon { display: block; width:38rpx; height:38rpx; background:url(https://file.medyaya.cn/wx_mini/images/icon-redPack-current.png) no-repeat; background-size:38rpx; position: absolute; right:0; top:-16rpx;} 
+.addMeetingBgList .active image{ border: 5rpx solid #ACE400;  }
+ .addMeetingBgList .active  .input-min-button { display: block;} 
+
+ .showMeetingBg-fiexd { position: fixed; top:0; left:0; width:100%; height:100vh; background:rgba(0,0,0,.5); z-index: 10;}
+ .showMeetingBg-fiexdBg { background:no-repeat ; background-size:contain;  height:calc(100vh - 200rpx); margin:30rpx 30rpx 0; position: relative; border-radius: 12rpx;}
+.record-page .closeButton { background:url(https://file.medyaya.cn/wx_mini/images/close-button-black.png) no-repeat; background-size:50rpx; position: absolute; right:16rpx; top:16rpx;}
+.showMeetingBg-fiexdImage { display: inline-block; width:100%; height:514rpx; background: no-repeat center center; background-size:contain;  margin-top:200rpx;}
+
+
+.addMeetingMusic { position: absolute; top:-80rpx; left:0; width:100%; height:calc(100vh); background:#F2F2F4; z-index: 10; }
+.addMeetingMusic .title { font-size:28rpx; color:#9699a2; padding:30rpx 32rpx 20rpx;}
+.addMeetingMusic-info { display: flex; align-items: center;}
+.addMeetingMusic-cover .icon{  width:138rpx; height:138rpx; border-radius: 8rpx; }
+.addMeetingMusic .play .icon { background:rgba(0,0,0,.5) url(https://file.medyaya.cn/wx_mini/images/addMeeting-music-play.png) no-repeat center center; background-size:56rpx;}
+.addMeetingMusic .pause .icon { background:rgba(0,0,0,.5) url(https://file.medyaya.cn/wx_mini/images/addMeeting-music-pause.png) no-repeat center center; background-size:56rpx;}
+.addMeetingMusic-title { text-align: left; margin-left:32rpx; }
+.addMeetingMusic-title .MusicTitle { font-size:34rpx; margin-bottom:10rpx;}
+.addMeetingMusic-title .time { font-size:26rpx; color:#9699a2; font-weight: bold;}
+
+.record-meeting-endPage-muisc { position: relative;}
+.record-meeting-endPage-muisc .record-meeting-music-tips { position: absolute; bottom:-100rpx; right:30rpx; background: #2B2F38;border: 2px solid #282A30;border-radius: 8px; padding:15rpx 32rpx; min-width: 300rpx; color:#787c86; font-size:24rpx; text-align: left;}
+.record-meeting-endPage-muisc .musicIcon{ position: absolute; width:0; height:0; top:-30rpx; border: 16rpx solid transparent; border-bottom-color: #2B2F38; right:45rpx;  content:'';}
+.record-meeting-endPage-muisc .icon {position: relative;}
+.record-meeting-endPage-muisc .icon-remove-green { position: absolute; right:20rpx; top:10rpx;}
+.record-meeting-endPage-muisc .icon-true-green { position: absolute; top:-10rpx; right:0;}
+
+.radio-group-addMeetingMusic .input-row .inputAuto-title { widtH:100%; position: relative;}
+.radio-group-addMeetingMusic .radioLabel { position: relative;}
+.radio-group-addMeetingMusic .radio-positon { position: absolute; right:20rpx; top:50%; margin-top:-25rpx;}
+
+
+.input-row .input-main .icon-remove { margin-right:-30rpx; }
+.input-row  .musicTime { font-size:26rpx; color:#9699a2; font-weight: bold; margin-left:30rpx;}

@@ -8,7 +8,7 @@
 		"newFeature": true
 	},
 	"compileType": "miniprogram",
-	"libVersion": "1.9.0",
+	"libVersion": "1.9.1",
 	"appid": "wxd494b34681fb6025",
 	"projectname": "CSP%E5%B0%8F%E7%A8%8B%E5%BA%8F",
 	"condition": {
@@ -30,8 +30,8 @@
 				{
 					"id": 0,
 					"name": "测试添加",
-					"pathName": "pages/meeting/addMeeting",
-					"query": ""
+					"pathName": "pages/player/index",
+					"query": "courseId=123439&loadPageType=showQRcode"
 				}
 			]
 		}

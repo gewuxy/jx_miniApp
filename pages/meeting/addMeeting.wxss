@@ -8,6 +8,9 @@ page { background-color:#F2F2F4; }
 .addMeetingBgList { width:100%;}
 .addMeetingBgList .radio-group-addMeetingBg image{ width:150rpx; height:220rpx; border-radius: 12rpx; border:5rpx solid #fff;}
 .addMeetingBgList .radioLabel { display: inline-block; width:25%; text-align: center; position: relative; height:304rpx; vertical-align:top;}
+.addMeetingMusic .addMeetingBgList { background-color:#fff; padding:28rpx 0 60rpx;}
+.addMeetingMusic .addMeetingBgList .radio-group-addMeetingBg { padding:0 20rpx;}
+.addMeetingMusic .addMeetingBgList .radioLabel { margin-bottom:20rpx;}
 .addMeetingBgList .inputButtonBox { height:48rpx;}
 .addMeetingBgList .input-min-button { margin:21rpx 10rpx 0;}
 .addMeetingBgList .input-min-button,
@@ -17,9 +20,9 @@ page { background-color:#F2F2F4; }
  .addMeetingBgList .active  .input-min-button { display: block;} 
 
  .showMeetingBg-fiexd { position: fixed; top:0; left:0; width:100%; height:100vh; background:rgba(0,0,0,.5); z-index: 10;}
- .showMeetingBg-fiexdBg { background:no-repeat ; background-size:contain;  height:calc(100vh - 200rpx); margin:30rpx 30rpx 0; position: relative; border-radius: 12rpx;}
+ .showMeetingBg-fiexdBg { background:center center no-repeat ; background-size:contain;  height:calc(100vh - 200rpx); margin:30rpx 30rpx 0; position: relative; border-radius: 12rpx; width:686rpx; text-align:center;}
 .addMeeting .closeButton { background:url(https://file.medyaya.cn/wx_mini/images/close-button-black.png) no-repeat; background-size:50rpx; position: absolute; right:16rpx; top:16rpx;}
-.showMeetingBg-fiexdImage { display: inline-block; width:100%; height:514rpx; background: no-repeat center center; background-size:contain;  margin-top:200rpx;}
+.showMeetingBg-fiexdImage { display: inline-block; width:686rpx; height:514rpx; background: no-repeat center center; background-size:contain;  margin-top:200rpx;}
 
 
 .addMeetingMusic { position: absolute; top:0; left:0; width:100%; height:100vh; background:#F2F2F4; z-index: 10; }

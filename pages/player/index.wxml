@@ -51,10 +51,10 @@
   <block wx:if="{{loadPageType == ''}}">
 
       <view class="playerMeeting">
-        <view class="playerMeetingBackground" style="background-color:{{videoBgcolor}};">
+        <view class="playerMeetingBackground" style="background-color:{{videoBgcolor}}; {{meetingThemeBg ? 'background-image:url('+meetingThemeBg+')':''}}">
           <view class="pageNunber"><text class="pageNumberBer"><text>{{changeCurrentIndex+1}}</text> <text class="muted"></text> <text >{{meetingDetailsList.length}}</text></text></view>
           <!-- 轮播图 -->
-          <swiper class="swiper" autoplay="{{isAutoplay}}" interval="3000" duration="500"  bindchange='changeSwiper' current="{{changeCurrentIndex}} ">
+          <swiper class="swiper" autoplay="{{isAutoplay}}" interval="{{audioInterval}}" duration="500"  bindchange='changeSwiper' current="{{changeCurrentIndex}} ">
             <block wx:for="{{meetingDetailsList}}" wx:key="{{index}}">
               <swiper-item data-id="{{item.id}}" data-key="{{index}}" data-url="{{item.imgUrl}}" >
 
@@ -207,8 +207,7 @@
   <block wx:if="{{loadPageType == 'showQRcode'}}">
     <view class="meetingQRcode">
       <view class="meetingQRcode-userInfo">
-        <view class="meetingQRcode-avatar"><image src="{{userInfo.avatar}}"></image></view>
-        <view class="meetingQRcode-nickName">{{userInfo.nickName}}</view>
+        <view class="meetingQRcode-avatar"><image src="{{userInfo.avatar}}"></image><text class="meetingQRcode-nickName">{{userInfo.nickName}}</text></view>
       </view>
       <view class="meetingQRcode-meeting">
         <view class="meetingQRcode-meeting-cover">
@@ -219,8 +218,8 @@
       <view class="meetingQRcode-main">
         <view class="meetingQRcode-QRcode"><image src="{{QRcode}}"></image></view>
         <view class="t-center">会讲</view>
-        <view class="t-center color-gray">使用系统截屏，将图片分享到朋友圈吧</view>
       </view>
+      <view class="meetingQRcode-fixed-text"><view class="t-center color-gray">- 使用系统截图，将图片分享到朋友圈吧 - </view></view>
     </view>
   </block>
 </view>

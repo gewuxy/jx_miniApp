@@ -47,6 +47,9 @@ page { background-color:#F2F2F4; }
 .icon-meeting-share {  display: inline-block; background:url(https://file.medyaya.cn/wx_mini/images/icon-index-share.png) no-repeat center center; width:38rpx; height:38rpx; background-size:38rpx; }
 .icon-meeting-home { display: inline-block; background:url(https://file.medyaya.cn/wx_mini/images/icon-meeting-home.png) no-repeat center center; width:50rpx; height:50rpx; background-size:50rpx;}
 .icon-remove { display: inline-block; background:url(https://file.medyaya.cn/wx_mini/images/icon-remove.png) no-repeat center center; width:40rpx; height:40rpx; background-size:30rpx;}
+.icon-remove-green { display: inline-block; background:url(https://file.medyaya.cn/wx_mini/images/icon-remove-green.png) no-repeat center center; width:40rpx; height:40rpx; background-size:30rpx;}
+.icon-true-green {display: inline-block; background:url(https://file.medyaya.cn/wx_mini/images/icon-true-green.png) no-repeat center center; width:40rpx; height:40rpx; background-size:30rpx;}
+
 
 .my-page .input-row .input-main{ padding:0 50rpx 0 0;}
 .btn-area { margin:20rpx 40rpx;}

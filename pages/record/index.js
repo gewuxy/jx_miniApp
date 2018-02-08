@@ -22,6 +22,7 @@ Page({
    */
   data: {
     loadPageType:"",
+    isPageMore:false,
     meetingDetailsList:[],
     meetingPassword:"",
     meetingPages:"",
@@ -57,7 +58,14 @@ Page({
     endPageTimes:'00:00',    //结束后的总会议时间
     isViedo:false,
     isPassword:"",
-    hasUpdateStop:false
+    hasUpdateStop:false,
+    radioCheckVal:0,       //红包主题
+    addMeetingBgList: [],
+    currentMusicTitle: "",
+    currentMusicTime: 0,
+    meetingBgTitle: "",
+    isCurrentMusic: false,
+    currentMusicId:0
   },
 
   /**
@@ -69,6 +77,75 @@ Page({
       courseId: options.courseId,
       loadPageType: options.loadPageType,
     });
+
+    if (options.loadPageType == "addMeetingMusic") {
+      wx.setNavigationBarTitle({ title: '添加音乐' });
+      //更新音乐缓存
+      if (wx.getStorageSync('addMeetingMusic')) {
+        var isShowMusic = wx.getStorageSync('addMeetingMusic') ? true : false
+
+        console.log('是不是选中音乐', isShowMusic)
+
+        //更新现在的数据
+        this.setData({
+          currentMusicTitle: wx.getStorageSync('addMeetingMusic').meetingMuiscTitle,
+          currentMusicTime: wx.getStorageSync('addMeetingMusic').meetingMuiscTime,
+          currentMusicId: wx.getStorageSync('addMeetingMusic').id,
+          isCurrentMusic: isShowMusic
+        })
+
+      }
+      that.setData({
+        loadPageType: options.loadPageType,
+        isPageMore:true       //是不是更多主题或者背景音乐
+      })
+      wx.request({
+        url: app.host + '/api/meeting/theme/music/more',
+        method: 'GET',
+        header: {
+          token: wx.getStorageSync('token')
+        },
+        success(res) {
+          console.log('加载更多音乐', res);
+          that.setData({
+            musicList: res.data.data.list
+          })
+        }
+
+      })
+
+    } else if (options.loadPageType == "moreAddMettingBg") {
+      //更新主题缓存
+      if (wx.getStorageSync('addMeetingBg')) {
+        //更新现在的数据
+        this.setData({
+          meetingBgTitle: wx.getStorageSync('addMeetingBg').meetingBgTitle,
+          radioCheckVal: wx.getStorageSync('addMeetingBg').id
+        })
+      }
+      wx.setNavigationBarTitle({ title: '选择主题' });
+      var isShowMusic = wx.getStorageSync('addMeetingMusic') ? true : false
+      that.setData({
+        loadPageType: options.loadPageType,
+        isCurrentMusic: isShowMusic,
+        isPageMore: true       //是不是更多主题或者背景音乐
+      })
+      //加载更多主题
+      wx.request({
+        url: app.host + '/api/meeting/theme/image/more',
+        method: 'GET',
+        header: {
+          token: wx.getStorageSync('token')
+        },
+        success(res) {
+          console.log('加载更多背景', res);
+          that.setData({
+            addMeetingBgMoreList: res.data.data.list
+          })
+        }
+
+      })
+    }
     
     
 
@@ -125,10 +202,75 @@ Page({
           meetingPages: res.data.data.audioCourse.details.length,
           currentAudioDuration: util.formatTime(currentTimes,'m:s')
         });
+
+        //背景音乐与主题加载数据
+        if (that.data.loadPageType == 'moreAddMettingBg' || that.data.loadPageType == 'addMeetingMusic'){
+          console.log('进去主题', res.data.data);
+          //如果没有主题
+          if (res.data.data.courseTheme) {
+
+            var isShowMusic = res.data.data.courseTheme.url ? true : false
+            console.log('对吗', isShowMusic);
+            that.setData({
+              isEditMeeting: wx.getStorageSync('addMeetingEdit'),
+              addMeetingBgList: res.data.data.imageList,
+              currentMusicTitle: res.data.data.courseTheme.name,
+              currentMusicTime: res.data.data.courseTheme.timeStr,
+              meetingBgTitle: res.data.data.courseTheme.imgName,
+              radioCheckVal: res.data.data.courseTheme.imageId,
+              isCurrentMusic: isShowMusic
+            });
+
+            //更新所有的缓存
+            //音乐缓存
+            wx.setStorage({
+              key: 'addMeetingMusic',
+              data: {
+                meetingMuiscTitle: res.data.data.courseTheme.name,
+                id: res.data.data.courseTheme.musicId,
+                meetingMuiscTime: res.data.data.courseTheme.timeStr
+              },
+              success: function (res) {
+                console.log("存储成功");
+              }
+            });
+            //主题缓存
+            wx.setStorage({
+              key: 'addMeetingBg',
+              data: {
+                meetingBgTitle: res.data.data.courseTheme.imgName,
+                id: res.data.data.courseTheme.imageId
+              },
+              success: function (res) {
+                console.log("存储成功");
+              }
+            });
+          } else {
+            that.setData({
+              isEditMeeting: wx.getStorageSync('addMeetingEdit'),
+              addMeetingBgList: res.data.data.imageList,
+              meetingBgTitle: "更多",
+              radioCheckVal: 0
+            });
+          }
+        }
+
+        //结束的页面
         if (that.data.loadPageType == "endPage") {
           wx.setNavigationBarTitle({
             title: '完成'
           })
+          console.log('进来完成');
+          //判断是否有音乐
+          if (res.data.data.courseTheme) {
+            var isShowMusic = res.data.data.courseTheme.url ? true : false
+            console.log('isShowMusic',isShowMusic)
+            that.setData({
+              isCurrentMusic: isShowMusic,
+              currentMusicTitle: res.data.data.courseTheme.name,
+              currentMusicTime: res.data.data.courseTheme.timeStr,
+            })
+          }
         } else {
           //修改标题为页码
           wx.setNavigationBarTitle({
@@ -155,7 +297,14 @@ Page({
               recordState: 'end',
               isViedo: false,
             })
-          } else {
+          } else if (wx.getStorageSync('meetingRecordOnHide')) {
+            console.log('有缓存，判断是切换出去');
+            that.setData({
+              currentAudioDuration: util.formatTime(that.data.recordTime, 'm:s'),
+              currentRecordTimes: util.formatTime(that.data.recordTime, 'm:s')
+            })
+
+          }else {
             console.log('没');
             that.setData({
               startButtonState: false,
@@ -178,7 +327,7 @@ Page({
           console.log(allDuration);
           if (!allDuration) {
             allDuration = 0
-          }
+          } 
 
           //判断已经是最后一页
           if (that.data.meetingDetailsList[that.data.changeCurrentIndex].sort == that.data.meetingDetailsList.length) {
@@ -190,6 +339,8 @@ Page({
               showEndButton: false
             })
           }
+
+
 
 
           //设置内容
@@ -204,6 +355,10 @@ Page({
             isPassword: res.data.data.hasPassword
           });
           wx.hideLoading();
+
+
+
+
 
 
           //打印缓存数据
@@ -222,6 +377,10 @@ Page({
     //监控录音开始
     recorderManager.onStart(() => {
       console.log('进入录音');
+      that.setData({
+        ShowTipsText: "",
+        isShowTips: false,
+      })
       //计时开始
       recordTimeInterval = setInterval(function () {
         
@@ -257,41 +416,35 @@ Page({
     })
     recorderManager.onError((res) => {
       console.log('录音错误');
-      that.setData({
-        recordState:'default'
-      })
-      wx.showModal({
-        title: '授权提示',
-        content: '小程序功能需要授权才能正常使用噢！请点击“确定”-“录音功能”再次授权',
-        showCancel: false,
-        success: function(res){
-          wx.openSetting({
-            success: (res) => {
-              that.setData({
-                recordState: 'default'
-              })
-              // if (app.globalData.errorBoll){
-              //   console.log('回调');
-              //   //回调获取缓存
-                
-              //   //防止二次加载
-              //   app.globalData.errorBoll = true;
-              // }
-            },
-            fail: function(res){
-              // 提示版本过低
-              wx.showModal({
-                title: '提示',
-                content: '当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。'
-              })
-            }
-          });
-        }
-      })
+      // that.setData({
+      //   recordState:'default'
+      // })
+      // wx.showModal({
+      //   title: '授权提示',
+      //   content: '小程序功能需要授权才能正常使用噢！请点击“确定”-“录音功能”再次授权',
+      //   showCancel: false,
+      //   success: function(res){
+      //     wx.openSetting({
+      //       success: (res) => {
+
+      //       },
+      //       fail: function(res){
+      //         // 提示版本过低
+      //         wx.showModal({
+      //           title: '提示',
+      //           content: '当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。'
+      //         })
+      //       }
+      //     });
+      //   }
+      // })
 
     })
     //监控录音停止
     recorderManager.onStop((res) => {
+      //暂停定时器
+      clearInterval(recordTimeInterval)
+
       console.log('recorder stop', res)
       // const { tempFilePath } = res
       that.data.currentRecordArray[that.data.currentIndex] = res.tempFilePath;
@@ -325,8 +478,7 @@ Page({
       })
       
 
-      //暂停定时器
-      clearInterval(recordTimeInterval)
+
 
       if (that.data.recordTime > 599) {
         var audioUploadIndex = 0;
@@ -357,27 +509,33 @@ Page({
   onHide: function () {
     var that = this;
     console.log('触发隐藏');
-    // 切换后停止之前的音乐
-    innerAudioContext.stop();
+    //设置缓存
+    wx.setStorageSync('meetingRecordOnHide', true);
+    //暂停定时器
+    clearInterval(recordTimeInterval)
+    that.EndRecord();
+    //切换后停止之前的音乐
+    // innerAudioContext.stop();
     
-    //切换还原封面播放图
-    that.setData({
-      recordTime: 0,   //如果没有清空显示
-      playVideo: false,
-      currentIndex: 0,
-      showPlayer: false,  //隐藏播放条
-      finishProgress: 0,    //播放完成后归零
-      playedTime: 0,      //播放完成后归零
-      showPlayTime: util.formatTime(that.data.playedTime, 'm:s'),
-      isPauseState: false,
-      isPlayRecord: false,
-      currentRecordDurationArray: [],
-      currentRecordTimes: util.formatTime(0, 'm:s'),   //如果没有清空显示
+    // //切换还原封面播放图
+    // that.setData({
+    //   recordTime: 0,   //如果没有清空显示
+    //   playVideo: false,
+    //   currentIndex: 0,
+    //   showPlayer: false,  //隐藏播放条
+    //   finishProgress: 0,    //播放完成后归零
+    //   playedTime: 0,      //播放完成后归零
+    //   showPlayTime: util.formatTime(that.data.playedTime, 'm:s'),
+    //   isPauseState: false,
+    //   isPlayRecord: false,
+    //   currentRecordDurationArray: [],
+    //   currentRecordArray: [],
+    //   currentRecordTimes: util.formatTime(0, 'm:s'),   //如果没有清空显示
       
 
-    })
-    //暂停定时器
-    clearInterval(playTimeInterval)
+    // })
+    // //暂停定时器
+    // clearInterval(playTimeInterval)
   },
 
   /**
@@ -385,14 +543,35 @@ Page({
    */
   onUnload: function () {
     // 关闭后停止播放声音
-    innerAudioContext.stop()
+    innerAudioContext.stop();
+    recorderManager.stop();
     console.log('录音卸载');
+    //清空缓存
+    wx.removeStorageSync('meetingRecordOnHide',false);
     var that = this;
     var audioUploadIndex = 0;
     var length = that.data.currentRecordArray.length;
     var tempFilePaths = that.data.currentRecordArray;
     var sort = that.data.meetingDetailsList[that.data.changeCurrentIndex].sort
     var detailId = that.data.meetingDetailsList[that.data.changeCurrentIndex].id
+
+
+    //切换还原封面播放图
+    // that.setData({
+    //   recordTime: 0,   //如果没有清空显示
+    //   playVideo: false,
+    //   currentIndex: 0,
+    //   showPlayer: false,  //隐藏播放条
+    //   finishProgress: 0,    //播放完成后归零
+    //   playedTime: 0,      //播放完成后归零
+    //   showPlayTime: util.formatTime(that.data.playedTime, 'm:s'),
+    //   isPauseState: false,
+    //   isPlayRecord: false,
+    //   currentRecordDurationArray: [],
+    //   currentRecordTimes: util.formatTime(0, 'm:s'),   //如果没有清空显示
+    //   recordState: 'default',     //按钮状态为默认
+    //   startButtonState: false,
+    // })
     
     wx.showLoading({
       title: '上传中',
@@ -422,9 +601,12 @@ Page({
     clearInterval(recordTimeInterval)
 
     //跳转刷新
-    wx.reLaunch({
-      url: '../../pages/index/index?isEditComplete=true',
-    })
+    if (that.data.loadPageType == "" || that.data.loadPageType == "endPage") {
+      wx.reLaunch({
+        url: '../../pages/index/index?isEditComplete=true',
+      })
+    }
+
   },
 
   /**
@@ -449,13 +631,13 @@ Page({
     if (that.data.isPassword) {
       //分享该页面返回首页
       return {
-        title: '你的朋友发来分享',
+        title: '快来看，我的图片会说话',
         path: `/pages/player/index?courseId=${that.data.courseId}&loadPageType=meetingPassword`
       }
     } else {
       //分享该页面返回首页
       return {
-        title: '你的朋友发来分享',
+        title: '快来看，我的图片会说话',
         path: `/pages/player/index?courseId=${that.data.courseId}`
       }
     }
@@ -891,6 +1073,16 @@ Page({
                 },
                 success(res) {
                   console.log('获取总时长', res.data.data.duration);
+                  //判断是否有音乐
+                  if (res.data.data.courseTheme) {
+                    var isShowMusic = res.data.data.courseTheme.url ? true : false
+                    console.log('isShowMusic', isShowMusic)
+                    that.setData({
+                      isCurrentMusic: isShowMusic,
+                      currentMusicTitle: res.data.data.courseTheme.name,
+                      currentMusicTime: res.data.data.courseTheme.timeStr,
+                    })
+                  }
                   that.setData({
                     endPageTimes: util.formatTime(res.data.data.duration, 'm:s'),
                     loadPageType: 'endPage'
@@ -955,6 +1147,16 @@ Page({
               },
               success(res) {
                 console.log('获取总时长', res.data.data.duration);
+                //判断是否有音乐
+                if (res.data.data.courseTheme) {
+                  var isShowMusic = res.data.data.courseTheme.url ? true : false
+                  console.log('isShowMusic', isShowMusic)
+                  that.setData({
+                    isCurrentMusic: isShowMusic,
+                    currentMusicTitle: res.data.data.courseTheme.name,
+                    currentMusicTime: res.data.data.courseTheme.timeStr,
+                  })
+                }
                 that.setData({
                   endPageTimes: util.formatTime(res.data.data.duration, 'm:s'),
                   loadPageType: 'endPage'
@@ -1066,6 +1268,8 @@ Page({
               isPlayRecord: false,
               currentRecordDurationArray: [],
               currentRecordTimes: util.formatTime(0, 'm:s'),   //如果没有清空显示
+              recordState: 'default',     //按钮状态为默认
+              startButtonState: false,
             })
             //暂停定时器
             clearInterval(playTimeInterval)
@@ -1148,6 +1352,17 @@ Page({
                     },
                     success(res) {
                       console.log('获取总时长', res.data.data.duration);
+                      console.log('获取总时长', res.data.data);
+                      //判断是否有音乐
+                      if (res.data.data.courseTheme) {
+                        var isShowMusic = res.data.data.courseTheme.url ? true : false
+                        console.log('isShowMusic',isShowMusic)
+                        that.setData({
+                          isCurrentMusic: isShowMusic,
+                          currentMusicTitle: res.data.data.courseTheme.name,
+                          currentMusicTime: res.data.data.courseTheme.timeStr,
+                        })
+                      }
                       that.setData({
                         endPageTimes: util.formatTime(res.data.data.duration, 'm:s'),
                         loadPageType: 'endPage'
@@ -1237,6 +1452,222 @@ Page({
         console.log('comlete', res)
       }
     })
+  },
+  //更多主题
+  moreAddMeetingBg: function (e) {
+    var that = this;
+    if (that.data.courseId) {
+      wx.navigateTo({
+        url: `../../pages/record/index?loadPageType=moreAddMettingBg&courseId=${that.data.courseId}`
+      })
+    } else {
+      wx.navigateTo({
+        url: '../../pages/record/index?loadPageType=moreAddMettingBg'
+      })
+    }
+
+
+  },
+  //背景音乐页面
+  toAddmeetingMusic: function () {
+    var that = this;
+    if (that.data.courseId) {
+      wx.navigateTo({
+        url: `../../pages/record/index?loadPageType=addMeetingMusic&courseId=${that.data.courseId}`
+      })
+    } else {
+      wx.navigateTo({
+        url: '../../pages/record/index?loadPageType=addMeetingMusic'
+      })
+    }
+
+  },
+  //主题保存按钮
+  toaddMeetingPage: function () {
+    var that = this;
+    wx.request({
+      url: app.host + '/api/meeting/update/img',
+      method: 'POST',
+      data: {
+        courseId: that.data.courseId,
+        imgId: wx.getStorageSync('addMeetingBg').id
+      },
+      header: {
+        token: wx.getStorageSync('token'),
+        "Content-Type": "application/x-www-form-urlencoded"   //处理 POST BUG 问题
+      },
+      success(res) {
+        that.setData({
+          loadPageType: "endPage"
+        })
+        wx.showToast({
+          title: '修改成功',
+          icon:'success'
+        })
+      }
+    })
+
+  },
+  //播放音乐
+  playMusic: function (e) {
+    var that = this;
+    console.log('播放音乐', e);
+    innerAudioContext.src = e.currentTarget.dataset.musicurl;
+    innerAudioContext.play();
+    that.setData({
+      isMusicPlay: e.currentTarget.dataset.index
+    })
+
+  },
+  //暂停音乐
+  pauseMusic: function (e) {
+    var that = this;
+    innerAudioContext.pause();
+    that.setData({
+      isMusicPlay: false
+    })
+  },
+  //选中音乐
+  radioMusic: function (e) {
+    var that = this;
+    console.log(e.currentTarget.dataset);
+    //选择新的列表
+    wx.setStorage({
+      key: 'addMeetingMusic',
+      data: {
+        meetingMuiscTitle: e.currentTarget.dataset.muisctitle,
+        id: e.currentTarget.dataset.id,
+        meetingMuiscTime: e.currentTarget.dataset.muisctime
+      },
+      success: function (res) {
+        console.log("存储成功");
+      }
+    });
+    // 更新服务器数据
+    wx.request({
+      url: app.host + '/api/meeting/update/music',
+      method: 'POST',
+      data: {
+        courseId: that.data.courseId,
+        musicId: wx.getStorageSync('addMeetingMusic').id
+      },
+      header: {
+        token: wx.getStorageSync('token'),
+        "Content-Type": "application/x-www-form-urlencoded"   //处理 POST BUG 问题
+      },
+      success(res) {
+        //更新现在的数据
+        that.setData({
+          loadPageType: "endPage",
+          currentMusicTitle: e.currentTarget.dataset.muisctitle,
+          currentMusicTime: e.currentTarget.dataset.muisctime,
+          currentMusicId: e.currentTarget.dataset.id,
+          isCurrentMusic: true,
+          courseId: that.data.courseId
+        })
+        wx.showToast({
+          title: '修改成功',
+          icon: 'success'
+        })
+      }
+    })
+
+    //暂停音乐
+    innerAudioContext.stop();
+  },
+  //删除音乐
+  removeMusic: function (e) {
+    var that = this;
+    console.log(e);
+    //更新缓存
+    wx.setStorage({
+      key: 'addMeetingMusic',
+      data: {
+        meetingMuiscTitle: "",
+        id: 0,
+        meetingMuiscTime: 0
+      },
+      success: function (res) {
+        console.log("存储成功");
+      }
+    });
+    //更新现在的数据
+    this.setData({
+      currentMusicTitle: "",
+      currentMusicTime: 0,
+      isCurrentMusic: false
+    })
+  },
+  //切换主题
+  radioChange: function (e) {
+    var that = this;
+    console.log('切换主题', e)
+    this.setData({
+      radioCheckVal: e.detail.value
+    })
+  },
+  //点击图片切换标题
+  radioChangeImg: function (e) {
+    var that = this;
+    console.log('点击后获取', e.currentTarget.dataset)
+    console.log(that.data.radioCheckVal, "-", e.currentTarget.dataset.valueid);
+    if (e.currentTarget.dataset.valueid == that.data.radioCheckVal) {
+      //重复点选，删除背景
+      wx.setStorage({
+        key: 'addMeetingBg',
+        data: {
+          meetingBgTitle: "更多",
+          id: 0
+        },
+        success: function (res) {
+          console.log("存储成功");
+        }
+      });
+      //更新现在的数据
+      this.setData({
+        meetingBgTitle: "更多",
+        radioCheckVal: 0
+      })
+    } else {
+      //选择新的列表
+      wx.setStorage({
+        key: 'addMeetingBg',
+        data: {
+          meetingBgTitle: e.currentTarget.dataset.meetingimgtitle,
+          id: e.currentTarget.dataset.valueid
+        },
+        success: function (res) {
+          console.log("存储成功");
+        }
+      });
+      //更新现在的数据
+      this.setData({
+        meetingBgTitle: e.currentTarget.dataset.meetingimgtitle,
+        radioCheckVal: e.currentTarget.dataset.valueid
+      })
+    }
+
+
+  },
+  //点击预览主题
+  showAddMeetingBg: function (e) {
+    var that = this;
+    console.log('获得背景图', e);
+    console.log('获得背景图', e.currentTarget.dataset.addmeetingbg);
+    that.setData({
+      isShowMeetingBg: true,
+      showMeetingImg: e.currentTarget.dataset.addmeetingbg
+    })
+
+
+  },
+  //关闭预览主题
+  showMeetingBgClose: function () {
+    var that = this;
+    that.setData({
+      isShowMeetingBg: false
+    })
+    console.log('关闭');
   },
   
 })

@@ -54,7 +54,7 @@
       </view>
       <view class="fiexd-button">
         <button formType="submit" data-buttonType="save" class="upload-img-btn">保存讲本</button>
-        <button formType="submit" data-buttonType="record" class="input-button">继续录音</button>
+        <button formType="submit" data-buttonType="record" class="input-button" wx:if="{{!isEditMeeting}}">继续录音</button>
       </view>
     </form>
 
@@ -71,7 +71,14 @@
             <block wx:for="{{musicList}}">
               <view  class="input-row radioLabel" >
                   <view class="input-header inputAuto-title">
-                    <label class="radio-positon"><radio value="{{item.id}}"  data-id="{{item.id}}" data-muiscTitle="{{item.name}}" data-muiscTime="{{item.duration}}" class="radio"  bindtap="radioMusic" ></radio></label>
+                    <block wx:if="{{currentMusicId == index+1}}">
+                      <label class="radio-positon"><radio value="{{item.id}}"  data-id="{{item.id}}" data-muiscTitle="{{item.name}}" data-muiscTime="{{item.timeStr}}" class="radio"checked="{{currentMusicId == index+1}}" data-a="{{currentMusicId}}" data-b="{{index+1}}"  bindtap="radioMusic" ></radio></label>
+                    </block>
+                    <block wx:else>
+                      <label class="radio-positon"><radio value="{{item.id}}"  data-id="{{item.id}}" data-muiscTitle="{{item.name}}" data-muiscTime="{{item.timeStr}}" class="radio" data-a="{{currentMusicId}}" data-b="{{index+1}}"  bindtap="radioMusic" ></radio></label>
+                    </block>
+                    
+
                     <view class="addMeetingMusic-info">
                       <block wx:if="{{isMusicPlay  == index+1}}">
                         <view class="addMeetingMusic-cover pause" bindtap='pauseMusic' data-index="{{index+1}}" data-musicUrl="{{item.url}}"><view class="icon "></view></view>
@@ -82,7 +89,7 @@
                       
                       <view class="addMeetingMusic-title">
                         <view class="MusicTitle">{{item.name}}</view>
-                        <view class="time">00:{{item.duration}}</view>
+                        <view class="time">{{item.timeStr}}</view>
                       </view>
                     </view>
                   </view>
@@ -115,6 +122,9 @@
               </block>
                 
             </radio-group>
+            <view class="btn-area">
+                <button class="inputButton" bindtap='toaddMeetingPage'>保存</button>
+            </view>
         </view>
     </view>
   </block>

@@ -9,16 +9,17 @@ page { background: #fff;}
 
 
 /* meetingQRcode  */
-.player-page .meetingQRcode{ background: #FFFFFF;box-shadow: 0 4px 12px 0 rgba(136,138,169,0.20); border-radius: 8px; width:90%; height:95%; margin:40rpx auto 0; text-align: center; padding:60rpx 0 30rpx;}
-.player-page .meetingQRcode-userInfo { padding:0 0 62rpx; }
+.player-page .meetingQRcode{ background: #FFFFFF; border-radius: 8px; width:100%; height:95%; margin:0 auto 0; text-align: center; padding:70rpx 0 30rpx;}
+.player-page .meetingQRcode-userInfo { padding:0 0 36rpx; }
 .player-page .meetingQRcode-avatar image{ border-radius: 50%; width:72rpx; height:72rpx;}
-.player-page .meetingQRcode-avatar { margin-bottom:15rpx;}
-.player-page .meetingQRcode-nickName { font-size:24rpx; color:#333;}
-.player-page .meetingQRcode-meeting { width:600rpx; height:450rpx; overflow: hidden;  margin:0 auto 63rpx;}
+.player-page .meetingQRcode-avatar { margin-bottom:15rpx; display: flex; align-items: center; justify-content: center;}
+.player-page .meetingQRcode-nickName { font-size:24rpx; color:#333; margin-left:20rpx;}
+.player-page .meetingQRcode-meeting { width:600rpx; height:450rpx; overflow: hidden;  margin:0 auto 60rpx;}
 .player-page .meetingQRcode-meeting image { max-width: 100%; }
 .player-page .meetingQRcode-main { font-size:24rpx;}
-.player-page .meetingQRcode-main view { margin-bottom:15rpx;}
-.player-page .meetingQRcode-QRcode image { width:190rpx; height:190rpx;  margin-bottom:20rpx;}
+.player-page .meetingQRcode-main view { margin-bottom:25rpx;}
+.player-page .meetingQRcode-QRcode image { width:190rpx; height:190rpx;  }
+.player-page .meetingQRcode-fixed-text { font-size:24rpx; color:#c6c5cb; position: fixed; bottom:30rpx; width:100%; text-align: center;}
 
 
 .fiexd-button-row .button .text {font-size:20rpx; color:#9699A2; line-height: 1; padding-top:5rpx;}
