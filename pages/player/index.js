@@ -452,7 +452,10 @@ Page({
       console.log('结束播放');
       //判断是最后一页，不再自动切换
       if (that.data.changeCurrentIndex + 1 == that.data.meetingDetailsList.length){
-        that.setData({ isPlayAudio: false });
+        that.setData({ 
+          isAutoplay: false,
+          isPlayAudio: true 
+        });
       } else {
         that.setData({ 
           isAutoplay: true,
@@ -475,10 +478,28 @@ Page({
    */
   onHide: function () {
     var that = this;
-    console.log('切出去了')
+    console.log('切出去了');
     that.setData({
       isAutoplay: false
     });
+    innerAudioContext.stop();
+    // BginnerAudioContext.stop();
+    //切出去之后允许用户能暂停背景音乐
+    // BginnerAudioContext.onPause(() => {
+    //   console.log('暂停了');
+    //   BginnerAudioContext.title = '正在为你播放'
+    //   BginnerAudioContext.epname = '会说话的图片'
+    //   BginnerAudioContext.singer = '会讲小程序'
+    //   BginnerAudioContext.src = ""
+    // })
+    // BginnerAudioContext.onEnded(() => {
+    //   console.log('背景循环播放');
+    //   BginnerAudioContext.title = '正在为你播放'
+    //   BginnerAudioContext.epname = '会说话的图片'
+    //   BginnerAudioContext.singer = '会讲小程序'
+    //   BginnerAudioContext.src = ""
+    // })
+
   },
 
   /**
@@ -745,13 +766,14 @@ Page({
       } else {
         console.log('最后一页', e.detail.current+1 + '-' + that.data.meetingDetailsList.length)
         if (e.detail.current + 1 == that.data.meetingDetailsList.length) {
+          console.log('是图片的最后一页');
           //如果是最后一页
           that.setData({
             isAutoplay: false,
-            isPlayAudio:true,
-            audioInterval: 3000
+            isPlayAudio:true
           })
         } else {
+          console.log('不是最后一页')
           that.setData({
             isAutoplay: true,
             audioInterval: 3000
@@ -904,7 +926,10 @@ Page({
   //红包活动的我要制作按钮
   toRedPackActivity:function(){
     var that = this;
+    innerAudioContext.stop();
+    BginnerAudioContext.stop();
     that.setData({
+      isAutoplay: false,
       loadPageType:'redPack'
     })
   },

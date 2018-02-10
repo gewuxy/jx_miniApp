@@ -123,7 +123,7 @@ Page({
           radioCheckVal: wx.getStorageSync('addMeetingBg').id
         })
       }
-      wx.setNavigationBarTitle({ title: '选择主题' });
+      
       var isShowMusic = wx.getStorageSync('addMeetingMusic') ? true : false
       that.setData({
         loadPageType: options.loadPageType,
@@ -272,10 +272,16 @@ Page({
             })
           }
         } else {
-          //修改标题为页码
-          wx.setNavigationBarTitle({
-            title: (that.data.changeCurrentIndex + 1) + ' / ' + res.data.data.audioCourse.details.length
-          });
+          //根据内容修改标题
+          if (that.data.loadPageType == 'moreAddMettingBg') {
+            wx.setNavigationBarTitle({ title: '选择主题' });
+          } else if (that.data.loadPageType == 'addMeetingMusic') {
+            wx.setNavigationBarTitle({ title: '选择音乐' });
+          } else {
+            wx.setNavigationBarTitle({
+              title: (that.data.changeCurrentIndex + 1) + ' / ' + res.data.data.audioCourse.details.length
+            });
+          }
         }
         //判断是不是视频
         if (that.data.meetingDetailsList[that.data.changeCurrentIndex].videoUrl) {
@@ -377,26 +383,31 @@ Page({
     //监控录音开始
     recorderManager.onStart(() => {
       console.log('进入录音');
+
       that.setData({
         ShowTipsText: "",
-        isShowTips: false,
+        isShowTips: false
       })
       //计时开始
       recordTimeInterval = setInterval(function () {
         
         var recordTime = that.data.recordTime += 1
-        console.log('有问题吗');
         that.setData({
           currentRecordTimes: util.formatTime(that.data.recordTime, 'm:s'),
           recordTime: recordTime
         })
-        if (that.data.recordTime > 599) {
+        if (that.data.recordTime > 597) {
           console.log('已经够10分钟了');
+
+          
 
           that.setData({
             recordState: 'end',
             startButtonState: true,
-            recordButtonState: false
+            recordButtonState: false,
+            ShowTipsText: "",
+            isShowTips: false,
+            
           })
 
           // 需要做提交动作
@@ -416,28 +427,35 @@ Page({
     })
     recorderManager.onError((res) => {
       console.log('录音错误');
-      // that.setData({
-      //   recordState:'default'
-      // })
-      // wx.showModal({
-      //   title: '授权提示',
-      //   content: '小程序功能需要授权才能正常使用噢！请点击“确定”-“录音功能”再次授权',
-      //   showCancel: false,
-      //   success: function(res){
-      //     wx.openSetting({
-      //       success: (res) => {
+      // wx.getSetting({
+      //   success(res) {
+      //     if(res.authSetting.scope.record == false) {
+      //           that.setData({
+      //             recordState:'default'
+      //           })
+      //           wx.showModal({
+      //             title: '授权提示',
+      //             content: '小程序功能需要授权才能正常使用噢！请点击“确定”-“录音功能”再次授权',
+      //             showCancel: false,
+      //             success: function(res){
+      //               wx.openSetting({
+      //                 success: (res) => {
 
-      //       },
-      //       fail: function(res){
-      //         // 提示版本过低
-      //         wx.showModal({
-      //           title: '提示',
-      //           content: '当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。'
-      //         })
-      //       }
-      //     });
+      //                 },
+      //                 fail: function(res){
+      //                   // 提示版本过低
+      //                   wx.showModal({
+      //                     title: '提示',
+      //                     content: '当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。'
+      //                   })
+      //                 }
+      //               });
+      //             }
+      //           })
+      //     }
       //   }
       // })
+
 
     })
     //监控录音停止
@@ -467,8 +485,6 @@ Page({
 
         })
         console.log('合体毫秒数组', util.arraySum(that.data.currentRecordDurationArray));
-        console.log('格式化时间', util.formatTimes(util.arraySum(that.data.currentRecordDurationArray), 'm:s'));
-        console.log('时分转为秒', util.timeToSec(util.formatTimes(util.arraySum(that.data.currentRecordDurationArray), 'm:s')));
       }
 
 
@@ -492,7 +508,7 @@ Page({
           mask: true
         })
         //自动长传音频
-        that.uploadAudio(tempFilePaths, audioUploadIndex, length, detailId, sort, sort);
+        that.uploadAudio(tempFilePaths, audioUploadIndex, length, detailId, sort, sort-1);
       }
 
 
@@ -600,8 +616,9 @@ Page({
     //暂停定时器
     clearInterval(recordTimeInterval)
 
+
     //跳转刷新
-    if (that.data.loadPageType == "" || that.data.loadPageType == "endPage") {
+    if (!that.data.loadPageType || that.data.loadPageType == "" || that.data.loadPageType == "endPage") {
       wx.reLaunch({
         url: '../../pages/index/index?isEditComplete=true',
       })
@@ -773,13 +790,21 @@ Page({
   startRecord: function () {
     console.log('进来了');
     var that = this;
-
+    innerAudioContext.stop();
     that.setData({
       recordState:'start',
       recordButtonState:true,    //启动录音状态
       currentAudioDuration:0,
-      startButtonState:false
+      startButtonState:false,
+      
+      isPlayRecord: false,
+      isPauseState: false,
+      finishProgress: 0,    //播放完成后归零
+      playedTime: 0,        //播放完成后归零
+      showPlayTime: util.formatTime(that.data.playedTime, 'm:s'),
+      showPlayer: false      //播放完成后隐藏进度条
     });
+    clearInterval(playTimeInterval);
     recorderManager.start(recordingOptions);
 
 
@@ -1113,6 +1138,7 @@ Page({
           //到最后一个到生成会议函数
           console.log('完成后音频地址', data.data.audioUrl)
           console.log('完成后音频时长', data.data.duration)
+          
 
           //立即修改页面data数据，已经服务器返回成功
           var currentAudioUrl = "meetingDetailsList[" + defaultPage + "].audioUrl"
@@ -1266,6 +1292,7 @@ Page({
               showPlayTime: util.formatTime(that.data.playedTime, 'm:s'),
               isPauseState: false,
               isPlayRecord: false,
+              currentRecordArray:[],
               currentRecordDurationArray: [],
               currentRecordTimes: util.formatTime(0, 'm:s'),   //如果没有清空显示
               recordState: 'default',     //按钮状态为默认
@@ -1543,13 +1570,14 @@ Page({
         console.log("存储成功");
       }
     });
+    console.log('音乐收到的ID', wx.getStorageSync('addMeetingMusic').id)
     // 更新服务器数据
     wx.request({
       url: app.host + '/api/meeting/update/music',
       method: 'POST',
       data: {
         courseId: that.data.courseId,
-        musicId: wx.getStorageSync('addMeetingMusic').id
+        musicId: e.currentTarget.dataset.id
       },
       header: {
         token: wx.getStorageSync('token'),
@@ -1591,12 +1619,32 @@ Page({
         console.log("存储成功");
       }
     });
-    //更新现在的数据
-    this.setData({
-      currentMusicTitle: "",
-      currentMusicTime: 0,
-      isCurrentMusic: false
+    // 更新服务器数据
+    wx.request({
+      url: app.host + '/api/meeting/update/music',
+      method: 'POST',
+      data: {
+        courseId: that.data.courseId,
+        musicId: 0
+      },
+      header: {
+        token: wx.getStorageSync('token'),
+        "Content-Type": "application/x-www-form-urlencoded"   //处理 POST BUG 问题
+      },
+      success(res) {
+        //更新现在的数据
+        that.setData({
+          currentMusicTitle: "",
+          currentMusicTime: 0,
+          isCurrentMusic: false
+        })
+        wx.showToast({
+          title: '删除成功',
+          icon: 'success'
+        })
+      }
     })
+
   },
   //切换主题
   radioChange: function (e) {

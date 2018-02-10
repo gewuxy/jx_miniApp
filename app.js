@@ -1,9 +1,9 @@
-const host = 'https://www.cspmeeting.com/csp';
+const host = 'https://www.cspmeeting.com';
 
 //app.js
 App({
   onShow() {
-
+  
   },
   getUserInfo:function () {
     var that = this;

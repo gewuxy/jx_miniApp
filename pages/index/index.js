@@ -151,8 +151,8 @@ Page({
               token: app.globalData.UserToken
             },
             success(res) {
-              // var randomNum = parseInt(4 * Math.random()) + 1
-              var randomNum = parseInt(1 * Math.random()) + 1
+              var randomNum = parseInt(4 * Math.random()) + 1
+              // var randomNum = parseInt(1 * Math.random()) + 1
               console.log('红包随机数', randomNum)
               console.log('show',res);
               that.setData({
@@ -525,22 +525,22 @@ Page({
     if (e.currentTarget.dataset.redpackid == 1){
       console.log('打开被爱红包')
       wx.navigateTo({
-        url: `../../pages/player/index?courseId=3&activityType=redPack`
+        url: `../../pages/player/index?courseId=102205&activityType=redPack`
       });
     } else if (e.currentTarget.dataset.redpackid == 2){
       console.log('打开多福红包')
       wx.navigateTo({
-        url: `../../pages/player/index?courseId=4&activityType=redPack`
+        url: `../../pages/player/index?courseId=3&activityType=redPack`
       });
     } else if (e.currentTarget.dataset.redpackid == 3) {
       console.log('打开进步红包')
       wx.navigateTo({
-        url: `../../pages/player/index?courseId=5&activityType=redPack`
+        url: `../../pages/player/index?courseId=102207&activityType=redPack`
       });
     } else {
       console.log('打开有钱红包')
       wx.navigateTo({
-        url: `../../pages/player/index?courseId=6&activityType=redPack`
+        url: `../../pages/player/index?courseId=102221&activityType=redPack`
       });
     }
 

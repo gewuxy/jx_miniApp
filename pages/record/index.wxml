@@ -236,7 +236,7 @@
   <!--背景主题  -->
   <block wx:if="{{loadPageType == 'moreAddMettingBg'}}">
     <view class="addMeetingMusic">
-      <view class="title">选择音乐</view>
+      <view class="title">选择主题</view>
         <view class="addMeetingBgList">
             <radio-group class="radio-group-addMeetingBg" bindchange="radioChange" >
 

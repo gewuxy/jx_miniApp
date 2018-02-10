@@ -55,11 +55,10 @@ Page({
       key: 'images',
       success: function (res) {
         that.setData({
-          imgs: res.data.imgs,
-          firstCoverImg: res.data.imgs[0]
+          imgs: res.data.imgs
         });
         console.log('哇哈哈哈', that.data.imgs);
-        console.log('获取第一张图', that.data.firstCoverImg);
+        console.log('获取第一张图', that.data.imgs[0]);
       },
     });
     //页面Page切换不同页面
@@ -222,6 +221,7 @@ Page({
                 console.log("存储成功");
               }
             });
+            
           } else {
             that.setData({
               isEditMeeting: wx.getStorageSync('addMeetingEdit'),
@@ -248,7 +248,8 @@ Page({
         success(res) {
           console.log('新建状态', res);
           that.setData({
-            addMeetingBgList:res.data.data.imageList
+            addMeetingBgList:res.data.data.imageList,
+            firstCoverImg: that.data.imgs[0]
           })
         }
 
@@ -524,6 +525,24 @@ Page({
   radioMusic:function(e) {
     var that = this;
     console.log(e.currentTarget.dataset);
+    // 编辑状态更新服务器数据
+    if (wx.getStorageSync('addMeetingEdit') == 'true') {
+      wx.request({
+        url: app.host + '/api/meeting/update/music',
+        method: 'POST',
+        data: {
+          courseId: that.data.courseId,
+          musicId: e.currentTarget.dataset.id
+        },
+        header: {
+          token: wx.getStorageSync('token'),
+          "Content-Type": "application/x-www-form-urlencoded"   //处理 POST BUG 问题
+        },
+        success(res) {
+          console.log('更新完音乐')
+        }
+      })
+    }
     //选择新的列表
     wx.setStorage({
       key: 'addMeetingMusic',
@@ -538,7 +557,7 @@ Page({
     });
     //更新现在的数据
     this.setData({
-      loadPageType: "",
+      // loadPageType: "",
       currentMusicTitle: e.currentTarget.dataset.muisctitle,
       currentMusicTime: e.currentTarget.dataset.muisctime,
       currentMusicId: e.currentTarget.dataset.id,
@@ -547,6 +566,7 @@ Page({
     })
     //暂停音乐
     innerAudioContext.stop();
+    wx.navigateBack();
   },
   //删除音乐
   removeMusic:function(e){
@@ -587,10 +607,32 @@ Page({
 
   },
   //主题保存按钮
-  toaddMeetingPage:function() {
+  toaddMeetingPage:function(e) {
     var that = this;
-    that.setData({
-      loadPageType:""
-    })
+    console.log(e);
+    if (wx.getStorageSync('addMeetingEdit') == 'true') {
+      //选择新的列表
+      wx.request({
+        url: app.host + '/api/meeting/update/img',
+        method: 'POST',
+        data: {
+          courseId: that.data.courseId,
+          imgId: wx.getStorageSync('addMeetingBg').id
+        },
+        header: {
+          token: wx.getStorageSync('token'),
+          "Content-Type": "application/x-www-form-urlencoded"   //处理 POST BUG 问题
+        },
+        success(res) {
+          console.log('成功实时保存数据');
+        }
+      })
+      
+    }
+    wx.navigateBack();
+    // that.setData({
+    //   loadPageType: ""
+    // })
+
   }
 })

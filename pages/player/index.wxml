@@ -164,7 +164,7 @@
         </view>
         <view class="redPackPage-row" >
           <view class="float-right"><view class="input-min-button " bindtap='chooseImg'>开始制作</view></view>
-          <text>或者自己拍照</text>
+          <text>或者自己拍照：</text>
         </view>
         <view class="redPackPage-row">
         <image class="redPackPage-img-02" src="https://file.medyaya.cn/wx_mini/images/redPack-info-img-02.png"></image>

@@ -58,7 +58,7 @@
   </view>
 
   <!--列表显示方式-->
-  <view class="meeting-list" hidden="{{isCardStatus==false}}">
+  <!-- <view class="meeting-list" hidden="{{isCardStatus==false}}">
     <view class="meeting-list-item" bindtap='showImage'>
       <view class="meeting-list-image"><image src="http://139.199.170.178/course/100712/ppt/17121115311202646656.jpg"></image></view>
       <view class="meeting-list-main">
@@ -99,7 +99,7 @@
         <view class="meeting-list-row "><view class="meeting-list-status">录播中</view><button class="meeting-list-share clearButtonStyle" open-type="share"></button></view>
       </view>
     </view>
-  </view>
+  </view> -->
 
   <!--红包活动  -->
   <block wx:if="{{pageType == 'redPacket'}}">
@@ -136,7 +136,7 @@
   <!--固定的按钮-->
   <view class="fixedButton">
       <!-- <view class="fixed-button-min changeMettingButton" bindtap='toRecordPage'><view class="icon"></view></view>   -->
-      <view class="fixed-button-min changeMettingButton" bindtap='gotoQRcode'><view class="icon"></view></view>  
+       <!-- <view class="fixed-button-min changeMettingButton" bindtap='gotoQRcode'><view class="icon"></view></view>    -->
     <!--<view class="qrcodeButton"><view class="icon"></view></view>-->
     <view class="qrcodeButton"><view class="icon" bindtap='chooseImg'></view></view>
     <view class="fixed-button-min userButton" bindtap='bindViewTap'>
